@@ -1,14 +1,44 @@
 {
-  "name": "astro-portfolio",
+  "name": "febryan-portfolio-astro",
   "type": "module",
-  "version": "0.0.1",
+  "version": "1.0.0",
+  "private": true,
+  "homepage": "https://febryan.netlify.app",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "deploy": "npm run build && touch dist/.nojekyll && gh-pages -d dist --dotfiles"
   },
   "dependencies": {
-    "astro": "^5.9.1"
+    "@astrojs/mdx": "^4.0.0",
+    "@astrojs/react": "^4.0.0",
+    "@astrojs/rss": "^4.0.12",
+    "@astrojs/sitemap": "^3.2.0",
+    "@astrojs/tailwind": "^6.0.0",
+    "@giscus/react": "^3.1.0",
+    "@mdx-js/react": "^3.1.0",
+    "astro": "^5.9.1",
+    "chart.js": "^4.4.8",
+    "framer-motion": "^11.16.4",
+    "gray-matter": "^4.0.3",
+    "react": "^18.2.0",
+    "react-chartjs-2": "^5.3.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^5.3.0",
+    "rehype-pretty-code": "^0.14.1",
+    "rehype-slug": "^6.0.0",
+    "remark-gfm": "^4.0.0",
+    "shiki": "^3.6.0",
+    "tailwindcss": "^3.4.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.15",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "gh-pages": "^6.2.0",
+    "tailwind-scrollbar": "^3.1.0",
+    "typescript": "^5.0.0"
   }
 }

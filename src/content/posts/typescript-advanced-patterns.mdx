@@ -1,0 +1,366 @@
+---
+title: "Advanced TypeScript Patterns and Techniques"
+date: "2024-11-20"
+tags: ["typescript", "javascript", "patterns", "advanced", "frontend"]
+category: "Frontend Development"
+summary: "Explore advanced TypeScript patterns including conditional types, mapped types, and utility types for building robust applications."
+author: "Febryan Ramadhan"
+difficulty: "Advanced"
+keywords: ["typescript", "advanced patterns", "conditional types", "mapped types", "utility types"]
+draft: false
+---
+
+# Advanced TypeScript Patterns and Techniques
+
+TypeScript's type system is incredibly powerful and allows for sophisticated patterns that can make your code more type-safe, maintainable, and expressive. Let's explore some advanced techniques.
+
+## Conditional Types
+
+### Basic Conditional Types
+
+```typescript
+type IsString<T> = T extends string ? true : false;
+
+type Test1 = IsString<string>; // true
+type Test2 = IsString<number>; // false
+```
+
+### Distributive Conditional Types
+
+```typescript
+type ToArray<T> = T extends any ? T[] : never;
+
+type StringOrNumberArray = ToArray<string | number>;
+// Result: string[] | number[]
+```
+
+### Infer Keyword
+
+```typescript
+type ReturnType<T> = T extends (...args: any[]) => infer R ? R : never;
+
+type FunctionReturn = ReturnType<() => string>; // string
+type AsyncReturn = ReturnType<() => Promise<number>>; // Promise<number>
+```
+
+## Mapped Types
+
+### Basic Mapped Types
+
+```typescript
+type Readonly<T> = {
+  readonly [P in keyof T]: T[P];
+};
+
+type Optional<T> = {
+  [P in keyof T]?: T[P];
+};
+```
+
+### Advanced Mapped Types
+
+```typescript
+type Getters<T> = {
+  [K in keyof T as `get${Capitalize<string & K>}`]: () => T[K];
+};
+
+interface Person {
+  name: string;
+  age: number;
+}
+
+type PersonGetters = Getters<Person>;
+// Result: {
+//   getName: () => string;
+//   getAge: () => number;
+// }
+```
+
+## Template Literal Types
+
+### String Manipulation
+
+```typescript
+type EventName<T extends string> = `on${Capitalize<T>}`;
+
+type ClickEvent = EventName<'click'>; // 'onClick'
+type HoverEvent = EventName<'hover'>; // 'onHover'
+```
+
+### Path Building
+
+```typescript
+type Join<K, P> = K extends string | number
+  ? P extends string | number
+    ? `${K}${'' extends P ? '' : '.'}${P}`
+    : never
+  : never;
+
+type Paths<T, D extends number = 10> = [D] extends [never]
+  ? never
+  : T extends object
+  ? {
+      [K in keyof T]-?: K extends string | number
+        ? `${K}` | Join<K, Paths<T[K], Prev[D]>>
+        : never;
+    }[keyof T]
+  : '';
+
+type Prev = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+interface NestedObject {
+  user: {
+    profile: {
+      name: string;
+      settings: {
+        theme: string;
+      };
+    };
+  };
+}
+
+type ObjectPaths = Paths<NestedObject>;
+// Result: "user" | "user.profile" | "user.profile.name" | "user.profile.settings" | "user.profile.settings.theme"
+```
+
+## Utility Types
+
+### Custom Utility Types
+
+```typescript
+// Deep Partial
+type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
+};
+
+// Deep Required
+type DeepRequired<T> = {
+  [P in keyof T]-?: T[P] extends object ? DeepRequired<T[P]> : T[P];
+};
+
+// Pick by Type
+type PickByType<T, U> = {
+  [P in keyof T as T[P] extends U ? P : never]: T[P];
+};
+
+interface Example {
+  id: number;
+  name: string;
+  isActive: boolean;
+  metadata: object;
+}
+
+type StringFields = PickByType<Example, string>; // { name: string }
+type BooleanFields = PickByType<Example, boolean>; // { isActive: boolean }
+```
+
+## Function Overloading
+
+### Advanced Function Signatures
+
+```typescript
+interface ApiResponse<T> {
+  data: T;
+  status: number;
+}
+
+function api(url: string): Promise<ApiResponse<unknown>>;
+function api<T>(url: string, parser: (data: unknown) => T): Promise<ApiResponse<T>>;
+function api<T>(
+  url: string,
+  parser?: (data: unknown) => T
+): Promise<ApiResponse<T | unknown>> {
+  // Implementation
+  return fetch(url)
+    .then(res => res.json())
+    .then(data => ({
+      data: parser ? parser(data) : data,
+      status: 200
+    }));
+}
+
+// Usage
+const response1 = api('/users'); // Promise<ApiResponse<unknown>>
+const response2 = api('/users', (data: any) => data as User[]); // Promise<ApiResponse<User[]>>
+```
+
+## Generic Constraints
+
+### Complex Constraints
+
+```typescript
+interface Lengthwise {
+  length: number;
+}
+
+function loggingIdentity<T extends Lengthwise>(arg: T): T {
+  console.log(arg.length);
+  return arg;
+}
+
+// Using keyof constraints
+function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {
+  return obj[key];
+}
+
+// Multiple constraints
+interface Serializable {
+  serialize(): string;
+}
+
+interface Timestamped {
+  timestamp: Date;
+}
+
+function processData<T extends Serializable & Timestamped>(data: T): string {
+  return `${data.timestamp.toISOString()}: ${data.serialize()}`;
+}
+```
+
+## Recursive Types
+
+### Tree Structures
+
+```typescript
+interface TreeNode<T> {
+  value: T;
+  children?: TreeNode<T>[];
+}
+
+type FlattenTree<T> = T extends TreeNode<infer U>
+  ? U | (T['children'] extends TreeNode<U>[] ? FlattenTree<T['children'][number]> : never)
+  : never;
+
+// JSON Type
+type JSONValue = 
+  | string
+  | number
+  | boolean
+  | null
+  | JSONValue[]
+  | { [key: string]: JSONValue };
+
+function parseJSON(json: string): JSONValue {
+  return JSON.parse(json);
+}
+```
+
+## Brand Types
+
+### Creating Nominal Types
+
+```typescript
+declare const __brand: unique symbol;
+type Brand<B> = { [__brand]: B };
+type Branded<T, B> = T & Brand<B>;
+
+type UserId = Branded<string, 'UserId'>;
+type Email = Branded<string, 'Email'>;
+
+function createUserId(id: string): UserId {
+  return id as UserId;
+}
+
+function sendEmail(email: Email, userId: UserId): void {
+  // Implementation
+}
+
+const userId = createUserId('123');
+const email = 'user@example.com' as Email;
+
+sendEmail(email, userId); // ✓ Valid
+// sendEmail(userId, email); // ✗ Type error
+```
+
+## Builder Pattern with Types
+
+### Type-Safe Builder
+
+```typescript
+interface Config {
+  host: string;
+  port: number;
+  ssl: boolean;
+  timeout: number;
+}
+
+type RequiredKeys = 'host' | 'port';
+type OptionalKeys = Exclude<keyof Config, RequiredKeys>;
+
+class ConfigBuilder {
+  private config: Partial<Config> = {};
+
+  host(host: string): ConfigBuilder {
+    this.config.host = host;
+    return this;
+  }
+
+  port(port: number): ConfigBuilder {
+    this.config.port = port;
+    return this;
+  }
+
+  ssl(ssl: boolean): ConfigBuilder {
+    this.config.ssl = ssl;
+    return this;
+  }
+
+  timeout(timeout: number): ConfigBuilder {
+    this.config.timeout = timeout;
+    return this;
+  }
+
+  build(): Config {
+    const required: RequiredKeys[] = ['host', 'port'];
+    for (const key of required) {
+      if (!(key in this.config)) {
+        throw new Error(`Missing required field: ${key}`);
+      }
+    }
+    
+    return {
+      ssl: false,
+      timeout: 5000,
+      ...this.config
+    } as Config;
+  }
+}
+
+// Usage
+const config = new ConfigBuilder()
+  .host('localhost')
+  .port(3000)
+  .ssl(true)
+  .build();
+```
+
+## Performance Considerations
+
+### Type-Level Performance
+
+```typescript
+// Avoid deeply nested conditional types
+// Bad
+type DeepNested<T, D extends number = 50> = D extends 0
+  ? never
+  : T extends object
+  ? { [K in keyof T]: DeepNested<T[K], Prev[D]> }
+  : T;
+
+// Good - Use simpler, more direct approaches
+type SimpleTransform<T> = {
+  [K in keyof T]: T[K] extends object ? SimpleTransform<T[K]> : T[K];
+};
+```
+
+## Best Practices
+
+1. **Use strict TypeScript configuration**
+2. **Prefer composition over complex inheritance**
+3. **Keep type definitions close to usage**
+4. **Use branded types for domain modeling**
+5. **Leverage utility types instead of reinventing**
+
+## Conclusion
+
+Advanced TypeScript patterns enable you to build more robust, type-safe applications. While these techniques are powerful, use them judiciously and always prioritize code readability and maintainability.

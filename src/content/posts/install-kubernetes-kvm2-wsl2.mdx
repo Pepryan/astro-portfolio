@@ -1,0 +1,595 @@
+---
+title: 'Bikin Kubernetes Cluster di KVM - From Zero to Hero! 🚀'
+date: '2025-06-04'
+tags: ['kubernetes', 'k8s', 'kvm', 'homelab', 'container-orchestration', 'kubeadm', 'calico']
+summary: 'Tutorial step-by-step deploy Kubernetes cluster production-ready di homelab KVM. Dari setup VM sampai deploy aplikasi pertama!'
+category: 'DevOps'
+author: 'Febryan Ramadhan'
+difficulty: 'Advanced'
+keywords: ['kubernetes', 'kvm', 'wsl2', 'homelab', 'cluster', 'devops']
+openGraph:
+  title: 'Install Kubernetes di KVM WSL2: Production-Ready Cluster'
+  description: 'Tutorial step-by-step deploy Kubernetes cluster production-ready di homelab KVM.'
+  type: 'article'
+twitter:
+  card: 'summary_large_image'
+  title: 'Install Kubernetes di KVM WSL2: Production-Ready Cluster'
+  description: 'Tutorial step-by-step deploy Kubernetes cluster production-ready di homelab KVM.'
+schema:
+  type: 'BlogPosting'
+  author:
+    name: 'Febryan Ramadhan'
+    url: 'https://pepryan.github.io'
+  publisher:
+    name: 'Febryan Ramadhan Portfolio'
+    url: 'https://pepryan.github.io'
+---
+
+> **Prerequisites**: Pastikan sudah setup KVM di WSL2 dari [tutorial sebelumnya](https://pepryan.github.io/portfolio/blog/install-kvm-wsl2-virtualization/). Kita bakal build on top of that setup!
+
+Setelah punya homelab KVM yang solid, saatnya naik level ke container orchestration! Di tutorial ini, kita bakal setup **production-ready Kubernetes cluster** dengan:
+
+- **1 Master Node** (Control Plane)
+- **2 Worker Nodes** 
+- **Calico CNI** untuk networking
+- **Containerd** sebagai container runtime
+
+Let's dive in! 💪
+
+---
+
+## 🎯 Architecture Overview
+
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   k8s-master    │    │  k8s-worker-1   │    │  k8s-worker-2   │
+│  192.168.122.11 │    │ 192.168.122.21  │    │ 192.168.122.22  │
+│                 │    │                 │    │                 │
+│ • API Server    │    │ • Kubelet       │    │ • Kubelet       │
+│ • etcd          │    │ • Kube-proxy    │    │ • Kube-proxy    │
+│ • Scheduler     │    │ • Containerd    │    │ • Containerd    │
+│ • Controller    │    │                 │    │                 │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+```
+
+**Specs per VM:**
+- **Master**: 1 vCPU, 2GB RAM, 20GB Storage
+- **Workers**: 1 vCPU, 2GB RAM, 20GB Storage
+
+---
+
+## 🏗️ Step 1: Create VMs dengan Terraform
+
+Mari kita automate VM creation pakai Terraform! Create file `k8s-cluster.tf`:
+
+```hcl
+terraform {
+  required_providers {
+    libvirt = {
+      source = "dmacvicar/libvirt"
+    }
+  }
+}
+
+provider "libvirt" {
+  uri = "qemu:///system"
+}
+
+# Ubuntu 22.04 Base Image
+resource "libvirt_volume" "ubuntu_base" {
+  name   = "ubuntu-22.04-server-cloudimg-amd64.img"
+  pool   = "isos"
+  source = "https://cloud-images.ubuntu.com/releases/22.04/release/ubuntu-22.04-server-cloudimg-amd64.img"
+  format = "qcow2"
+}
+
+# Master Node
+resource "libvirt_volume" "k8s_master" {
+  name           = "k8s-master.qcow2"
+  pool           = "vms"
+  base_volume_id = libvirt_volume.ubuntu_base.id
+  size           = 21474836480 # 20GB
+}
+
+resource "libvirt_domain" "k8s_master" {
+  name   = "k8s-master"
+  memory = "2048"
+  vcpu   = 1
+
+  network_interface {
+    network_name   = "net-lab"
+    addresses      = ["192.168.100.11"]
+    hostname       = "k8s-master"
+  }
+
+  disk {
+    volume_id = libvirt_volume.k8s_master.id
+  }
+
+  console {
+    type        = "pty"
+    target_port = "0"
+    target_type = "serial"
+  }
+
+  graphics {
+    type        = "spice"
+    listen_type = "address"
+    autoport    = true
+  }
+}
+
+# Worker Nodes
+resource "libvirt_volume" "k8s_worker" {
+  count          = 2
+  name           = "k8s-worker-${count.index + 1}.qcow2"
+  pool           = "vms"
+  base_volume_id = libvirt_volume.ubuntu_base.id
+  size           = 21474836480 # 20GB
+}
+
+resource "libvirt_domain" "k8s_worker" {
+  count  = 2
+  name   = "k8s-worker-${count.index + 1}"
+  memory = "2048"
+  vcpu   = 1
+
+  network_interface {
+    network_name   = "net-lab"
+    addresses      = ["192.168.100.${21 + count.index}"]
+    hostname       = "k8s-worker-${count.index + 1}"
+  }
+
+  disk {
+    volume_id = libvirt_volume.k8s_worker[count.index].id
+  }
+
+  console {
+    type        = "pty"
+    target_port = "0"
+    target_type = "serial"
+  }
+
+  graphics {
+    type        = "spice"
+    listen_type = "address"
+    autoport    = true
+  }
+}
+```
+
+Deploy VMs:
+```bash
+terraform init
+terraform plan
+terraform apply -auto-approve
+```
+
+---
+
+## 🔧 Step 2: Initial VM Setup (Semua Node)
+
+Login ke setiap VM dan jalankan commands berikut. Bisa pakai script atau manual satu-satu:
+
+### Update System & Install Prerequisites
+```bash
+# Update system
+sudo apt-get update -y && sudo apt upgrade -y --with-new-pkgs
+
+# Install required packages
+sudo apt-get install -y \
+  apt-transport-https \
+  ca-certificates \
+  curl \
+  gpg \
+  software-properties-common \
+  nano \
+  htop \
+  net-tools
+```
+
+### Configure Hosts File
+```bash
+# Edit hosts file untuk semua nodes
+sudo nano /etc/hosts
+
+# Tambahkan entries berikut:
+192.168.100.11 k8s-master
+192.168.100.21 k8s-worker-1  
+192.168.100.22 k8s-worker-2
+```
+
+### Set Timezone
+```bash
+sudo timedatectl set-timezone Asia/Jakarta
+```
+
+### Disable Swap (Critical!)
+```bash
+# Disable swap immediately
+sudo swapoff -a
+
+# Disable swap permanently
+sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+
+# Verify swap is disabled
+free -h
+```
+
+---
+
+## 🌐 Step 3: Configure Kernel Modules & Networking
+
+### Load Required Kernel Modules
+```bash
+# Load modules immediately
+sudo modprobe overlay
+sudo modprobe br_netfilter
+
+# Make modules persistent across reboots
+cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
+overlay
+br_netfilter
+EOF
+```
+
+### Configure Kernel Parameters
+```bash
+# Setup networking parameters for Kubernetes
+cat <<EOF | sudo tee /etc/sysctl.d/99-k8s-sysctl.conf
+net.ipv4.ip_forward                 = 1
+net.bridge.bridge-nf-call-arptables = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables  = 1
+net.ipv4.conf.all.rp_filter         = 1
+EOF
+
+# Apply settings
+sudo sysctl --system
+
+# Verify settings
+sudo sysctl net.bridge.bridge-nf-call-iptables
+```
+
+---
+
+## 📦 Step 4: Install Container Runtime (Containerd)
+
+### Add Docker Repository
+```bash
+# Create keyrings directory (for Ubuntu < 22.04)
+sudo install -m 0755 -d /etc/apt/keyrings
+
+# Add Docker GPG key
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+# Add Docker repository
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+```
+
+### Install & Configure Containerd
+```bash
+# Update package list and install containerd
+sudo apt-get update
+sudo apt-get install -y containerd.io
+
+# Generate default configuration
+sudo containerd config default | sudo tee /etc/containerd/config.toml
+
+# Configure systemd cgroup driver (IMPORTANT!)
+sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.toml
+
+# Restart and enable containerd
+sudo systemctl restart containerd
+sudo systemctl enable containerd
+
+# Verify containerd is running
+sudo systemctl status containerd
+```
+
+**Pro tip**: Kalau mau manual edit config, cari section `[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]` dan set `SystemdCgroup = true`.
+
+---
+
+## ☸️ Step 5: Install Kubernetes Components
+
+### Add Kubernetes Repository
+```bash
+# Create keyrings directory (if not exists)
+sudo mkdir -p -m 755 /etc/apt/keyrings
+
+# Add Kubernetes GPG key
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+# Add Kubernetes repository
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+```
+
+### Install Kubernetes Tools
+```bash
+# Update package list
+sudo apt-get update
+
+# Install kubelet, kubeadm, kubectl
+sudo apt-get install -y kubelet kubeadm kubectl
+
+# Hold packages to prevent automatic updates
+sudo apt-mark hold kubelet kubeadm kubectl
+
+# Enable kubelet service
+sudo systemctl enable kubelet
+
+# Verify installation
+kubeadm version
+kubectl version --client
+```
+
+---
+
+## 🎛️ Step 6: Initialize Master Node
+
+**⚠️ HANYA di Master Node (k8s-master):**
+
+### Initialize Cluster
+```bash
+# Initialize Kubernetes cluster
+sudo kubeadm init \
+  --apiserver-advertise-address=192.168.100.11 \
+  --pod-network-cidr=192.168.0.0/16 \
+  --node-name=k8s-master
+
+# Setup kubectl for regular user
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+# Verify cluster status
+kubectl cluster-info
+kubectl get nodes
+```
+
+**Important**: Save the `kubeadm join` command yang muncul setelah init! Format:
+```bash
+kubeadm join 192.168.100.11:6443 --token <token> --discovery-token-ca-cert-hash sha256:<hash>
+```
+
+---
+
+## 🕸️ Step 7: Install CNI Plugin (Calico)
+
+**Masih di Master Node:**
+
+### Install Calico
+```bash
+# Download and apply Calico manifest
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.29.2/manifests/tigera-operator.yaml
+
+# Download custom resources
+curl -L https://raw.githubusercontent.com/projectcalico/calico/v3.29.2/manifests/custom-resources.yaml -o calico-custom-resources.yaml
+
+# Apply custom resources
+kubectl create -f calico-custom-resources.yaml
+
+# Verify Calico installation
+kubectl get pods -n calico-system
+```
+
+### Install Calicoctl (Optional tapi Recommended)
+```bash
+# Download calicoctl binary
+curl -L https://github.com/projectcalico/calico/releases/download/v3.29.2/calicoctl-linux-amd64 -o calicoctl
+
+# Make executable and move to PATH
+chmod +x calicoctl
+sudo mv calicoctl /usr/local/bin/
+
+# Verify installation
+calicoctl version
+```
+
+---
+
+## 👷 Step 8: Join Worker Nodes
+
+**Di setiap Worker Node (k8s-worker-1 dan k8s-worker-2):**
+
+### Join Cluster
+Jalankan command join yang didapat dari master node initialization:
+
+```bash
+# Example command (ganti dengan token actual)
+sudo kubeadm join 192.168.100.11:6443 \
+  --token <your-token> \
+  --discovery-token-ca-cert-hash sha256:<your-hash>
+```
+
+### Verify di Master Node
+```bash
+# Cek semua nodes sudah Ready
+kubectl get nodes
+
+# Expected output:
+# NAME           STATUS   ROLES           AGE   VERSION
+# k8s-master     Ready    control-plane   10m   v1.32.0
+# k8s-worker-1   Ready    <none>          5m    v1.32.0
+# k8s-worker-2   Ready    <none>          5m    v1.32.0
+
+# Cek pod system berjalan normal
+kubectl get pods --all-namespaces
+```
+
+---
+
+## 🎯 Step 9: Test Deployment
+
+Mari test cluster dengan deploy aplikasi sederhana:
+
+### Deploy Nginx
+```bash
+# Create deployment
+kubectl create deployment nginx-test --image=nginx:latest --replicas=3
+
+# Expose deployment
+kubectl expose deployment nginx-test --port=80 --type=NodePort
+
+# Check deployment status
+kubectl get deployments
+kubectl get pods -o wide
+kubectl get services
+```
+
+### Test Connectivity
+```bash
+# Get NodePort
+kubectl get svc nginx-test
+
+# Test dari dalam cluster
+kubectl run test-pod --image=busybox --rm -it --restart=Never -- wget -qO- nginx-test:80
+
+# Test dari luar cluster (ganti dengan NodePort actual)
+curl http://192.168.100.21:<NodePort>
+```
+
+---
+
+## 🔧 Advanced Configuration
+
+### Install Metrics Server
+```bash
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+
+# Verify
+kubectl top nodes
+kubectl top pods
+```
+
+### Setup Ingress Controller (Nginx)
+```bash
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.0/deploy/static/provider/baremetal/deploy.yaml
+
+# Wait for ingress controller to be ready
+kubectl wait --namespace ingress-nginx \
+  --for=condition=ready pod \
+  --selector=app.kubernetes.io/component=controller \
+  --timeout=120s
+```
+
+---
+
+## 🚨 Troubleshooting Common Issues
+
+### Node Not Ready
+```bash
+# Check kubelet status
+sudo systemctl status kubelet
+
+# Check kubelet logs
+sudo journalctl -u kubelet -f
+
+# Common fixes:
+sudo systemctl restart kubelet
+sudo systemctl restart containerd
+```
+
+### Pod Stuck in Pending
+```bash
+# Check node resources
+kubectl describe nodes
+
+# Check pod events
+kubectl describe pod <pod-name>
+
+# Common causes: insufficient resources, node not ready
+```
+
+### CNI Issues
+```bash
+# Restart Calico pods
+kubectl rollout restart daemonset/calico-node -n calico-system
+
+# Check Calico status
+kubectl get pods -n calico-system
+calicoctl node status
+```
+
+### Join Token Expired
+```bash
+# Generate new token (di master node)
+kubeadm token create --print-join-command
+```
+
+---
+
+## 📊 Monitoring & Maintenance
+
+### Useful Commands
+```bash
+# Check cluster health
+kubectl cluster-info dump
+
+# Check resource usage
+kubectl top nodes
+kubectl top pods --all-namespaces
+
+# View cluster events
+kubectl get events --sort-by=.metadata.creationTimestamp
+
+# Check service accounts
+kubectl get serviceaccounts --all-namespaces
+```
+
+### Regular Maintenance
+```bash
+# Update Kubernetes components
+sudo apt update
+sudo apt upgrade kubeadm kubelet kubectl
+
+# Backup etcd (important!)
+sudo ETCDCTL_API=3 etcdctl snapshot save backup.db \
+  --endpoints=https://127.0.0.1:2379 \
+  --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+  --cert=/etc/kubernetes/pki/etcd/server.crt \
+  --key=/etc/kubernetes/pki/etcd/server.key
+```
+
+---
+
+## 🎯 What's Next?
+
+Congrats! Sekarang sudah punya **production-ready Kubernetes cluster** yang berjalan di homelab. Selanjutnya bisa explore:
+
+🚀 **Deploy complex applications** dengan Helm charts  
+🚀 **Setup persistent storage** dengan Longhorn atau Ceph  
+🚀 **Implement GitOps** dengan ArgoCD atau Flux  
+🚀 **Add monitoring stack** dengan Prometheus + Grafana  
+🚀 **Practice disaster recovery** dengan backup/restore procedures  
+
+### Recommended Next Steps:
+1. **Install Helm** - Package manager untuk Kubernetes
+2. **Setup Persistent Volumes** - Untuk stateful applications
+3. **Deploy sample microservices** - Practice real-world scenarios
+4. **Learn YAML manifests** - Deep dive into Kubernetes resources
+5. **Explore security** - RBAC, Network Policies, Pod Security
+
+---
+
+## 💭 Final Thoughts
+
+Setting up Kubernetes dari scratch might seem overwhelming, tapi ini adalah **fundamental skill** yang invaluable buat modern infrastructure. Dengan homelab cluster ini, bisa:
+
+- **Understand Kubernetes internals** secara mendalam
+- **Practice deployment strategies** tanpa fear of breaking production
+- **Learn troubleshooting** dalam controlled environment  
+- **Build confidence** dengan container orchestration
+
+Remember: **Kubernetes is a journey, not a destination**. Keep experimenting, breaking things (safely), dan learning from mistakes. That's how expertise develops! 🚀
+
+---
+
+*Questions atau stuck di step manapun? Reach out ke febryanramadhan@gmail.com mari troubleshoot together! Building strong Kubernetes community starts with helping each other 💪*
+
+**Coming up next**: "Deploy Production-Ready Applications di Kubernetes Homelab" - Stay tuned! 👀

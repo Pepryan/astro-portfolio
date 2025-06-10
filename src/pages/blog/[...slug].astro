@@ -1,0 +1,93 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import { ThemeProvider } from '../../components/ThemeProvider';
+import LayoutWrapper from '../../components/LayoutWrapper';
+import Header from '../../components/Header';
+import BlogPostLayout from '../../components/BlogPostLayout';
+import Footer from '../../components/Footer';
+import { calculateReadingTime } from '../../utils/readingTime';
+import { generateBlogPostSEO } from '../../utils/seo';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post, allPosts: posts },
+  }));
+}
+
+const { post, allPosts } = Astro.props;
+const { Content } = await post.render();
+
+// Calculate reading time with improved algorithm
+const readingTimeResult = calculateReadingTime(post.body || '', {
+  wordsPerMinute: 200,
+  includeCodeBlocks: true,
+  includeImages: true
+});
+const readingTime = readingTimeResult.minutes;
+const words = readingTimeResult.words;
+
+// Prepare all posts with reading times for related posts and navigation
+const publishedPosts = allPosts
+  .filter(p => !p.data.draft && !p.data.hidden)
+  .map(p => {
+    const pReadingTime = calculateReadingTime(p.body || '', {
+      wordsPerMinute: 200,
+      includeCodeBlocks: true,
+      includeImages: true
+    });
+    return {
+      slug: p.slug,
+      data: p.data,
+      readingTime: pReadingTime.minutes
+    };
+  });
+
+// Generate SEO data for blog post
+const blogPostSEO = generateBlogPostSEO({
+  title: post.data.title,
+  description: post.data.description,
+  summary: post.data.summary,
+  date: post.data.date,
+  updated: post.data.updated,
+  tags: post.data.tags,
+  category: post.data.category,
+  thumbnail: post.data.thumbnail,
+  keywords: post.data.keywords,
+  author: post.data.author,
+  slug: post.slug
+});
+---
+
+<Layout
+  title={blogPostSEO.title}
+  description={blogPostSEO.description}
+  image={blogPostSEO.image}
+  canonical={blogPostSEO.canonical}
+  type={blogPostSEO.type}
+  publishedTime={blogPostSEO.publishedTime}
+  modifiedTime={blogPostSEO.modifiedTime}
+  keywords={blogPostSEO.keywords}
+  tags={blogPostSEO.tags}
+  section={blogPostSEO.section}
+>
+  <ThemeProvider client:load>
+    <LayoutWrapper client:load>
+      <Header client:load />
+
+      <BlogPostLayout
+        post={post}
+        readingTime={readingTime}
+        wordCount={words}
+        postUrl={blogPostSEO.canonical || `/blog/${post.slug}`}
+        allPosts={publishedPosts}
+        client:load
+      >
+        <Content />
+      </BlogPostLayout>
+      <Footer client:load />
+    </LayoutWrapper>
+  </ThemeProvider>
+</Layout>

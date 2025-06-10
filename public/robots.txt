@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# Disallow admin or private areas (if any)
+Disallow: /admin/
+Disallow: /.well-known/
+Disallow: /api/
+
+# Allow all crawlers to access the site
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://febryan.netlify.app/sitemap-index.xml
+Sitemap: https://febryan.netlify.app/sitemap-0.xml

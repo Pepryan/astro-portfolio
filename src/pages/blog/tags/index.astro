@@ -1,0 +1,156 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../../layouts/Layout.astro';
+import { ThemeProvider } from '../../../components/ThemeProvider';
+import LayoutWrapper from '../../../components/LayoutWrapper';
+import Header from '../../../components/Header';
+import Footer from '../../../components/Footer';
+
+// Get all blog posts
+const posts = await getCollection('posts');
+const publishedPosts = posts.filter(post => !post.data.draft && !post.data.hidden);
+
+// Get all unique tags with post counts
+const tagCounts = new Map();
+publishedPosts.forEach(post => {
+  post.data.tags?.forEach(tag => {
+    tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+  });
+});
+
+// Sort tags by post count (descending) then alphabetically
+const sortedTags = Array.from(tagCounts.entries())
+  .sort((a, b) => {
+    if (b[1] !== a[1]) return b[1] - a[1]; // Sort by count first
+    return a[0].localeCompare(b[0]); // Then alphabetically
+  });
+
+const totalTags = sortedTags.length;
+const totalPosts = publishedPosts.length;
+const description = `Browse all ${totalTags} tags used across ${totalPosts} blog posts. Find articles by topic and discover content that interests you.`;
+---
+
+<Layout 
+  title="All Tags | Febryan Blog"
+  description={description}
+  canonical="https://febryan.netlify.app/blog/tags"
+>
+  <ThemeProvider client:load>
+    <LayoutWrapper client:load>
+      <div class="min-h-screen bg-white dark:bg-neutral-900">
+        <Header client:load />
+        
+        <main class="max-w-7xl mx-auto px-4 pt-24 pb-16">
+          {/* Header */}
+          <div class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-neutral-900 dark:text-neutral-100 mb-4">
+              Browse by Tags
+            </h1>
+            <p class="text-lg text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto mb-6">
+              {description}
+            </p>
+
+            {/* Navigation */}
+            <a 
+              href="/blog" 
+              class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium
+                text-neutral-600 dark:text-neutral-400 hover:text-blue-600 dark:hover:text-blue-400
+                bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700
+                rounded-lg transition-colors"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+              </svg>
+              Back to All Posts
+            </a>
+          </div>
+
+          {/* Stats */}
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div class="bg-neutral-50 dark:bg-neutral-800/50 rounded-lg p-6 text-center">
+              <div class="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-2">
+                {totalTags}
+              </div>
+              <div class="text-sm text-neutral-600 dark:text-neutral-400">Total Tags</div>
+            </div>
+            <div class="bg-neutral-50 dark:bg-neutral-800/50 rounded-lg p-6 text-center">
+              <div class="text-2xl font-bold text-green-600 dark:text-green-400 mb-2">
+                {totalPosts}
+              </div>
+              <div class="text-sm text-neutral-600 dark:text-neutral-400">Total Posts</div>
+            </div>
+            <div class="bg-neutral-50 dark:bg-neutral-800/50 rounded-lg p-6 text-center">
+              <div class="text-2xl font-bold text-purple-600 dark:text-purple-400 mb-2">
+                {Math.round(totalPosts / totalTags * 10) / 10}
+              </div>
+              <div class="text-sm text-neutral-600 dark:text-neutral-400">Avg Posts per Tag</div>
+            </div>
+          </div>
+
+          {/* Tags Cloud */}
+          <div class="mb-12">
+            <h2 class="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-6 text-center">
+              Popular Tags
+            </h2>
+            <div class="flex flex-wrap justify-center gap-3">
+              {sortedTags.slice(0, 10).map(([tag, count]) => (
+                <a
+                  href={`/blog/tags/${tag}`}
+                  class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 
+                    hover:from-blue-600 hover:to-blue-700 text-white rounded-full text-sm font-medium
+                    shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                  </svg>
+                  {tag}
+                  <span class="bg-white/20 px-2 py-0.5 rounded-full text-xs">
+                    {count}
+                  </span>
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* All Tags Grid */}
+          <div>
+            <h2 class="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-6">
+              All Tags ({totalTags})
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+              {sortedTags.map(([tag, count]) => (
+                <a
+                  href={`/blog/tags/${tag}`}
+                  class="group block p-4 bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 
+                    dark:border-neutral-700 hover:border-blue-300 dark:hover:border-blue-600
+                    hover:shadow-lg transition-all duration-200"
+                >
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <svg class="w-4 h-4 text-neutral-400 group-hover:text-blue-500 transition-colors" 
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                      </svg>
+                      <span class="font-medium text-neutral-900 dark:text-neutral-100 group-hover:text-blue-600 
+                        dark:group-hover:text-blue-400 transition-colors truncate">
+                        {tag}
+                      </span>
+                    </div>
+                    <span class="text-sm text-neutral-500 dark:text-neutral-400 bg-neutral-100 
+                      dark:bg-neutral-700 px-2 py-1 rounded-full">
+                      {count}
+                    </span>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        </main>
+        
+        <Footer client:load />
+      </div>
+    </LayoutWrapper>
+  </ThemeProvider>
+</Layout>

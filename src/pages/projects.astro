@@ -1,0 +1,254 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { ThemeProvider } from '../components/ThemeProvider';
+import LayoutWrapper from '../components/LayoutWrapper';
+import Header from '../components/Header';
+import PortfolioSection from '../components/PortfolioSection';
+import FloatingNavigation from '../components/FloatingNavigation';
+import Footer from '../components/Footer';
+import { generateSEO } from '../utils/seo';
+import { componentConfig } from '../config/components';
+
+const { pages } = componentConfig;
+
+// Generate SEO data for projects page
+const projectsSEO = generateSEO({
+  title: 'Projects - Febryan Ramadhan',
+  description: 'Explore my portfolio of cloud engineering, DevOps, and web development projects. Discover the technologies and solutions I\'ve built.',
+  type: 'website',
+  keywords: ['projects', 'portfolio', 'cloud engineering', 'devops', 'web development', 'aws', 'kubernetes']
+});
+
+// Check if projects page is enabled
+if (!pages.projects.enabled) {
+  return Astro.redirect('/');
+}
+---
+
+<Layout
+  title={projectsSEO.title}
+  description={projectsSEO.description}
+  canonical={projectsSEO.canonical}
+  type={projectsSEO.type}
+  keywords={projectsSEO.keywords}
+>
+  <ThemeProvider client:load>
+    <LayoutWrapper client:load>
+      <div class="min-h-screen bg-white dark:bg-neutral-900">
+        <Header client:load />
+
+        <main class="max-w-7xl mx-auto px-4 py-4 mb-10">
+          <!-- Page Header -->
+          <section class="pt-24 pb-16">
+            <div class="text-center max-w-4xl mx-auto">
+              <h1 class="text-4xl md:text-6xl font-bold bg-clip-text text-transparent
+                bg-gradient-to-r from-blue-600 to-purple-600
+                dark:from-blue-400 dark:to-purple-400 mb-6">
+                My Projects
+              </h1>
+              <p class="text-lg md:text-xl text-neutral-600 dark:text-neutral-400 leading-relaxed">
+                A showcase of my work in cloud engineering, DevOps automation, and web development. 
+                Each project represents a unique challenge and innovative solution.
+              </p>
+            </div>
+          </section>
+
+          <!-- Projects Grid -->
+          <section id="projects" class="py-16">
+            <PortfolioSection client:load />
+          </section>
+
+          <!-- Additional Project Categories -->
+          <section id="categories" class="py-16">
+            <div class="max-w-6xl mx-auto">
+              <h2 class="text-3xl md:text-4xl font-bold text-center text-neutral-900 dark:text-neutral-100 mb-12">
+                Project Categories
+              </h2>
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Cloud Infrastructure -->
+                <div class="p-6 bg-white/80 dark:bg-neutral-800/80 rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700 hover:shadow-xl transition-all duration-300 group cursor-pointer">
+                  <div class="text-4xl mb-4 group-hover:scale-110 transition-transform">☁️</div>
+                  <h3 class="text-xl font-semibold text-neutral-800 dark:text-neutral-200 mb-2">Cloud Infrastructure</h3>
+                  <p class="text-neutral-600 dark:text-neutral-400 text-sm">AWS, OpenStack, and cloud-native solutions</p>
+                  <div class="mt-4 text-blue-600 dark:text-blue-400 text-sm font-medium">5 Projects</div>
+                </div>
+
+                <!-- DevOps & Automation -->
+                <div class="p-6 bg-white/80 dark:bg-neutral-800/80 rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700 hover:shadow-xl transition-all duration-300 group cursor-pointer">
+                  <div class="text-4xl mb-4 group-hover:scale-110 transition-transform">⚙️</div>
+                  <h3 class="text-xl font-semibold text-neutral-800 dark:text-neutral-200 mb-2">DevOps & Automation</h3>
+                  <p class="text-neutral-600 dark:text-neutral-400 text-sm">CI/CD pipelines, monitoring, and automation</p>
+                  <div class="mt-4 text-green-600 dark:text-green-400 text-sm font-medium">8 Projects</div>
+                </div>
+
+                <!-- Web Development -->
+                <div class="p-6 bg-white/80 dark:bg-neutral-800/80 rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700 hover:shadow-xl transition-all duration-300 group cursor-pointer">
+                  <div class="text-4xl mb-4 group-hover:scale-110 transition-transform">🌐</div>
+                  <h3 class="text-xl font-semibold text-neutral-800 dark:text-neutral-200 mb-2">Web Development</h3>
+                  <p class="text-neutral-600 dark:text-neutral-400 text-sm">Modern web applications and frameworks</p>
+                  <div class="mt-4 text-purple-600 dark:text-purple-400 text-sm font-medium">6 Projects</div>
+                </div>
+
+                <!-- Open Source -->
+                <div class="p-6 bg-white/80 dark:bg-neutral-800/80 rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700 hover:shadow-xl transition-all duration-300 group cursor-pointer">
+                  <div class="text-4xl mb-4 group-hover:scale-110 transition-transform">🔓</div>
+                  <h3 class="text-xl font-semibold text-neutral-800 dark:text-neutral-200 mb-2">Open Source</h3>
+                  <p class="text-neutral-600 dark:text-neutral-400 text-sm">Community contributions and tools</p>
+                  <div class="mt-4 text-orange-600 dark:text-orange-400 text-sm font-medium">3 Projects</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Technologies Used -->
+          <section id="technologies" class="py-16">
+            <div class="max-w-6xl mx-auto text-center">
+              <h2 class="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-neutral-100 mb-12">
+                Technologies & Tools
+              </h2>
+              
+              <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                {['AWS', 'Docker', 'Kubernetes', 'Terraform', 'Ansible', 'Python', 'React', 'Node.js', 'PostgreSQL', 'Redis', 'Grafana', 'Prometheus'].map((tech) => (
+                  <div class="p-4 bg-white/80 dark:bg-neutral-800/80 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 hover:shadow-md transition-all duration-300 hover:scale-105">
+                    <div class="text-sm font-medium text-neutral-700 dark:text-neutral-300">{tech}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <!-- Call to Action -->
+          {pages.projects.cta.enabled && (
+            <section id="cta" class="py-16">
+              <div class="max-w-4xl mx-auto text-center">
+                <div class={`p-8 md:p-12 rounded-3xl ${
+                  pages.projects.cta.backgroundStyle === 'gradient'
+                    ? 'bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 text-white'
+                    : pages.projects.cta.backgroundStyle === 'pattern'
+                    ? 'bg-neutral-900 dark:bg-neutral-800 text-white'
+                    : 'bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100'
+                }`}>
+                  <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                    {pages.projects.cta.title}
+                  </h2>
+                  <p class={`text-lg md:text-xl mb-8 ${
+                    pages.projects.cta.backgroundStyle === 'minimal'
+                      ? 'text-neutral-600 dark:text-neutral-400'
+                      : 'text-white/90'
+                  }`}>
+                    {pages.projects.cta.subtitle}
+                  </p>
+                  <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href={pages.projects.cta.primaryAction.link} class={`inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-semibold transition-colors ${
+                      pages.projects.cta.backgroundStyle === 'minimal'
+                        ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600'
+                        : 'bg-white text-neutral-900 hover:bg-neutral-100'
+                    }`}>
+                      <span>{pages.projects.cta.primaryAction.text}</span>
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                      </svg>
+                    </a>
+                    <a href={pages.projects.cta.secondaryAction.link} class={`inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-semibold transition-all ${
+                      pages.projects.cta.backgroundStyle === 'minimal'
+                        ? 'border-2 border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-300 hover:border-neutral-400 dark:hover:border-neutral-500'
+                        : 'border-2 border-white/30 text-white hover:border-white/50 hover:bg-white/10'
+                    }`}>
+                      <span>{pages.projects.cta.secondaryAction.text}</span>
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                      </svg>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </section>
+          )}
+        </main>
+
+        <!-- Floating Navigation -->
+        <FloatingNavigation client:load />
+
+        <!-- Footer -->
+        <Footer client:load />
+      </div>
+    </LayoutWrapper>
+  </ThemeProvider>
+</Layout>
+
+<style>
+  /* Custom styles for projects page */
+  .projects-page {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.02) 0%, rgba(147, 51, 234, 0.02) 100%);
+  }
+  
+  /* Smooth scroll behavior */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Section spacing */
+  section {
+    scroll-margin-top: 80px;
+  }
+  
+  /* Project card hover effects */
+  .project-card {
+    transition: all 0.3s ease;
+  }
+  
+  .project-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+</style>
+
+<script>
+  // Add interactive features for projects page
+  document.addEventListener('DOMContentLoaded', () => {
+    // Filter functionality (if needed)
+    const filterButtons = document.querySelectorAll('[data-filter]');
+    const projectCards = document.querySelectorAll('[data-category]');
+    
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const filter = button.getAttribute('data-filter');
+        
+        // Update active button
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        
+        // Filter projects
+        projectCards.forEach(card => {
+          const category = card.getAttribute('data-category');
+          const htmlCard = card as HTMLElement;
+          if (filter === 'all' || category === filter) {
+            htmlCard.style.display = 'block';
+            htmlCard.style.animation = 'fadeIn 0.5s ease';
+          } else {
+            htmlCard.style.display = 'none';
+          }
+        });
+      });
+    });
+    
+    // Lazy loading for project images
+    const images = document.querySelectorAll('img[data-src]');
+    const imageObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const img = entry.target as HTMLImageElement;
+          const dataSrc = img.getAttribute('data-src');
+          if (dataSrc) {
+            img.src = dataSrc;
+            img.removeAttribute('data-src');
+          }
+          imageObserver.unobserve(img);
+        }
+      });
+    });
+    
+    images.forEach(img => imageObserver.observe(img));
+  });
+</script>
