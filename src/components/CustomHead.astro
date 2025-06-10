@@ -1,0 +1,141 @@
+---
+import { seoConfig } from '../config/components';
+import { generateRobotsMeta, truncateText, formatKeywords } from '../utils/seo';
+
+export interface Props {
+  title?: string;
+  description?: string;
+  canonical?: string;
+  ogImage?: string;
+  ogType?: string;
+  twitterCard?: string;
+  keywords?: string | string[];
+  author?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
+  section?: string;
+  tags?: string[];
+  noindex?: boolean;
+  nofollow?: boolean;
+  alternateLanguages?: { lang: string; url: string }[];
+}
+
+const {
+  title = seoConfig.site.title,
+  description = seoConfig.site.description,
+  canonical = seoConfig.site.url,
+  ogImage = seoConfig.images.default,
+  ogType = "website",
+  twitterCard = seoConfig.social.twitter.card,
+  keywords = seoConfig.keywords,
+  author = seoConfig.author.name,
+  publishedTime,
+  modifiedTime,
+  section,
+  tags = [],
+  noindex = false,
+  nofollow = false,
+  alternateLanguages = []
+} = Astro.props;
+
+// Process URLs
+const fullCanonical = canonical.startsWith('http') ? canonical : `${seoConfig.site.url}${canonical}`;
+const fullOgImage = ogImage.startsWith('http') ? ogImage : `${seoConfig.site.url}${ogImage}`;
+
+// Process keywords
+const keywordArray = Array.isArray(keywords) ? keywords : keywords.split(',').map(k => k.trim());
+const formattedKeywords = formatKeywords(keywordArray);
+
+// Process description
+const truncatedDescription = truncateText(description, 160);
+
+// Generate robots meta
+const robotsMeta = generateRobotsMeta(noindex, nofollow);
+
+// Use the title as-is since it's already processed by SEO utilities
+const pageTitle = title;
+---
+
+<!-- Primary Meta Tags -->
+<title>{pageTitle}</title>
+<meta name="title" content={pageTitle} />
+<meta name="description" content={truncatedDescription} />
+<meta name="keywords" content={formattedKeywords} />
+<meta name="author" content={author} />
+<meta name="robots" content={robotsMeta} />
+<meta name="language" content={seoConfig.site.language} />
+<meta name="revisit-after" content="7 days" />
+
+<!-- Additional SEO Meta Tags -->
+<meta name="generator" content={Astro.generator} />
+<meta name="format-detection" content="telephone=no" />
+<meta name="geo.region" content="ID-JB" />
+<meta name="geo.placename" content="Bogor, Indonesia" />
+<meta name="geo.position" content="-6.5971;106.8060" />
+<meta name="ICBM" content="-6.5971, 106.8060" />
+
+<!-- Canonical URL -->
+<link rel="canonical" href={fullCanonical} />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content={ogType} />
+<meta property="og:url" content={fullCanonical} />
+<meta property="og:title" content={pageTitle} />
+<meta property="og:description" content={truncatedDescription} />
+<meta property="og:image" content={fullOgImage} />
+<meta property="og:image:alt" content={`${pageTitle} - ${seoConfig.site.name}`} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:site_name" content={seoConfig.site.name} />
+<meta property="og:locale" content={seoConfig.site.locale} />
+
+<!-- Article-specific Open Graph tags -->
+{publishedTime && <meta property="article:published_time" content={publishedTime} />}
+{modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+{section && <meta property="article:section" content={section} />}
+{author && <meta property="article:author" content={author} />}
+{tags.map(tag => <meta property="article:tag" content={tag} />)}
+
+<!-- Twitter -->
+<meta name="twitter:card" content={twitterCard} />
+<meta name="twitter:site" content={seoConfig.social.twitter.username} />
+<meta name="twitter:creator" content={seoConfig.social.twitter.username} />
+<meta name="twitter:url" content={fullCanonical} />
+<meta name="twitter:title" content={pageTitle} />
+<meta name="twitter:description" content={truncatedDescription} />
+<meta name="twitter:image" content={fullOgImage} />
+<meta name="twitter:image:alt" content={`${pageTitle} - ${seoConfig.site.name}`} />
+
+<!-- Viewport and Theme -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content={seoConfig.theme.color} />
+<meta name="msapplication-TileColor" content={seoConfig.theme.color} />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content={seoConfig.site.name} />
+
+<!-- Alternate Languages -->
+{alternateLanguages.map(alt => (
+  <link rel="alternate" hreflang={alt.lang} href={alt.url} />
+))}
+{alternateLanguages.length > 0 && (
+  <link rel="alternate" hreflang="x-default" href={fullCanonical} />
+)}
+
+<!-- Favicon and Icons -->
+<link rel="icon" type="image/x-icon" href={seoConfig.images.favicon} />
+<link rel="apple-touch-icon" sizes="180x180" href={seoConfig.images.appleTouchIcon} />
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="manifest" href="/site.webmanifest" />
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color={seoConfig.theme.color} />
+
+<!-- Preconnect to external domains -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preconnect" href="https://giscus.app" />
+
+<!-- DNS Prefetch -->
+<link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+<link rel="dns-prefetch" href="https://www.google-analytics.com" />

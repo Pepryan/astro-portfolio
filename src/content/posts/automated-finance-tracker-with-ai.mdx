@@ -1,0 +1,108 @@
+---
+title: 'Bikin Finance Tracker Otomatis Pakai AI? Gampang Banget! 🤖💰 Pakai Telegram, n8n, Gemini AI, Notion'
+date: '2025-05-27'
+updated: '2025-05-28'
+tags: ['automation', 'finance', 'n8n', 'notion', 'ai', 'telegram', 'nocode', 'lowcode', 'gemini']
+draft: false
+summary: 'Capek nyatet pengeluaran manual? Coba bikin finance tracker otomatis pakai n8n, Notion, dan AI. Tinggal chat ke bot Telegram, semua data dirangkum AI dan langsung tercatat rapi di Notion! ✨'
+thumbnail: "/images/template-n8n.png"
+author: "Febryan"
+category: "Tutorial"
+difficulty: "Intermediate"
+keywords: ["finance tracker", "automation", "telegram bot", "n8n workflow", "notion database", "ai integration", "gemini ai", "expense tracking", "personal finance"]
+openGraph:
+  title: "Finance Tracker Otomatis dengan AI - Tutorial Lengkap"
+  description: "Buat sistem finance tracker otomatis menggunakan Telegram Bot, n8n, Notion, dan Google Gemini AI. Catat pengeluaran jadi super mudah!"
+  image: "/images/template-n8n.png"
+  url: "https://pepryan.github.io/blog/automated-finance-tracker-with-ai"
+twitter:
+  card: "summary_large_image"
+  title: "Finance Tracker Otomatis dengan AI 🤖💰"
+  description: "Tutorial bikin finance tracker otomatis pakai Telegram, n8n, Notion & AI. Tinggal chat, data langsung tercatat rapi!"
+  image: "/images/template-n8n.png"
+schema:
+  type: "HowTo"
+  headline: "Bikin Finance Tracker Otomatis Pakai AI? Gampang Banget!"
+  description: "Panduan lengkap membuat sistem finance tracker otomatis menggunakan Telegram Bot, n8n workflow automation, Notion database, dan Google Gemini AI untuk tracking pengeluaran yang efisien."
+  author:
+    name: "Febryan"
+    url: "https://pepryan.github.io"
+  datePublished: "2025-05-27"
+  dateModified: "2025-05-28"
+  publisher:
+    name: "Febryan Portfolio"
+    url: "https://pepryan.github.io"
+---
+Capek nyatet pengeluaran manual? Sekarang bisa otomatis cuma lewat chat Telegram! Kombinasi **n8n**, **Notion**, dan **Google Gemini AI**, kita bisa bikin sistem yang:
+
+- Nerima teks/foto struk/screenshot via bot Telegram  
+- AI ekstrak info penting (jumlah, kategori, dll)  
+- Data langsung masuk ke database Notion  
+- Bisa rekap pengeluaran otomatis  
+
+Bayangin, kita cuma perlu kirim pesan "Beli kopi 25rb" atau foto struk belanja, dan semua data langsung tercatat rapi! ✨
+
+## Apa Itu n8n dan kenapa powerful banget? 🚀
+
+Cerita dikit tentang n8n. Ini tuh platform otomatisasi workflow yang powerful banget! Kita bisa menghubungkan berbagai aplikasi dan layanan tanpa perlu jago coding. 💻
+
+Kelebihan n8n: 😍
+- **Open Source dan Gratis** ✅: Bisa di-deploy sendiri, gak perlu bayar subscription
+- **No-Code/Low-Code** 🧩: Cukup paham logika input-proses-output, drag and drop aja
+- **Integrasi Banyak Platform** 🔄: Dari Notion, Google Sheets, Telegram, sampai AI tools, 500+ integrasi aplikasi
+- **Fleksibel Banget** 🛠️: Bisa bikin workflow sesimple atau sekompleks yang kita mau
+
+Yang penting paham flow datanya: input → proses → output. Gak perlu jago coding sama sekali! 🙌 (minimal paham logic dan parsing data)
+
+Semua bisa kita buat tanpa coding rumit. Cuma drag-and-drop di n8n dan paham alur data aja. Simpel, fleksibel, powerful.
+
+## Cara Bikinnya 🛠️
+Kalau tertarik bikin juga, ini yang dibutuhkan:
+
+1. **Internal Integration Secret Notion** 🔑 - Didapatkan dari [https://www.notion.so/profile/integrations](https://www.notion.so/profile/integrations)
+2. **API Google Gemini AI** 🤖 - Didapatkan dari [https://aistudio.google.com/apikey](https://aistudio.google.com/apikey)
+3. **API Bot Telegram** 💬 - Dibuat melalui BotFather di Telegram
+4. **Template Notion** 📋 - Duplikat dari [template ini](https://battle-option-f5f.notion.site/200241ec407a80b4818ad5a1052d2b3d?v=200241ec407a81358320000cf264c9ae)
+
+## Template n8n 👇
+Awalnya pakai template yang cuma bisa kirim image, tapi kemudian diimprove supaya bisa nerima berbagai jenis input termasuk teks biasa 🔄
+
+- Template base (thanks to Rizqi Pratama Ramadhani): [Finance Tracker Template](https://n8n.io/workflows/3960-automated-financial-tracker-telegram-invoices-to-notion-with-gemini-ai-reports/)
+- Template yang saya improve: [Finance Tracker Template-improved](
+https://drive.google.com/file/d/1tXEibyZChlPpIT8cK2rTpw3sY8D9msgq/view?usp=sharing
+)
+
+![Template n8n](/images/template-n8n.png)
+
+## Tutorial singkat 📝
+- Siapin server n8n (deploy bisa pake docker atau langsung di server pake npm) bisa liat [di sini](https://twnb.nbtrisna.my.id/n8n-docker-install/) atau dokumentasi officialnya [di sini](https://docs.n8n.io/hosting/)
+
+
+- Buat credential Notion, Google Gemini AI, dan Telegram Bot di n8n
+![buat cred](/images/buat-cred1.png)
+
+- Isi API Notion, Google Gemini AI, dan Telegram Bot
+- Import template bisa drag and drop atau import dari file JSON
+- Duplikat template Notion di Notion ([template ini](https://battle-option-f5f.notion.site/200241ec407a80b4818ad5a1052d2b3d?v=200241ec407a81358320000cf264c9ae))
+
+- Sesuaikan tiap node dengan meng-konekkan Credential Notion, Google Gemini AI, dan Telegram Bot yang sudah dibuat
+![node detail](/images/node-detail.png)
+
+- Set active workflow
+
+## Hasilnya 👀
+![hasil tele 1](/images/hasil1.png)
+![hasil tele 2](/images/hasil2.png)
+![hasil notion](/images/hasil-notion.png)
+
+## Next yang bisa diimprove🚀
+- Bikin inputan voice message
+- Bikin report yang lebih detail
+- Bikin fitur untuk update, delete atau nyari data
+- Insights dari AI
+
+## Kesimpulan 🎯
+
+Buat kita yang gak pengen capek sama manual, automation ini bisa jadi game-changer! 🎮 Yang keren, gak perlu jago coding buat bikin ini. Cukup paham logika dasar aja.
+
+Dengan n8n, dan AI, tracking keuangan jadi semudah kirim chat. Gak ada lagi alasan buat gak ngatur keuangan dengan baik! 💪

@@ -1,16 +1,82 @@
 ---
+import Layout from '../layouts/Layout.astro';
+import { ThemeProvider } from '../components/ThemeProvider';
+import LayoutWrapper from '../components/LayoutWrapper';
+import Header from '../components/Header';
+import Hero from '../components/Hero';
+import StoryJourney from '../components/StoryJourney';
+import BentoGrid from '../components/BentoGrid';
+import FeaturedWork from '../components/FeaturedWork';
+import CTASection from '../components/CTASection';
+import FloatingNavigation from '../components/FloatingNavigation';
+import Footer from '../components/Footer';
+import { generateSEO } from '../utils/seo';
+import { componentConfig } from '../config/components';
 
+const { homepage } = componentConfig;
+
+// Generate SEO data for homepage
+const homepageSEO = generateSEO({
+  type: 'website',
+  keywords: ['portfolio', 'cloud engineer', 'devops specialist', 'personal website', '2025 design', 'modern portfolio']
+});
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout
+  title={homepageSEO.title}
+  description={homepageSEO.description}
+  canonical={homepageSEO.canonical}
+  type={homepageSEO.type}
+  keywords={homepageSEO.keywords}
+>
+  <ThemeProvider client:load>
+    <LayoutWrapper client:load>
+      <div class="min-h-screen bg-white dark:bg-neutral-900">
+        <Header client:load />
+
+      <main class="max-w-7xl mx-auto px-4 py-4 mb-10">
+        <!-- Hero Section - Enhanced 2025 Design -->
+        <section id="home" class="min-h-screen flex items-center justify-center -mt-16 px-4">
+          <div class="w-full max-w-6xl mx-auto">
+            <Hero client:load />
+          </div>
+        </section>
+
+        {homepage.sections.story && (
+          <!-- Story Journey Section -->
+          <section id="story" class="relative">
+            <StoryJourney client:load />
+          </section>
+        )}
+
+        {homepage.sections.bentoGrid && (
+          <!-- Bento Grid Section -->
+          <section id="about" class="relative">
+            <BentoGrid client:load />
+          </section>
+        )}
+
+        {homepage.sections.featuredWork && (
+          <!-- Featured Work Section -->
+          <section id="work" class="relative">
+            <FeaturedWork client:load />
+          </section>
+        )}
+
+        {homepage.sections.cta && (
+          <!-- CTA Section -->
+          <section id="contact" class="relative">
+            <CTASection client:load />
+          </section>
+        )}
+      </main>
+
+      <!-- Floating Navigation -->
+      <FloatingNavigation client:load />
+
+        <!-- Footer -->
+        <Footer client:load />
+      </div>
+    </LayoutWrapper>
+  </ThemeProvider>
+</Layout>

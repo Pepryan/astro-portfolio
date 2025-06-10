@@ -1,0 +1,133 @@
+---
+import '../styles/globals.css';
+import CustomHead from '../components/CustomHead.astro';
+import GoogleAnalytics from '../components/GoogleAnalytics.astro';
+import StructuredData from '../components/StructuredData.astro';
+import CopyCodeScript from '../components/CopyCodeScript.astro';
+import { seoConfig } from '../config/components';
+import { generateSEO } from '../utils/seo';
+
+export interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  canonical?: string;
+  type?: 'website' | 'article' | 'person' | 'organization';
+  publishedTime?: string;
+  modifiedTime?: string;
+  keywords?: string | string[];
+  tags?: string[];
+  section?: string;
+  noindex?: boolean;
+  nofollow?: boolean;
+}
+
+const {
+  title,
+  description,
+  image,
+  canonical,
+  type = 'website',
+  publishedTime,
+  modifiedTime,
+  keywords,
+  tags,
+  section,
+  noindex = false,
+  nofollow = false
+} = Astro.props;
+
+// Generate SEO data using utility function
+const seoData = generateSEO({
+  title,
+  description,
+  canonical,
+  image,
+  type,
+  keywords: Array.isArray(keywords) ? keywords : keywords?.split(',').map(k => k.trim()),
+  publishedTime,
+  modifiedTime,
+  section,
+  tags,
+  noindex,
+  nofollow
+});
+---
+
+<!doctype html>
+<html lang={seoConfig.site.language} class="scroll-smooth">
+  <head>
+    <meta charset={seoConfig.site.charset} />
+
+    <!-- Use CustomHead component for all SEO meta tags -->
+    <CustomHead
+      title={seoData.title}
+      description={seoData.description}
+      canonical={seoData.canonical}
+      ogImage={seoData.image}
+      ogType={seoData.type}
+      publishedTime={seoData.publishedTime}
+      modifiedTime={seoData.modifiedTime}
+      keywords={seoData.keywords}
+      tags={seoData.tags}
+      author={seoData.author}
+      section={seoData.section}
+      noindex={seoData.noindex}
+      nofollow={seoData.nofollow}
+    />
+
+    <!-- Structured Data -->
+    <StructuredData
+      type={seoData.type}
+      title={seoData.title}
+      description={seoData.description}
+      url={seoData.canonical}
+      image={seoData.image}
+      publishedTime={seoData.publishedTime}
+      modifiedTime={seoData.modifiedTime}
+      keywords={seoData.keywords}
+      section={seoData.section}
+      tags={seoData.tags}
+      author={seoData.author}
+    />
+
+    <!-- Google Analytics -->
+    <GoogleAnalytics id={seoConfig.analytics.googleAnalyticsId} />
+
+    <!-- Theme Script -->
+    <script is:inline>
+      // Prevent flash of unstyled content (FOUC)
+      (function() {
+        try {
+          if (typeof localStorage !== 'undefined') {
+            const stored = localStorage.getItem('darkMode');
+            let isDark = false;
+
+            if (stored !== null) {
+              // Use stored preference
+              isDark = stored === 'true';
+            } else {
+              // Fallback to system preference
+              isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            }
+
+            if (isDark) {
+              document.documentElement.classList.add('dark');
+            } else {
+              document.documentElement.classList.remove('dark');
+            }
+          }
+        } catch (error) {
+          // Silently fail if localStorage is not available
+          console.warn('Theme initialization failed:', error);
+        }
+      })();
+    </script>
+  </head>
+  <body class="bg-white dark:bg-neutral-900 transition-colors">
+    <slot />
+
+    <!-- Copy Code Script for all pages -->
+    <CopyCodeScript />
+  </body>
+</html>

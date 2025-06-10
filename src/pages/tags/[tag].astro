@@ -1,0 +1,101 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import { ThemeProvider } from '../../components/ThemeProvider';
+import LayoutWrapper from '../../components/LayoutWrapper';
+import Header from '../../components/Header';
+import BlogCard from '../../components/BlogCard';
+import Footer from '../../components/Footer';
+import { calculateReadingTime } from '../../utils/readingTime';
+import { generateTagPageSEO } from '../../utils/seo';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  const publishedPosts = posts.filter(post => !post.data.draft && !post.data.hidden);
+  
+  // Get all unique tags
+  const allTags = [...new Set(publishedPosts.flatMap(post => post.data.tags || []))];
+  
+  return allTags.map(tag => ({
+    params: { tag },
+    props: { 
+      tag,
+      posts: publishedPosts.filter(post => post.data.tags?.includes(tag))
+    }
+  }));
+}
+
+const { tag, posts } = Astro.props;
+
+// Calculate reading times for posts
+const postsWithReadingTime = posts.map(post => {
+  const readingTimeResult = calculateReadingTime(post.body || '', {
+    wordsPerMinute: 200,
+    includeCodeBlocks: true,
+    includeImages: true
+  });
+  return { ...post, readingTime: readingTimeResult.minutes };
+});
+
+// Generate SEO data for tag page
+const tagSEO = generateTagPageSEO(tag, postsWithReadingTime);
+---
+
+<Layout 
+  title={tagSEO.title}
+  description={tagSEO.description}
+  canonical={tagSEO.canonical}
+  type={tagSEO.type}
+  keywords={tagSEO.keywords}
+>
+  <ThemeProvider client:load>
+    <LayoutWrapper client:load>
+      <Header client:load />
+      
+      <main class="min-h-screen bg-white dark:bg-neutral-900">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <!-- Tag Header -->
+          <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              Articles tagged with "{tag}"
+            </h1>
+            <p class="text-gray-600 dark:text-gray-400">
+              {postsWithReadingTime.length} {postsWithReadingTime.length === 1 ? 'article' : 'articles'} found
+            </p>
+          </div>
+
+          <!-- Posts Grid -->
+          {postsWithReadingTime.length > 0 ? (
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {postsWithReadingTime.map(post => (
+                <BlogCard 
+                  post={post} 
+                  readingTime={post.readingTime}
+                  client:load
+                />
+              ))}
+            </div>
+          ) : (
+            <div class="text-center py-12">
+              <p class="text-gray-600 dark:text-gray-400 text-lg">
+                No articles found with this tag.
+              </p>
+            </div>
+          )}
+
+          <!-- Back to Blog -->
+          <div class="mt-12 text-center">
+            <a 
+              href="/blog" 
+              class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+            >
+              ← Back to Blog
+            </a>
+          </div>
+        </div>
+      </main>
+      
+      <Footer client:load />
+    </LayoutWrapper>
+  </ThemeProvider>
+</Layout>

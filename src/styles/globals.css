@@ -1,0 +1,248 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Responsive container untuk mencegah overflow */
+.prose {
+  max-width: 100% !important;
+  overflow-x: hidden;
+}
+
+/* Responsive styling untuk semua elemen dalam prose */
+.prose * {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Responsive images */
+.prose img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Responsive tables */
+.prose table {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .prose {
+    font-size: 14px;
+  }
+
+  pre {
+    border-radius: 0;
+  }
+
+  /* Larger font size for code blocks on mobile */
+  pre code {
+    font-size: 14px !important;
+    line-height: 1.5;
+  }
+
+  /* Show copy button on mobile when touched */
+  .copy-code-btn {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .copy-code-btn.mobile-visible {
+    opacity: 1 !important;
+  }
+}
+
+/* Code block styling */
+pre {
+  @apply relative rounded-lg overflow-hidden;
+  overflow-x: auto;
+  padding: 1rem;
+  max-width: 100%;
+  width: 100%;
+}
+
+/* Code block header - unified styling */
+[data-rehype-pretty-code-title] {
+  @apply block w-full px-4 py-2 text-xs font-mono
+    text-neutral-500 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800/80
+    border-b border-neutral-200 dark:border-neutral-700;
+}
+
+/* Add language badge to title */
+[data-rehype-pretty-code-title]:after {
+  content: attr(data-language);
+  @apply ml-2 px-2 py-0.5 rounded-md 
+    bg-neutral-200 dark:bg-neutral-700
+    text-neutral-600 dark:text-neutral-300
+    uppercase text-[10px] tracking-wider;
+}
+
+/* Language-only header (when no title) */
+pre:not([data-rehype-pretty-code-title]) > pre[data-language]:before {
+  @apply block w-full px-4 py-2 text-xs font-mono
+    text-neutral-500 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800/80
+    border-b border-neutral-200 dark:border-neutral-700;
+  content: attr(data-language);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Code content */
+pre > code {
+  @apply grid min-w-full break-words rounded-none border-0 bg-transparent p-0 text-sm pt-2;
+  counter-reset: line;
+  box-decoration-break: clone;
+  white-space: pre;
+  overflow-x: auto;
+  word-wrap: normal;
+}
+
+code[data-line-numbers] {
+  counter-reset: line;
+}
+
+code[data-line-numbers] > [data-line]::before {
+  counter-increment: line;
+  content: counter(line);
+  display: inline-block;
+  width: 0.75rem;
+  margin-right: 2rem;
+  text-align: right;
+  color: gray;
+}
+
+code[data-line-numbers-max-digits="2"] > [data-line]::before {
+  width: 1.25rem;
+}
+
+code[data-line-numbers-max-digits="3"] > [data-line]::before {
+  width: 1.75rem;
+}
+
+code[data-line-numbers-max-digits="4"] > [data-line]::before {
+  width: 2.25rem;
+}
+
+/* Highlighted line */
+.highlighted {
+  @apply border-l-blue-400 bg-blue-400/25;
+}
+
+/* Word highlight */
+.word {
+  @apply rounded-md bg-blue-400/30 p-1;
+}
+
+/* Inline code */
+:not(pre) > code {
+  @apply rounded bg-neutral-100 px-1.5 py-0.5 text-sm dark:bg-neutral-800;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Dark mode adjustments */
+.dark pre {
+  @apply bg-neutral-900/70;
+}
+
+.dark .highlighted {
+  @apply border-l-blue-400 bg-blue-400/25;
+}
+
+/* Highlighted characters/words */
+[data-highlighted-chars] {
+  @apply bg-blue-400/25 rounded px-1 py-0.5;
+  box-decoration-break: clone;
+}
+
+[data-highlighted-chars="word"] {
+  @apply bg-blue-400/25 rounded px-1 py-0.5;
+  box-decoration-break: clone;
+}
+
+/* Dark mode adjustments */
+.dark [data-highlighted-chars],
+.dark [data-highlighted-chars="word"] {
+  @apply bg-blue-400/25;
+}
+
+/* Copy button for code blocks - New compact design */
+.code-block-wrapper {
+  @apply relative;
+}
+
+/* Ensure code blocks have proper positioning for copy button */
+pre {
+  @apply relative;
+}
+
+/* Copy button styles - responsive and mobile-friendly */
+.copy-code-btn {
+  /* Base positioning and responsive size */
+  @apply absolute top-3 right-3;
+  @apply w-9 h-9 md:w-8 md:h-8;
+
+  /* Layout */
+  @apply flex items-center justify-center;
+
+  /* Styling */
+  @apply rounded-md border shadow-sm;
+  @apply bg-neutral-100/90 dark:bg-neutral-800/90;
+  @apply border-neutral-200/50 dark:border-neutral-600/50;
+  @apply text-neutral-500 dark:text-neutral-400;
+
+  /* Interactions */
+  @apply transition-all duration-200;
+  @apply hover:bg-neutral-200 dark:hover:bg-neutral-700;
+  @apply hover:text-neutral-700 dark:hover:text-neutral-200;
+  @apply hover:shadow-md;
+  @apply focus:outline-none focus:ring-1 focus:ring-blue-500;
+
+  /* Visibility - desktop hover, mobile touch */
+  @apply opacity-0;
+
+  /* Backdrop blur for modern look */
+  backdrop-filter: blur(8px);
+}
+
+/* Desktop hover behavior */
+@media (min-width: 769px) {
+  .group:hover .copy-code-btn {
+    @apply opacity-100;
+  }
+}
+
+/* Success state */
+.copy-code-btn.copied {
+  @apply bg-green-100/90 dark:bg-green-900/90;
+  @apply text-green-600 dark:text-green-400;
+  @apply border-green-300 dark:border-green-600;
+}
+
+/* Smooth scrolling for anchor links */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Focus styles for accessibility */
+.focus-visible {
+  @apply outline-none ring-2 ring-blue-500 ring-offset-2 ring-offset-white dark:ring-offset-neutral-900;
+}
+
+/* Line clamp utilities */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

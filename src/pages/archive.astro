@@ -1,0 +1,52 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import { ThemeProvider } from '../components/ThemeProvider';
+import LayoutWrapper from '../components/LayoutWrapper';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import ArchiveClient from '../components/ArchiveClient';
+import { calculateReadingTime } from '../utils/readingTime';
+import { generateSEO } from '../utils/seo';
+
+// Get all blog posts
+const posts = await getCollection('posts');
+const publishedPosts = posts
+  .filter(post => !post.data.draft && !post.data.hidden)
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+
+// Calculate reading times
+const postsWithReadingTime = publishedPosts.map(post => {
+  const readingTimeResult = calculateReadingTime(post.body || '', {
+    wordsPerMinute: 200,
+    includeCodeBlocks: true,
+    includeImages: true
+  });
+  return { ...post, readingTime: readingTimeResult.minutes };
+});
+
+// Generate SEO data for archive page
+const archiveSEO = generateSEO({
+  title: 'Blog Archive',
+  description: `Browse all ${postsWithReadingTime.length} blog posts organized by year and category. Find technical articles about cloud engineering, DevOps, infrastructure, and automation.`,
+  canonical: '/archive',
+  type: 'website',
+  keywords: ['archive', 'blog posts', 'articles', 'technical writing', 'history']
+});
+---
+
+<Layout
+  title={archiveSEO.title}
+  description={archiveSEO.description}
+  canonical={archiveSEO.canonical}
+  type={archiveSEO.type}
+  keywords={archiveSEO.keywords}
+>
+  <ThemeProvider client:load>
+    <LayoutWrapper client:load>
+      <Header client:load />
+      <ArchiveClient posts={postsWithReadingTime} client:load />
+      <Footer client:load />
+    </LayoutWrapper>
+  </ThemeProvider>
+</Layout>

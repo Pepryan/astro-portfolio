@@ -1,0 +1,132 @@
+---
+// Client-side script to add copy buttons to code blocks
+---
+
+<script>
+  function addCopyButtons() {
+    console.log('🔧 Adding copy buttons to code blocks...');
+
+    // Find all pre elements that contain code
+    const preElements = document.querySelectorAll('pre:has(code)');
+    console.log(`📦 Found ${preElements.length} code blocks`);
+
+    preElements.forEach((pre, index) => {
+      // Skip if copy button already exists
+      if (pre.querySelector('.copy-code-btn')) {
+        console.log(`⏭️ Skipping code block ${index + 1} - button already exists`);
+        return;
+      }
+
+      // Create copy button with new compact design
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'copy-code-btn absolute top-3 right-3 w-9 h-9 md:w-8 md:h-8 rounded-md transition-all duration-200 bg-neutral-100/90 dark:bg-neutral-800/90 backdrop-blur-sm text-neutral-500 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700 hover:text-neutral-700 dark:hover:text-neutral-200 focus:outline-none focus:ring-1 focus:ring-blue-500 opacity-0 group-hover:opacity-100 md:group-hover:opacity-100 flex items-center justify-center border border-neutral-200/50 dark:border-neutral-600/50 shadow-sm hover:shadow-md';
+      copyBtn.innerHTML = `
+        <svg class="w-5 h-5 md:w-4 md:h-4 copy-icon transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+        </svg>
+        <svg class="w-5 h-5 md:w-4 md:h-4 check-icon hidden transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+      `;
+      copyBtn.setAttribute('aria-label', 'Copy code');
+      copyBtn.setAttribute('title', 'Copy code');
+
+      // Add click handler with improved feedback
+      copyBtn.addEventListener('click', async () => {
+        const code = pre.querySelector('code');
+        if (!code) {
+          console.warn('⚠️ No code element found in pre block');
+          return;
+        }
+
+        try {
+          const textToCopy = code.textContent || '';
+          await navigator.clipboard.writeText(textToCopy);
+          console.log('✅ Code copied successfully:', textToCopy.substring(0, 50) + '...');
+
+          // Show success state with enhanced animation
+          const copyIcon = copyBtn.querySelector('.copy-icon');
+          const checkIcon = copyBtn.querySelector('.check-icon');
+
+          if (copyIcon && checkIcon) {
+            // Add scale animation
+            copyBtn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+              copyBtn.style.transform = 'scale(1)';
+            }, 100);
+
+            copyIcon.classList.add('hidden');
+            checkIcon.classList.remove('hidden');
+            copyBtn.classList.remove('bg-neutral-100/90', 'dark:bg-neutral-800/90', 'text-neutral-500', 'dark:text-neutral-400');
+            copyBtn.classList.add('bg-green-100/90', 'dark:bg-green-900/90', 'text-green-600', 'dark:text-green-400', 'border-green-300', 'dark:border-green-600');
+            copyBtn.setAttribute('aria-label', 'Copied!');
+            copyBtn.setAttribute('title', 'Copied!');
+
+            // Reset after 2 seconds
+            setTimeout(() => {
+              copyIcon.classList.remove('hidden');
+              checkIcon.classList.add('hidden');
+              copyBtn.classList.remove('bg-green-100/90', 'dark:bg-green-900/90', 'text-green-600', 'dark:text-green-400', 'border-green-300', 'dark:border-green-600');
+              copyBtn.classList.add('bg-neutral-100/90', 'dark:bg-neutral-800/90', 'text-neutral-500', 'dark:text-neutral-400');
+              copyBtn.setAttribute('aria-label', 'Copy code');
+              copyBtn.setAttribute('title', 'Copy code');
+            }, 2000);
+          }
+        } catch (err) {
+          console.error('❌ Failed to copy code:', err);
+          // Show error feedback
+          copyBtn.style.transform = 'scale(0.95)';
+          copyBtn.classList.add('bg-red-100', 'dark:bg-red-900', 'text-red-600', 'dark:text-red-400');
+          setTimeout(() => {
+            copyBtn.style.transform = 'scale(1)';
+            copyBtn.classList.remove('bg-red-100', 'dark:bg-red-900', 'text-red-600', 'dark:text-red-400');
+          }, 500);
+        }
+      });
+
+      // Make pre element relative and add group class
+      (pre as HTMLElement).style.position = 'relative';
+      pre.classList.add('group');
+
+      // Add mobile touch support - show button when code block is touched
+      const showButtonOnMobile = () => {
+        if (window.innerWidth <= 768) { // Mobile breakpoint
+          copyBtn.classList.add('mobile-visible');
+          console.log('📱 Copy button shown on mobile');
+          // Hide after 3 seconds on mobile
+          setTimeout(() => {
+            if (window.innerWidth <= 768) {
+              copyBtn.classList.remove('mobile-visible');
+              console.log('📱 Copy button hidden on mobile');
+            }
+          }, 3000);
+        }
+      };
+
+      // Add touch events for mobile
+      pre.addEventListener('touchstart', showButtonOnMobile);
+      pre.addEventListener('click', showButtonOnMobile);
+
+      // Add button to pre element
+      pre.appendChild(copyBtn);
+      console.log(`✨ Added copy button to code block ${index + 1}`);
+    });
+
+    console.log(`🎉 Successfully processed ${preElements.length} code blocks`);
+  }
+
+  // Add copy buttons when DOM is loaded
+  if (document.readyState === 'loading') {
+    console.log('⏳ DOM still loading, waiting for DOMContentLoaded...');
+    document.addEventListener('DOMContentLoaded', addCopyButtons);
+  } else {
+    console.log('🚀 DOM ready, adding copy buttons immediately');
+    addCopyButtons();
+  }
+
+  // Re-add copy buttons when navigating (for SPA behavior)
+  document.addEventListener('astro:page-load', () => {
+    console.log('🔄 Page loaded via Astro navigation, re-adding copy buttons');
+    addCopyButtons();
+  });
+</script>
