@@ -69,7 +69,7 @@ export const seoConfig = {
 
   // Analytics and Tracking
   analytics: {
-    googleAnalyticsId: "G-XXXXXXXXXX", // Replace with actual GA4 ID
+    googleAnalyticsId: "G-FEVJVQ6XD9", // Replace with actual GA4 ID
     googleTagManagerId: "", // Optional
     microsoftClarityId: "", // Optional
   },
