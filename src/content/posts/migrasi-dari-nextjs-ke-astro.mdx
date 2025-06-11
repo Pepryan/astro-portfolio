@@ -1,0 +1,346 @@
+---
+title: "Migrasi dari Next.js ke Astro"
+date: 2025-06-11
+summary: "Pengalaman migrasi blog dari Next.js 15 ke Astro dengan analisis performa, tantangan teknis, dan panduan praktis untuk developer yang ingin melakukan hal serupa."
+tags: ["Astro", "Next.js", "Migration", "Performance", "Cloudflare", "Web Development", "Static Site Generator", "Tutorial"]
+draft: false
+author: "Febryan Ramadhan"
+openGraph:
+  title: "Migrasi Blog Next.js ke Astro"
+  description: "Tutorial lengkap migrasi dari Next.js 15 ke Astro dengan analisis performa, tips optimasi, dan deployment ke Cloudflare Pages. Pelajari mengapa Astro lebih cepat untuk static sites."
+  type: "article"
+---
+
+## Mengapa Migrasi dari Next.js ke Astro?
+
+Setelah berbulan-bulan menggunakan Next.js 15 untuk blog pribadi, saya mulai merasakan beberapa "friction" yang membuat saya berpikir ulang. Bukan karena Next.js buruk—justru sebaliknya, Next.js adalah framework yang luar biasa untuk aplikasi web yang kompleks. Tapi untuk blog sederhana seperti ini, rasanya kaya pake Ferrari buat pergi ke warung sebelah.
+
+### Masalah yang Saya Hadapi dengan Next.js
+
+**1. Build Time yang Lambat**
+Setiap kali saya ingin publish artikel baru, proses build di Vercel memakan waktu 2-3 menit. Untuk blog dengan 10-15 artikel, ini terasa berlebihan.
+
+**2. Bundle Size yang Besar**
+Meskipun hanya menampilkan konten statis, JavaScript bundle yang dihasilkan cukup besar karena React runtime dan Next.js overhead.
+
+**3. Kompleksitas yang Tidak Perlu**
+Fitur-fitur canggih Next.js seperti API routes, middleware, dan server components tidak saya gunakan sama sekali.
+
+## Kenapa Memilih Astro?
+
+Astro menawarkan pendekatan yang berbeda dengan filosofi "Islands Architecture" dan "Ship Less JavaScript". Inilah yang membuat saya tertarik:
+
+### Keunggulan Astro
+
+**1. Zero JavaScript by Default**
+Astro hanya mengirim HTML dan CSS ke browser. JavaScript hanya dimuat ketika benar-benar diperlukan.
+
+**2. Multi-Framework Support**
+Bisa menggunakan React, Vue, Svelte, atau vanilla JavaScript dalam satu project.
+
+**3. Build Speed yang Luar Biasa**
+Build time yang jauh lebih cepat dibanding Next.js untuk static content.
+
+**4. SEO-Friendly**
+Static HTML yang dihasilkan sangat SEO-friendly tanpa perlu konfigurasi tambahan.
+
+## Proses Migrasi: Step by Step
+
+### 1. Setup Project Astro
+
+```bash
+npm create astro@latest astro-portfolio
+cd astro-portfolio
+npm install
+```
+
+### 2. Konfigurasi Content Collections
+
+Salah satu fitur terbaik Astro adalah Content Collections yang memberikan type safety untuk konten markdown:
+
+```typescript
+// src/content/config.ts
+import { defineCollection, z } from 'astro:content';
+
+const postsCollection = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    date: z.date(),
+    summary: z.string(),
+    tags: z.array(z.string()),
+    draft: z.boolean().default(false),
+    featuredImage: z.string().optional(),
+  }),
+});
+
+export const collections = {
+  posts: postsCollection,
+};
+```
+
+### 3. Migrasi Komponen React
+
+Untuk komponen yang memerlukan interaktivitas, saya menggunakan React dengan directive `client:load`:
+
+```astro
+---
+// src/components/ThemeToggle.astro
+import ThemeToggleReact from './ThemeToggleReact.tsx';
+---
+
+<ThemeToggleReact client:load />
+```
+
+### 4. Setup Routing dan Layout
+
+Astro menggunakan file-based routing yang sangat intuitif:
+
+```astro
+---
+// src/pages/blog/[...slug].astro
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+---
+
+<Layout title={post.data.title}>
+  <article>
+    <h1>{post.data.title}</h1>
+    <Content />
+  </article>
+</Layout>
+```
+
+## Hasil Migrasi: Analisis Performa
+
+### Metrics Sebelum (Next.js)
+- **Build Time**: 2-3 menit
+- **Bundle Size**: ~180KB (gzipped)
+- **Lighthouse Score**: 85-90
+- **First Contentful Paint**: 1.2s
+- **Time to Interactive**: 2.1s
+
+### Metrics Sesudah (Astro)
+- **Build Time**: 30-45 detik
+- **Bundle Size**: ~15KB (gzipped)
+- **Lighthouse Score**: 98-100
+- **First Contentful Paint**: 0.6s
+- **Time to Interactive**: 0.8s
+
+### Insight Penting
+
+**1. Dramatic Bundle Size Reduction**
+Pengurangan bundle size hingga 90% karena Astro tidak mengirim React runtime ke browser.
+
+**2. Faster Build Times**
+Build time 4x lebih cepat karena Astro tidak perlu melakukan hydration dan optimasi JavaScript yang kompleks.
+
+**3. Better Core Web Vitals**
+Semua metric Core Web Vitals berada di zona hijau, yang sangat penting untuk SEO.
+
+## Deployment ke Cloudflare Pages
+
+Migrasi dari GitHub Pages ke Cloudflare Pages memberikan beberapa keuntungan:
+
+### Setup Cloudflare Pages
+
+1. **Connect Repository**
+   - Login ke Cloudflare Dashboard
+   - Pilih Pages → Create a project
+   - Connect GitHub repository
+
+2. **Build Configuration**
+   ```
+   Build command: npm run build
+   Build output directory: dist
+   Root directory: /
+   ```
+
+3. **Custom Domain**
+   - Tambahkan custom domain `febryan.web.id`
+   - Setup DNS records di Cloudflare
+
+### Keuntungan Cloudflare Pages
+
+- **Global CDN**: Konten didistribusikan ke 200+ data center
+- **Automatic HTTPS**: SSL certificate otomatis
+- **Preview Deployments**: Setiap PR mendapat preview URL
+- **Analytics**: Built-in web analytics
+- **Edge Functions**: Serverless functions di edge (jika diperlukan)
+
+## Tantangan dan Solusi
+
+### 1. Dynamic Imports
+
+**Masalah**: Beberapa komponen React memerlukan dynamic imports.
+
+**Solusi**: Menggunakan `client:visible` directive untuk lazy loading:
+
+```astro
+<HeavyComponent client:visible />
+```
+
+### 3. State Management
+
+**Masalah**: Sharing state antar komponen tanpa React Context.
+
+**Solusi**: Menggunakan Nano Stores untuk state management yang ringan:
+
+```javascript
+// src/stores/theme.js
+import { atom } from 'nanostores';
+
+export const theme = atom('light');
+```
+
+## Tips Optimasi Lanjutan
+
+### 1. Image Optimization
+
+```astro
+---
+import { Image } from 'astro:assets';
+import heroImage from '../assets/hero.jpg';
+---
+
+<Image 
+  src={heroImage} 
+  alt="Hero image" 
+  width={800} 
+  height={400}
+  format="webp"
+  quality={80}
+/>
+```
+
+### 2. Preloading Critical Resources
+
+```astro
+---
+// src/layouts/Layout.astro
+---
+
+<head>
+  <link rel="preload" href="/fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+</head>
+```
+
+### 3. Service Worker untuk Caching
+
+```javascript
+// public/sw.js
+self.addEventListener('fetch', (event) => {
+  if (event.request.destination === 'image') {
+    event.respondWith(
+      caches.open('images').then((cache) => {
+        return cache.match(event.request).then((response) => {
+          return response || fetch(event.request).then((fetchResponse) => {
+            cache.put(event.request, fetchResponse.clone());
+            return fetchResponse;
+          });
+        });
+      })
+    );
+  }
+});
+```
+
+## SEO Optimization
+
+### Structured Data
+
+```astro
+---
+// src/components/StructuredData.astro
+const { post } = Astro.props;
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": post.data.title,
+  "description": post.data.summary,
+  "author": {
+    "@type": "Person",
+    "name": "Febryan"
+  },
+  "datePublished": post.data.date.toISOString(),
+  "url": `https://febryan.web.id/blog/${post.slug}`
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+```
+
+### Meta Tags Optimization
+
+```astro
+<head>
+  <title>{seo.title}</title>
+  <meta name="description" content={seo.description}>
+  <meta name="keywords" content={seo.keywords.join(', ')}>
+  <link rel="canonical" href={seo.canonical}>
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content={seo.title}>
+  <meta property="og:description" content={seo.description}>
+  <meta property="og:url" content={seo.canonical}>
+  <meta property="og:type" content="article">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content={seo.title}>
+  <meta name="twitter:description" content={seo.description}>
+</head>
+```
+
+## Kesimpulan dan Rekomendasi
+
+### Kapan Sebaiknya Migrasi ke Astro?
+
+**✅ Pilih Astro jika:**
+- Blog atau website dengan konten mostly static
+- Prioritas pada performa dan SEO
+- Ingin build time yang cepat
+- Tim kecil dengan fokus pada content
+
+**✅ Tetap dengan Next.js jika:**
+- Aplikasi web yang kompleks dengan banyak interaktivitas
+- Memerlukan API routes dan server-side logic
+- Tim besar dengan ekosistem React yang sudah established
+- E-commerce atau dashboard yang memerlukan real-time updates
+
+### Lessons Learned
+
+1. **"Right Tool for the Right Job"**: Tidak ada framework yang sempurna untuk semua use case
+2. **Performance Matters**: Perbedaan performa yang signifikan berdampak pada user experience dan SEO
+3. **Developer Experience**: Astro memberikan DX yang excellent untuk static content
+4. **Migration Strategy**: Migrasi bertahap lebih aman daripada big bang approach
+
+## What's Next?
+
+Blog ini sekarang bisa diakses di [febryan.web.id](https://febryan.web.id) dengan performa yang jauh lebih baik. Link lama di [fepryan.github.io/portfolio](https://fepryan.github.io/portfolio) masih aktif, tapi semua update terbaru akan ada di domain baru.
+
+### Rencana Pengembangan
+
+- **Tutorial Series**: Akan membuat series tutorial lengkap tentang Web, ataupun Cloud
+- **Performance Monitoring**: Setup monitoring untuk tracking Core Web Vitals
+- **Content Strategy**: Fokus pada konten teknis yang actionable
+- **Community Building**: Sharing pengalaman di komunitas developer Indonesia
+
+Jika kamu sedang mempertimbangkan migrasi serupa atau punya pertanyaan tentang proses ini, jangan ragu untuk reach out. Mari kita diskusi dan sharing pengalaman!
+
+---
+
+*Artikel ini adalah bagian dari series "Web Development Journey" di mana saya sharing pengalaman hands-on dalam membangun dan mengoptimasi website. Stay tuned untuk tutorial dan insight lainnya!*

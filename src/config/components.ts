@@ -372,6 +372,12 @@ export const componentConfig = {
         }
       }
     },
+    contact: {
+      enabled: true,
+      showInNavigation: true,
+      title: "Contact",
+      description: "Get in touch for collaborations, opportunities, or just to say hello!"
+    },
     resume: {
       enabled: false,
       showInNavigation: false, // Hidden by default, accessible via direct link
