@@ -47,21 +47,21 @@ const homepageSEO = generateSEO({
         {homepage.sections.story && (
           <!-- Story Journey Section -->
           <section id="story" class="relative">
-            <StoryJourney client:load />
+            <StoryJourney client:only="react" />
           </section>
         )}
 
         {homepage.sections.bentoGrid && (
           <!-- Bento Grid Section -->
           <section id="about" class="relative">
-            <BentoGrid client:load />
+            <BentoGrid client:only="react" />
           </section>
         )}
 
         {homepage.sections.featuredWork && (
           <!-- Featured Work Section -->
           <section id="work" class="relative">
-            <FeaturedWork client:load />
+            <FeaturedWork client:only="react" />
           </section>
         )}
 
@@ -73,13 +73,13 @@ const homepageSEO = generateSEO({
         {homepage.sections.cta && (
           <!-- CTA Section -->
           <section id="contact" class="relative">
-            <CTASection client:load />
+            <CTASection client:only="react" />
           </section>
         )}
       </main>
 
       <!-- Floating Navigation -->
-      <FloatingNavigation client:load />
+      <FloatingNavigation client:only="react" />
 
       <!-- Floating Blog Button -->
       <!-- <FloatingBlogButton client:load /> -->

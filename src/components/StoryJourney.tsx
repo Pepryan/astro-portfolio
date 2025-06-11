@@ -7,6 +7,8 @@ const { storyJourney } = componentConfig;
 export default function StoryJourney() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
+
+  // Initialize scroll progress with safe defaults
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
@@ -20,7 +22,27 @@ export default function StoryJourney() {
   const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
   const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
 
-  if (!storyJourney.enabled || !mounted) return null;
+  // Early return if not enabled
+  if (!storyJourney.enabled) return null;
+
+  // Show loading state until mounted
+  if (!mounted) {
+    return (
+      <section className="py-16 sm:py-24 relative overflow-hidden">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <div className="h-12 bg-neutral-200 dark:bg-neutral-700 rounded animate-pulse mb-4"></div>
+            <div className="h-6 bg-neutral-200 dark:bg-neutral-700 rounded max-w-2xl mx-auto"></div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="h-64 bg-neutral-200 dark:bg-neutral-700 rounded-2xl animate-pulse"></div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   const containerVariants = {
     hidden: { opacity: 0 },

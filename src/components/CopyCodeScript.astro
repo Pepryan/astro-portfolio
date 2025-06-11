@@ -4,16 +4,12 @@
 
 <script>
   function addCopyButtons() {
-    console.log('🔧 Adding copy buttons to code blocks...');
-
     // Find all pre elements that contain code
     const preElements = document.querySelectorAll('pre:has(code)');
-    console.log(`📦 Found ${preElements.length} code blocks`);
 
-    preElements.forEach((pre, index) => {
+    preElements.forEach((pre) => {
       // Skip if copy button already exists
       if (pre.querySelector('.copy-code-btn')) {
-        console.log(`⏭️ Skipping code block ${index + 1} - button already exists`);
         return;
       }
 
@@ -35,14 +31,12 @@
       copyBtn.addEventListener('click', async () => {
         const code = pre.querySelector('code');
         if (!code) {
-          console.warn('⚠️ No code element found in pre block');
           return;
         }
 
         try {
           const textToCopy = code.textContent || '';
           await navigator.clipboard.writeText(textToCopy);
-          console.log('✅ Code copied successfully:', textToCopy.substring(0, 50) + '...');
 
           // Show success state with enhanced animation
           const copyIcon = copyBtn.querySelector('.copy-icon');
@@ -73,7 +67,6 @@
             }, 2000);
           }
         } catch (err) {
-          console.error('❌ Failed to copy code:', err);
           // Show error feedback
           copyBtn.style.transform = 'scale(0.95)';
           copyBtn.classList.add('bg-red-100', 'dark:bg-red-900', 'text-red-600', 'dark:text-red-400');
@@ -92,12 +85,10 @@
       const showButtonOnMobile = () => {
         if (window.innerWidth <= 768) { // Mobile breakpoint
           copyBtn.classList.add('mobile-visible');
-          console.log('📱 Copy button shown on mobile');
           // Hide after 3 seconds on mobile
           setTimeout(() => {
             if (window.innerWidth <= 768) {
               copyBtn.classList.remove('mobile-visible');
-              console.log('📱 Copy button hidden on mobile');
             }
           }, 3000);
         }
@@ -109,24 +100,18 @@
 
       // Add button to pre element
       pre.appendChild(copyBtn);
-      console.log(`✨ Added copy button to code block ${index + 1}`);
     });
-
-    console.log(`🎉 Successfully processed ${preElements.length} code blocks`);
   }
 
   // Add copy buttons when DOM is loaded
   if (document.readyState === 'loading') {
-    console.log('⏳ DOM still loading, waiting for DOMContentLoaded...');
     document.addEventListener('DOMContentLoaded', addCopyButtons);
   } else {
-    console.log('🚀 DOM ready, adding copy buttons immediately');
     addCopyButtons();
   }
 
   // Re-add copy buttons when navigating (for SPA behavior)
   document.addEventListener('astro:page-load', () => {
-    console.log('🔄 Page loaded via Astro navigation, re-adding copy buttons');
     addCopyButtons();
   });
 </script>

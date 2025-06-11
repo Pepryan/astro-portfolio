@@ -48,18 +48,14 @@ export default function GiscusComments({ slug, title }: GiscusCommentsProps) {
         const iframe = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame');
         if (iframe && iframe.contentWindow) {
           const theme = getCurrentTheme();
-          console.log('🎨 Sending theme change to Giscus:', theme);
           try {
             iframe.contentWindow.postMessage(
               { giscus: { setConfig: { theme } } },
               'https://giscus.app'
             );
-            console.log('✅ Theme message sent successfully');
           } catch (error) {
-            console.warn('❌ Failed to send theme message:', error);
+            // Silent error handling
           }
-        } else {
-          console.warn('⚠️ Giscus iframe not ready yet');
         }
       }, 100);
     };
