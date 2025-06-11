@@ -7,8 +7,10 @@ import Hero from '../components/Hero';
 import StoryJourney from '../components/StoryJourney';
 import BentoGrid from '../components/BentoGrid';
 import FeaturedWork from '../components/FeaturedWork';
+import BlogCTA from '../components/BlogCTA';
 import CTASection from '../components/CTASection';
 import FloatingNavigation from '../components/FloatingNavigation';
+import FloatingBlogButton from '../components/FloatingBlogButton';
 import Footer from '../components/Footer';
 import { generateSEO } from '../utils/seo';
 import { componentConfig } from '../config/components';
@@ -63,6 +65,11 @@ const homepageSEO = generateSEO({
           </section>
         )}
 
+        <!-- Blog CTA Section -->
+        <!-- <section id="blog-cta" class="relative">
+          <BlogCTA client:load />
+        </section> -->
+
         {homepage.sections.cta && (
           <!-- CTA Section -->
           <section id="contact" class="relative">
@@ -73,6 +80,9 @@ const homepageSEO = generateSEO({
 
       <!-- Floating Navigation -->
       <FloatingNavigation client:load />
+
+      <!-- Floating Blog Button -->
+      <!-- <FloatingBlogButton client:load /> -->
 
         <!-- Footer -->
         <Footer client:load />

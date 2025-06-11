@@ -1,5 +1,5 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { FiGithub, FiLinkedin, FiMail, FiGitlab, FiArrowDown } from 'react-icons/fi';
+import { FiGithub, FiLinkedin, FiMail, FiGitlab, FiArrowDown, FiEdit3, FiArrowRight } from 'react-icons/fi';
 import { FaXTwitter } from 'react-icons/fa6';
 import { componentConfig } from '../config/components';
 import { useEffect, useState, useRef } from 'react';
@@ -250,8 +250,45 @@ export default function Hero() {
             ))}
           </motion.div>
 
+          {/* Blog CTA Button */}
           <motion.div
-            className="flex justify-center pt-12"
+            className="flex justify-center pt-8"
+            variants={itemVariants}
+          >
+            <motion.a
+              href="/blog"
+              className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-semibold text-lg
+                bg-gradient-to-r from-blue-500 to-purple-500 text-white
+                hover:from-blue-600 hover:to-purple-600
+                shadow-lg hover:shadow-xl shadow-blue-500/25 hover:shadow-blue-600/30
+                transition-all duration-300 group relative overflow-hidden"
+              whileHover={{
+                scale: 1.05,
+                y: -2,
+                transition: { type: "spring", stiffness: 300 }
+              }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <FiEdit3 className="w-5 h-5" />
+              <span>Explore My Blog</span>
+              <motion.div
+                className="group-hover:translate-x-1 transition-transform"
+                whileHover={{ rotate: -45 }}
+              >
+                <FiArrowRight className="w-5 h-5" />
+              </motion.div>
+
+              {/* Button shine effect */}
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full"
+                animate={{ x: ["0%", "200%"] }}
+                transition={{ duration: 2, repeat: Infinity, repeatDelay: 4 }}
+              />
+            </motion.a>
+          </motion.div>
+
+          <motion.div
+            className="flex justify-center pt-8"
             variants={itemVariants}
           >
             <motion.button

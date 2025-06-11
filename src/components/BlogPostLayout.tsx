@@ -278,7 +278,8 @@ export default function BlogPostLayout({
 
         {/* Article Footer */}
         <footer className="mt-16 pt-8 border-t border-neutral-200 dark:border-neutral-800">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex flex-col gap-6">
+            {/* Author Information */}
             <div className="text-sm text-neutral-600 dark:text-neutral-400">
               <div className="flex items-center gap-2 mb-1">
                 <FiUser className="w-4 h-4" />
@@ -286,7 +287,7 @@ export default function BlogPostLayout({
               </div>
               <p>Published on {post.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
             </div>
-            
+
             {/* Share buttons */}
             <div className="flex flex-col gap-3">
               <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400">Share this article:</span>
