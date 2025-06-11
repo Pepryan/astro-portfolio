@@ -22,28 +22,28 @@ export default function Contact() {
   };
 
   const socialLinks = [
-    { 
-      icon: FiGithub, 
-      href: `https://${contact.social.github}`, 
+    {
+      icon: FiGithub,
+      href: contact.social.github.url,
       label: 'GitHub',
       color: 'hover:text-gray-600 dark:hover:text-gray-400'
     },
-    { 
-      icon: FiGitlab, 
-      href: `https://${contact.social.gitlab}`, 
+    {
+      icon: FiGitlab,
+      href: contact.social.gitlab.url,
       label: 'GitLab',
       color: 'hover:text-orange-600 dark:hover:text-orange-400'
     },
-    { 
-      icon: FiLinkedin, 
-      href: `https://${contact.social.linkedin}`, 
+    {
+      icon: FiLinkedin,
+      href: contact.social.linkedin.url,
       label: 'LinkedIn',
       color: 'hover:text-blue-600 dark:hover:text-blue-400'
     },
-    { 
-      icon: FaXTwitter, 
-      href: `https://${contact.social.twitter}`, 
-      label: 'Twitter',
+    {
+      icon: FaXTwitter,
+      href: contact.social.twitter.url,
+      label: 'X (Twitter)',
       color: 'hover:text-black dark:hover:text-white'
     }
   ];

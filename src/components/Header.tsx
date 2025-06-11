@@ -1,4 +1,4 @@
-import { FiHome, FiUser, FiFolder, FiArchive } from 'react-icons/fi';
+import { FiHome, FiUser, FiFolder, FiArchive, FiMail } from 'react-icons/fi';
 import ThemeToggle from './ThemeToggle';
 import { componentConfig } from '../config/components';
 
@@ -52,6 +52,18 @@ export default function Header() {
             >
               Blog
             </a>
+
+            {pages.contact.enabled && pages.contact.showInNavigation && (
+              <a
+                href="/contact"
+                className="px-3 py-2 text-sm text-neutral-600 hover:text-neutral-900 dark:text-neutral-400
+                  dark:hover:text-neutral-200 transition-colors hidden sm:inline-flex items-center gap-1"
+                title="Contact Me"
+              >
+                <FiMail className="w-4 h-4" />
+                <span>Contact</span>
+              </a>
+            )}
 
             <a
               href="/archive"

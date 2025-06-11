@@ -1,0 +1,56 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { ThemeProvider } from '../components/ThemeProvider';
+import LayoutWrapper from '../components/LayoutWrapper';
+import Header from '../components/Header';
+import Contact from '../components/Contact';
+import FloatingNavigation from '../components/FloatingNavigation';
+import Footer from '../components/Footer';
+import { generateSEO } from '../utils/seo';
+import { componentConfig } from '../config/components';
+
+const { pages, navigation } = componentConfig;
+
+// Generate SEO data for contact page
+const contactSEO = generateSEO({
+  title: 'Contact',
+  description: 'Get in touch with Febryan Ramadhan for collaborations, opportunities, or just to say hello! Available for cloud engineering, DevOps, and web development projects.',
+  canonical: '/contact',
+  type: 'website',
+  keywords: ['contact', 'collaboration', 'cloud engineer', 'devops', 'web developer', 'freelance', 'opportunities']
+});
+---
+
+<Layout
+  title={contactSEO.title}
+  description={contactSEO.description}
+  canonical={contactSEO.canonical}
+  image={contactSEO.image}
+  type={contactSEO.type}
+  keywords={contactSEO.keywords}
+>
+  <ThemeProvider client:load>
+    <LayoutWrapper>
+      <!-- Header -->
+      <Header client:load />
+
+      <!-- Main Content -->
+      <main class="max-w-7xl mx-auto px-4 py-4 mb-10">
+        <!-- Contact Section -->
+        <section id="contact" class="min-h-screen flex items-center justify-center -mt-16 px-4">
+          <div class="w-full max-w-6xl mx-auto pt-20">
+            <Contact client:load />
+          </div>
+        </section>
+      </main>
+
+      <!-- Floating Navigation -->
+      {navigation.floating.enabled && (
+        <FloatingNavigation client:load />
+      )}
+
+      <!-- Footer -->
+      <Footer client:load />
+    </LayoutWrapper>
+  </ThemeProvider>
+</Layout>
