@@ -6,8 +6,8 @@ export const seoConfig = {
     title: "Febryan Portfolio - Cloud Engineer & DevOps Specialist",
     description: "Personal portfolio and technical blog by Febryan Ramadhan. Cloud Engineer specializing in DevOps, Infrastructure, and Automation. Sharing tutorials and insights about modern technology.",
     url: "https://febryan.web.id",
-    language: "en",
-    locale: "en_US",
+    language: "id",
+    locale: "id_ID",
     charset: "UTF-8"
   },
 
@@ -25,7 +25,7 @@ export const seoConfig = {
   // Social Media
   social: {
     twitter: {
-      username: "@febryanramadhan",
+      username: "@pepryan",
       card: "summary_large_image"
     },
     linkedin: "https://linkedin.com/in/febryanramadhan",
@@ -144,7 +144,7 @@ export const componentConfig = {
   hero: {
     enabled: true,
     title: "Febryan Ramadhan",
-    subtitle: "Cloud Engineer | DevSecOps | Web",
+    subtitle: "Cloud Engineer | DevSecOps | Web | Automation | AI",
     tagline: "Building the future, one line of code at a time",
     story: {
       intro: "From tinkering with PCs in junior high to architecting cloud solutions",
@@ -335,6 +335,26 @@ export const componentConfig = {
     },
     backgroundStyle: "minimal", // "gradient", "pattern", "minimal"
     showSocialLinks: true
+  },
+
+  // Blog CTA Section (2025)
+  blogCta: {
+    enabled: true,
+    title: "Explore My Thoughts & Insights",
+    subtitle: "Discover articles about cloud engineering, DevOps practices, and modern web development. Join me on this journey of continuous learning and sharing knowledge.",
+    primaryAction: {
+      text: "Read My Blog",
+      link: "/blog",
+      style: "primary"
+    },
+    secondaryAction: {
+      text: "Latest Articles",
+      link: "/blog",
+      style: "secondary"
+    },
+    backgroundStyle: "gradient", // "gradient", "pattern", "minimal"
+    showSocialLinks: false,
+    placement: "hero" // "hero", "between-sections", "before-cta"
   },
 
   // Page Configurations (Separate Pages)
