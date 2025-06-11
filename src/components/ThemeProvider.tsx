@@ -80,9 +80,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   }, []);
 
   const toggleDarkMode = () => {
-    console.log('toggleDarkMode called, current darkMode:', darkMode); // Debug log
     const newMode = !darkMode;
-    console.log('Toggling theme from', darkMode, 'to', newMode); // Debug log
 
     setDarkMode(newMode);
     applyTheme(newMode);
@@ -91,10 +89,9 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     try {
       if (typeof window !== 'undefined') {
         localStorage.setItem('darkMode', String(newMode));
-        console.log('Saved to localStorage:', newMode);
       }
     } catch (error) {
-      console.warn('Error saving theme preference:', error);
+      // Silent error handling
     }
   };
 

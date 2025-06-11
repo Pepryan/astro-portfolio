@@ -17,12 +17,11 @@ export default function KeyboardShortcuts({ onToggleShortcuts }: KeyboardShortcu
 
     try {
       localStorage.setItem('darkMode', String(newMode));
-      console.log('Theme toggled via keyboard to:', newMode);
 
       // Trigger custom event to notify other components
       window.dispatchEvent(new CustomEvent('themeChanged', { detail: { darkMode: newMode } }));
     } catch (error) {
-      console.warn('Error saving theme:', error);
+      // Silent error handling
     }
   };
 

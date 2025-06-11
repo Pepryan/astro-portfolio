@@ -12,6 +12,11 @@ export default function FloatingNavigation() {
   // Check if floating navigation is enabled
   const isEnabled = componentConfig.navigation.floating.enabled;
 
+  // Early return if not enabled
+  if (!isEnabled) {
+    return null;
+  }
+
   useEffect(() => {
     setMounted(true);
 
@@ -92,15 +97,23 @@ export default function FloatingNavigation() {
     }
   };
 
-  // If not enabled, don't render anything
-  if (!isEnabled) {
-    return null;
+  // Show loading state until mounted
+  if (!mounted) {
+    return (
+      <nav className="fixed bottom-8 sm:bottom-12 left-1/2 -translate-x-1/2 px-3 py-3 sm:px-4 sm:py-3
+        bg-white/70 dark:bg-neutral-800/70 backdrop-blur-md rounded-full
+        shadow-lg border border-neutral-200 dark:border-neutral-700 z-40 opacity-50">
+        <div className="flex items-center gap-3 sm:gap-4">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="w-10 h-10 bg-neutral-200 dark:bg-neutral-600 rounded-full animate-pulse"></div>
+          ))}
+        </div>
+      </nav>
+    );
   }
 
-  // Instead of conditional return, render conditionally
+  // Render the actual component
   return (
-    <div style={{ opacity: mounted ? 1 : 0 }}>
-      {mounted && (
     <nav className="fixed bottom-8 sm:bottom-12 left-1/2 -translate-x-1/2 px-3 py-3 sm:px-4 sm:py-3
       bg-white/70 dark:bg-neutral-800/70 backdrop-blur-md rounded-full
       shadow-lg border border-neutral-200 dark:border-neutral-700 z-40">
@@ -146,7 +159,5 @@ export default function FloatingNavigation() {
         })}
       </motion.div>
     </nav>
-      )}
-    </div>
   );
 }

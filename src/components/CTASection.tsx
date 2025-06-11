@@ -9,6 +9,8 @@ const { cta } = componentConfig;
 export default function CTASection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
+
+  // Initialize scroll progress with safe defaults
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
@@ -21,7 +23,28 @@ export default function CTASection() {
   const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
   const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.8, 1, 0.8]);
 
-  if (!cta.enabled || !mounted) return null;
+  // Early return if not enabled
+  if (!cta.enabled) return null;
+
+  // Show loading state until mounted
+  if (!mounted) {
+    return (
+      <section className="py-16 sm:py-24 relative overflow-hidden">
+        <div className="max-w-4xl mx-auto px-4 relative">
+          <div className="relative rounded-3xl p-8 md:p-12 lg:p-16 overflow-hidden bg-neutral-200 dark:bg-neutral-700 animate-pulse">
+            <div className="relative z-10 text-center">
+              <div className="h-16 bg-neutral-300 dark:bg-neutral-600 rounded mb-6"></div>
+              <div className="h-8 bg-neutral-300 dark:bg-neutral-600 rounded max-w-3xl mx-auto mb-8"></div>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <div className="h-12 w-32 bg-neutral-300 dark:bg-neutral-600 rounded-2xl"></div>
+                <div className="h-12 w-32 bg-neutral-300 dark:bg-neutral-600 rounded-2xl"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   const containerVariants = {
     hidden: { opacity: 0 },

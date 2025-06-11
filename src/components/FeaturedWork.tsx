@@ -9,7 +9,8 @@ export default function FeaturedWork() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
-  
+
+  // Initialize scroll progress with safe defaults
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
@@ -21,7 +22,23 @@ export default function FeaturedWork() {
 
   const y = useTransform(scrollYProgress, [0, 1], [30, -30]);
 
-  if (!featuredWork.enabled || !mounted) return null;
+  // Early return if not enabled
+  if (!featuredWork.enabled) return null;
+
+  // Show loading state until mounted
+  if (!mounted) {
+    return (
+      <section className="py-16 sm:py-24 relative overflow-hidden">
+        <div className="max-w-6xl mx-auto px-4 relative">
+          <div className="text-center mb-16">
+            <div className="h-12 bg-neutral-200 dark:bg-neutral-700 rounded animate-pulse mb-4"></div>
+            <div className="h-6 bg-neutral-200 dark:bg-neutral-700 rounded max-w-2xl mx-auto"></div>
+          </div>
+          <div className="h-96 bg-neutral-200 dark:bg-neutral-700 rounded-2xl animate-pulse"></div>
+        </div>
+      </section>
+    );
+  }
 
   const containerVariants = {
     hidden: { opacity: 0 },
