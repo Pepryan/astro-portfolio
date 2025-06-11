@@ -1,4 +1,4 @@
-import { FiCalendar, FiClock, FiTag, FiArrowUpRight, FiBookOpen } from 'react-icons/fi';
+import { FiCalendar, FiTag, FiArrowUpRight, FiBookOpen, FiFileText } from 'react-icons/fi';
 
 interface BlogPost {
   slug: string;
@@ -57,8 +57,9 @@ export default function BlogCard({ post, readingTime }: BlogCardProps) {
         }}
         aria-label={`Read article: ${post.data.title}`}
       >
-        {post.data.thumbnail && (
-          <div className="relative w-full aspect-[16/9] overflow-hidden">
+        {/* Image Section - Always show either thumbnail or default */}
+        <div className="relative w-full aspect-[16/9] overflow-hidden">
+          {post.data.thumbnail ? (
             <img
               src={post.data.thumbnail}
               alt={post.data.title}
@@ -66,17 +67,28 @@ export default function BlogCard({ post, readingTime }: BlogCardProps) {
               loading="lazy"
               decoding="async"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0
-              group-hover:opacity-100 transition-opacity duration-300" />
-
-            <div className="absolute top-4 right-4 bg-white/90 dark:bg-neutral-900/90
-              backdrop-blur-sm rounded-full px-3 py-1.5 text-xs font-medium
-              text-neutral-700 dark:text-neutral-300 border border-white/20">
-              <FiBookOpen className="w-3 h-3 inline mr-1" />
-              {estimatedReadingTime} min
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-blue-50 to-purple-50 dark:from-neutral-800 dark:to-neutral-700
+              flex items-center justify-center">
+              <div className="text-center">
+                <FiFileText className="w-12 h-12 text-blue-500 dark:text-blue-400 mx-auto mb-2" />
+                <div className="text-sm font-medium text-neutral-600 dark:text-neutral-400">
+                  Blog Post
+                </div>
+              </div>
             </div>
+          )}
+
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0
+            group-hover:opacity-100 transition-opacity duration-300" />
+
+          <div className="absolute top-4 right-4 bg-white/90 dark:bg-neutral-900/90
+            backdrop-blur-sm rounded-full px-3 py-1.5 text-xs font-medium
+            text-neutral-700 dark:text-neutral-300 border border-white/20">
+            <FiBookOpen className="w-3 h-3 inline mr-1" />
+            {estimatedReadingTime} min
           </div>
-        )}
+        </div>
 
         <div className="p-6 space-y-4">
           {post.data.tags && post.data.tags.length > 0 && (
@@ -146,12 +158,7 @@ export default function BlogCard({ post, readingTime }: BlogCardProps) {
                 })}
               </time>
 
-              {!post.data.thumbnail && (
-                <div className="flex items-center gap-1.5">
-                  <FiClock className="w-4 h-4" />
-                  <span>{estimatedReadingTime} min read</span>
-                </div>
-              )}
+
             </div>
 
             <div className="flex items-center gap-1 text-sm font-medium text-blue-600 dark:text-blue-400

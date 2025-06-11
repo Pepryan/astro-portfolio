@@ -9,7 +9,7 @@ import rehypePrettyCode from 'rehype-pretty-code';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://febryan.netlify.app',
+  site: 'https://febryan.web.id',
   output: 'static',
   integrations: [
     mdx({

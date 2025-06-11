@@ -10,5 +10,5 @@ Disallow: /api/
 Crawl-delay: 1
 
 # Sitemap location
-Sitemap: https://febryan.netlify.app/sitemap-index.xml
-Sitemap: https://febryan.netlify.app/sitemap-0.xml
+Sitemap: https://febryan.web.id/sitemap-index.xml
+Sitemap: https://febryan.web.id/sitemap-0.xml

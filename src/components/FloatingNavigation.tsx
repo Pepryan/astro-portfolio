@@ -1,12 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { FiHome, FiUser, FiBriefcase, FiAward } from 'react-icons/fi';
+import { componentConfig } from '../config/components';
 
 export default function FloatingNavigation() {
   const [mounted, setMounted] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const lastScrollY = useRef(0);
   const scrollDirection = useRef<'up' | 'down'>('down');
+
+  // Check if floating navigation is enabled
+  const isEnabled = componentConfig.navigation.floating.enabled;
 
   useEffect(() => {
     setMounted(true);
@@ -87,6 +91,11 @@ export default function FloatingNavigation() {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  // If not enabled, don't render anything
+  if (!isEnabled) {
+    return null;
+  }
 
   // Instead of conditional return, render conditionally
   return (
