@@ -20,13 +20,17 @@ interface BlogListProps {
   searchQuery?: string;
   selectedTag?: string;
   postsPerPage?: number;
+  showPaginationInfo?: boolean;
+  compactLayout?: boolean;
 }
 
 export default function BlogList({
   posts,
   searchQuery = '',
   selectedTag = '',
-  postsPerPage = 6
+  postsPerPage = 6,
+  showPaginationInfo = false,
+  compactLayout = true
 }: BlogListProps) {
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -82,9 +86,9 @@ export default function BlogList({
   };
 
   return (
-    <div className="space-y-8">
+    <div className={compactLayout ? "space-y-6" : "space-y-8"}>
       {/* Enhanced Desktop Info with Micro Interactions */}
-      {filteredPosts.length > 0 && totalPages > 1 && (
+      {showPaginationInfo && filteredPosts.length > 0 && totalPages > 1 && (
         <div className="hidden sm:flex items-center justify-between">
           {/* Animated Results Count */}
           <div className="group flex items-center gap-3">
@@ -137,7 +141,7 @@ export default function BlogList({
       {filteredPosts.length > 0 ? (
         <>
           {/* Posts grid - 3 column layout */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 ${compactLayout ? "gap-4 lg:gap-6" : "gap-6 lg:gap-8"}`}>
             {currentPosts.map((post) => (
               <BlogCard
                 key={post.slug}
@@ -149,14 +153,16 @@ export default function BlogList({
 
           {/* Enhanced Pagination with Mobile Info */}
           {totalPages > 1 && (
-            <div className="space-y-4 pt-8">
+            <div className={`space-y-4 ${compactLayout ? "pt-6" : "pt-8"}`}>
               {/* Mobile-only compact info */}
-              <div className="flex sm:hidden items-center justify-center">
-                <div className="text-xs text-neutral-500 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800
-                  px-3 py-1.5 rounded-full border border-neutral-200 dark:border-neutral-700">
-                  Page {currentPage} of {totalPages} • {filteredPosts.length} posts
+              {showPaginationInfo && (
+                <div className="flex sm:hidden items-center justify-center">
+                  <div className="text-xs text-neutral-500 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800
+                    px-3 py-1.5 rounded-full border border-neutral-200 dark:border-neutral-700">
+                    Page {currentPage} of {totalPages} • {filteredPosts.length} posts
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Pagination Controls */}
               <div className="flex justify-center">

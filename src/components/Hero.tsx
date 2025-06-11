@@ -112,7 +112,7 @@ export default function Hero() {
   ];
 
   const scrollToAbout = () => {
-    const aboutSection = document.getElementById('about');
+    const aboutSection = document.getElementById('story');
     if (aboutSection) {
       aboutSection.scrollIntoView({ behavior: 'smooth' });
     }

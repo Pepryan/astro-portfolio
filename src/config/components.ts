@@ -5,7 +5,7 @@ export const seoConfig = {
     name: "Febryan Portfolio",
     title: "Febryan Portfolio - Cloud Engineer & DevOps Specialist",
     description: "Personal portfolio and technical blog by Febryan Ramadhan. Cloud Engineer specializing in DevOps, Infrastructure, and Automation. Sharing tutorials and insights about modern technology.",
-    url: "https://febryan.netlify.app",
+    url: "https://febryan.web.id",
     language: "en",
     locale: "en_US",
     charset: "UTF-8"
@@ -15,11 +15,11 @@ export const seoConfig = {
   author: {
     name: "Febryan Ramadhan",
     email: "febryanramadhan@gmail.com",
-    url: "https://febryan.netlify.app",
+    url: "https://febryan.web.id",
     jobTitle: "Cloud Engineer & DevOps Specialist",
     location: "Bogor, Indonesia",
     bio: "Cloud Engineer specializing in DevOps, Infrastructure, and Automation",
-    image: "https://febryan.netlify.app/images/profile.jpg"
+    image: "https://febryan.web.id/images/profile.jpg"
   },
 
   // Social Media
@@ -35,8 +35,8 @@ export const seoConfig = {
 
   // Default Images
   images: {
-    default: "https://febryan.netlify.app/images/default-og-image.png",
-    logo: "https://febryan.netlify.app/images/logo.png",
+    default: "https://febryan.web.id/images/default-og-image.png",
+    logo: "https://febryan.web.id/images/logo.png",
     favicon: "/favicon.ico",
     appleTouchIcon: "/apple-touch-icon.png"
   },
@@ -81,14 +81,25 @@ export const seoConfig = {
     postsPerPage: 6,
     showReadingTime: true,
     showWordCount: true,
-    enableComments: true
+    enableComments: true,
+    // Blog Page Layout Settings
+    layout: {
+      showStats: false, // Show post count and topics count - set to false to hide
+      showPaginationInfo: false, // Show "Showing 1-6 of 14" and "14 blog posts" info
+      compactLayout: true, // Use compact spacing and seamless design
+      terminology: "posts", // "posts" or "articles" - affects all labels
+      statsLabels: {
+        posts: "posts", // Can be changed to "articles", "writings", etc.
+        topics: "topics" // Can be changed to "categories", "tags", etc.
+      }
+    }
   },
 
   // Organization Schema (for structured data)
   organization: {
     name: "Febryan Portfolio",
-    url: "https://febryan.netlify.app",
-    logo: "https://febryan.netlify.app/images/logo.png",
+    url: "https://febryan.web.id",
+    logo: "https://febryan.web.id/images/logo.png",
     sameAs: [
       "https://linkedin.com/in/febryanramadhan",
       "https://github.com/Pepryan",
@@ -275,7 +286,7 @@ export const componentConfig = {
         tags: ["Astro", "React", "TailwindCSS", "Framer Motion"],
         link: "https://github.com/Pepryan/astro-portfolio",
         github: "https://github.com/Pepryan/astro-portfolio",
-        demo: "https://febryan.netlify.app",
+        demo: "https://febryan.web.id",
         featured: true,
         category: "Web"
       },
@@ -519,7 +530,7 @@ export const componentConfig = {
         tags: ["Astro", "React", "TailwindCSS", "Framer Motion", "TypeScript"],
         link: "https://github.com/Pepryan/astro-portfolio",
         github: "https://github.com/Pepryan/astro-portfolio",
-        demo: "https://febryan.netlify.app",
+        demo: "https://febryan.web.id",
         featured: true,
         category: "Web",
         status: "Active",
