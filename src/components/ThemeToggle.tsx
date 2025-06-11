@@ -58,9 +58,8 @@ export default function ThemeToggle() {
     // Save to localStorage
     try {
       localStorage.setItem('darkMode', String(newMode));
-      console.log('Theme toggled to:', newMode, 'and saved to localStorage');
     } catch (error) {
-      console.warn('Error saving theme:', error);
+      // Silent error handling
     }
 
     // Trigger custom event for Giscus and other components
