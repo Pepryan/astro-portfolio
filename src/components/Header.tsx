@@ -12,11 +12,14 @@ export default function Header() {
         <div className="flex items-center justify-between h-16">
           <a
             href="/"
-            className="font-medium text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 
+            className="font-medium text-neutral-600 hover:text-neutral-900 dark:text-neutral-400
               dark:hover:text-neutral-200 transition-colors flex items-center gap-2"
+            aria-label="Go to homepage - Febryan Ramadhan Portfolio"
+            title="Home - Febryan Ramadhan"
           >
-            <FiHome className="w-5 h-5" />
+            <FiHome className="w-5 h-5" aria-hidden="true" />
             <span className="font-bold hidden sm:inline">FR</span>
+            <span className="sr-only">Febryan Ramadhan - Home</span>
           </a>
 
           <nav className="flex items-center gap-1">

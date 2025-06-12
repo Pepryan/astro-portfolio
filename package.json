@@ -9,13 +9,14 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "deploy": "npm run build && touch dist/.nojekyll && gh-pages -d dist --dotfiles"
+    "deploy": "npm run build && touch dist/.nojekyll && gh-pages -d dist --dotfiles",
+    "validate-sitemap": "node scripts/validate-sitemap.js",
+    "build:validate": "npm run build && npm run validate-sitemap"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.0.0",
     "@astrojs/react": "^4.0.0",
     "@astrojs/rss": "^4.0.12",
-    "@astrojs/sitemap": "^3.2.0",
     "@astrojs/tailwind": "^6.0.0",
     "@giscus/react": "^3.1.0",
     "@mdx-js/react": "^3.1.0",
