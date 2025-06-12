@@ -221,6 +221,7 @@ export const componentConfig = {
         size: "large", // large, medium, small
         color: "blue",
         interactive: true,
+        link: "/projects#cloud",
         stats: { label: "Projects", value: "15+" }
       },
       {
@@ -231,6 +232,7 @@ export const componentConfig = {
         size: "medium",
         color: "green",
         interactive: true,
+        link: "/projects#devops",
         stats: { label: "Deployments", value: "100+" }
       },
       {
@@ -241,6 +243,7 @@ export const componentConfig = {
         size: "medium",
         color: "purple",
         interactive: true,
+        link: "/projects#web",
         stats: { label: "Apps Built", value: "20+" }
       },
       {

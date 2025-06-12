@@ -176,18 +176,22 @@ export default function BentoGrid() {
             const colors = getColorClasses(card.color);
             const CardComponent = card.interactive ? motion.a : motion.div;
 
+            // Determine the href - use link if available, otherwise use a fallback
+            const cardHref = card.interactive ? (card.link || `#${card.id}`) : undefined;
+
             return (
               <CardComponent
                 key={card.id}
-                href={card.link || undefined}
+                href={cardHref}
                 rel={card.interactive && card.link ? "noopener noreferrer" : undefined}
-                aria-label={card.interactive ? `Navigate to ${card.title}` : undefined}
+                aria-label={card.interactive ? `Learn more about ${card.title} - ${card.description}` : card.title}
+                title={card.interactive ? `Click to learn more about ${card.title}` : card.title}
                 className={`
                   ${getCardSize(card.size)}
                   group relative p-6 rounded-2xl border backdrop-blur-sm
                   bg-gradient-to-br ${colors.bg} ${colors.border}
                   hover:bg-gradient-to-br ${colors.hover}
-                  transition-all duration-300 cursor-pointer
+                  transition-all duration-300 ${card.interactive ? 'cursor-pointer' : 'cursor-default'}
                   ${card.interactive ? 'hover:scale-[1.02] hover:shadow-xl' : 'hover:scale-[1.01]'}
                   ${card.size === 'large' ? 'min-h-[300px] md:min-h-[400px]' : 'min-h-[200px]'}
                 `}
