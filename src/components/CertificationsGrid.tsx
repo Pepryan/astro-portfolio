@@ -1,42 +1,151 @@
+import React from 'react';
 import { motion } from 'framer-motion';
 import { FiAward, FiExternalLink, FiCalendar } from 'react-icons/fi';
 
 const certifications = [
   {
-    title: "AWS Certified Solutions Architect",
-    issuer: "Amazon Web Services",
+    title: "AWS Academy Cloud Architecting",
+    issuer: "AWS",
     date: "2023",
     status: "Active",
-    description: "Validates expertise in designing distributed systems on AWS",
-    credentialUrl: "#",
+    description: "Comprehensive cloud architecture training and certification",
+    credentialUrl: "https://www.credly.com/badges/576f0a39-1615-4d94-860b-d8fc2316de44/public_url",
     logo: "/images/aws-logo.png"
   },
   {
-    title: "Certified Kubernetes Administrator",
-    issuer: "Cloud Native Computing Foundation",
+    title: "Certified DevOps Professional",
+    issuer: "GitLab",
     date: "2023",
     status: "Active",
-    description: "Demonstrates skills in Kubernetes cluster administration",
-    credentialUrl: "#",
-    logo: "/images/k8s-logo.png"
+    description: "Advanced DevOps practices and GitLab platform expertise",
+    credentialUrl: "https://www.credly.com/badges/f3a13b0d-f6ef-41d8-884e-52060edc9e75/public_url",
+    logo: "/images/gitlab-logo.png"
   },
   {
-    title: "HashiCorp Certified: Terraform Associate",
-    issuer: "HashiCorp",
+    title: "Certified Security Specialist",
+    issuer: "GitLab",
     date: "2022",
     status: "Active",
-    description: "Validates knowledge of Terraform's basic concepts and skills",
-    credentialUrl: "#",
-    logo: "/images/terraform-logo.png"
+    description: "Security best practices and GitLab security features",
+    credentialUrl: "https://www.credly.com/badges/fe4d83d0-b1b4-469c-8c41-953254e07476/public_url",
+    logo: "/images/gitlab-logo.png"
   },
   {
-    title: "Docker Certified Associate",
-    issuer: "Docker Inc.",
+    title: "Certified CI/CD Associate",
+    issuer: "GitLab",
     date: "2022",
     status: "Active",
-    description: "Demonstrates proficiency in Docker containerization platform",
-    credentialUrl: "#",
-    logo: "/images/docker-logo.png"
+    description: "Continuous Integration and Continuous Deployment expertise",
+    credentialUrl: "https://www.credly.com/badges/f9b78922-688e-4729-91de-9e90bd5cef1d/public_url",
+    logo: "/images/gitlab-logo.png"
+  },
+  {
+    title: "Certified Project Management Associate",
+    issuer: "GitLab",
+    date: "2022",
+    status: "Active",
+    description: "Project management methodologies and GitLab project tools",
+    credentialUrl: "https://www.credly.com/badges/2063b57e-5d5e-4917-8199-edbcb766f635/public_url",
+    logo: "/images/gitlab-logo.png"
+  },
+  {
+    title: "Certified Git Associate",
+    issuer: "GitLab",
+    date: "2022",
+    status: "Active",
+    description: "Git version control and collaboration fundamentals",
+    credentialUrl: "https://www.credly.com/badges/cef73c89-298d-44d5-8885-29d4eb6f3990/public_url",
+    logo: "/images/gitlab-logo.png"
+  },
+  {
+    title: "RHCSA Rapid Track Course",
+    issuer: "Btech",
+    date: "2022",
+    status: "Active",
+    description: "Red Hat Certified System Administrator training",
+    credentialUrl: null,
+    logo: "/images/redhat-logo.png"
+  },
+  {
+    title: "IT Support Specialization",
+    issuer: "Google",
+    date: "2021",
+    status: "Active",
+    description: "Comprehensive IT support and troubleshooting skills",
+    credentialUrl: "https://www.credly.com/badges/b9c328c5-1e22-41b4-a1e3-f04cb9a37669/public_url",
+    logo: "/images/google-logo.png"
+  },
+  {
+    title: "Web Development Node.js",
+    issuer: "Progate",
+    date: "2020",
+    status: "Active",
+    description: "Server-side JavaScript development with Node.js",
+    credentialUrl: null,
+    logo: "/images/progate-logo.png"
+  },
+  {
+    title: "Web Development Ruby on Rails",
+    issuer: "Progate",
+    date: "2020",
+    status: "Active",
+    description: "Full-stack web development with Ruby on Rails",
+    credentialUrl: null,
+    logo: "/images/progate-logo.png"
+  },
+  {
+    title: "Memulai Pemrograman dengan Python",
+    issuer: "Dicoding",
+    date: "2020",
+    status: "Active",
+    description: "Python programming fundamentals and best practices",
+    credentialUrl: null,
+    logo: "/images/dicoding-logo.png"
+  },
+  {
+    title: "Network and Infrastructure",
+    issuer: "Kominfo & BNSP",
+    date: "2019",
+    status: "Active",
+    description: "Network infrastructure design and management",
+    credentialUrl: null,
+    logo: "/images/kominfo-logo.png"
+  },
+  {
+    title: "Digitalent Junior Network Administrator",
+    issuer: "Kominfo",
+    date: "2019",
+    status: "Active",
+    description: "Network administration and digital talent development",
+    credentialUrl: null,
+    logo: "/images/kominfo-logo.png"
+  },
+  {
+    title: "Web Programming C#",
+    issuer: "LepKom Gunadarma",
+    date: "2017",
+    status: "Active",
+    description: "Web application development using C# and .NET",
+    credentialUrl: null,
+    logo: "/images/gunadarma-logo.png"
+  },
+  {
+    title: "OS Server Linux Ubuntu",
+    issuer: "LepKom Gunadarma",
+    date: "2017",
+    status: "Active",
+    description: "Linux server administration and Ubuntu management",
+    credentialUrl: null,
+    logo: "/images/gunadarma-logo.png"
+  },
+  {
+    title: "Cisco Certified Network Associate (CCNA)",
+    issuer: "Cisco",
+    date: "2013",
+    status: "Active",
+    description: "Network fundamentals and Cisco networking technologies",
+    credentialUrl: null,
+    logo: "/images/cisco-logo.png"
   }
 ];
 
@@ -107,7 +216,7 @@ export default function CertificationsGrid() {
               {cert.date}
             </div>
             
-            {cert.credentialUrl && (
+            {cert.credentialUrl && cert.credentialUrl !== '#' && (
               <motion.a
                 href={cert.credentialUrl}
                 target="_blank"

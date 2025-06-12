@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import SkillsGrid from './SkillsGrid';
 import ProjectsGrid from './ProjectsGrid';
@@ -32,26 +32,6 @@ export default function PortfolioSection() {
 
   return (
     <div className="py-8 md:py-16">
-      {/* Main Header */}
-      <div className="text-center mb-12">
-        <motion.h2 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-3xl md:text-5xl font-bold text-neutral-900 dark:text-neutral-100 mb-4"
-        >
-          My Portfolio
-        </motion.h2>
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto text-lg"
-        >
-          A showcase of my skills, projects, and professional certifications
-        </motion.p>
-      </div>
-
       {/* Navigation Tabs */}
       <div className="mb-12">
         <div className="flex flex-wrap justify-center gap-2 md:gap-4">

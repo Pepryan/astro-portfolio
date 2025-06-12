@@ -411,7 +411,50 @@ export const componentConfig = {
       showInNavigation: true,
       layout: "grid", // "grid", "masonry", "list"
       showFilters: true,
-      categories: ["All", "Cloud", "DevOps", "Web", "Automation"],
+      categories: [
+        {
+          id: "all",
+          name: "All",
+          description: "All projects and work",
+          icon: "🚀",
+          count: 9
+        },
+        {
+          id: "cloud",
+          name: "Cloud",
+          description: "Cloud infrastructure and architecture",
+          icon: "☁️",
+          count: 3
+        },
+        {
+          id: "devops",
+          name: "DevOps",
+          description: "CI/CD, automation, and infrastructure",
+          icon: "⚙️",
+          count: 1
+        },
+        {
+          id: "automation",
+          name: "Automation",
+          description: "Process automation and scripting",
+          icon: "🤖",
+          count: 0
+        },
+        {
+          id: "open-source",
+          name: "Open Source",
+          description: "Open source contributions and projects",
+          icon: "🌟",
+          count: 1
+        },
+        {
+          id: "web",
+          name: "Web",
+          description: "Web applications and development",
+          icon: "🌐",
+          count: 4
+        }
+      ],
       cta: {
         enabled: true,
         title: "Have a Project in Mind?",
@@ -551,25 +594,53 @@ export const componentConfig = {
     layout: 'grid', // 'grid' or 'list'
     categories: [
       {
-        id: 'cloud-infra',
-        title: "Cloud & Infrastructure",
+        id: 'devops-cloud',
+        title: "DevOps & Cloud",
         color: 'blue',
         items: [
-          { name: "AWS", focus: "EC2, S3, RDS, Lambda", level: 85 },
-          { name: "OpenStack", focus: "Private Cloud Management", level: 90 },
-          { name: "Kubernetes", focus: "Container Orchestration", level: 80 },
-          { name: "Docker", focus: "Containerization", level: 95 }
+          { name: "DevOps", focus: "CI/CD, Automation", level: 90 },
+          { name: "Kubernetes", focus: "Container Orchestration", level: 85 },
+          { name: "Amazon Web Services (AWS)", focus: "Cloud Infrastructure", level: 88 },
+          { name: "Linux", focus: "System Administration", level: 95 },
+          { name: "OpenStack", focus: "Private Cloud", level: 85 },
+          { name: "Google Cloud Platform (GCP)", focus: "Cloud Services", level: 80 },
+          { name: "KVM", focus: "Virtualization", level: 85 }
         ]
       },
       {
-        id: 'devops-automation',
-        title: "DevOps & Automation",
+        id: 'development-scripting',
+        title: "Development & Scripting",
         color: 'green',
         items: [
-          { name: "CI/CD", focus: "GitLab CI, Jenkins", level: 85 },
-          { name: "Infrastructure as Code", focus: "Terraform, Ansible", level: 80 },
-          { name: "Monitoring", focus: "Prometheus, Grafana", level: 90 },
-          { name: "Scripting", focus: "Python, Bash", level: 95 }
+          { name: "HTML, CSS, Javascript", focus: "Frontend Development", level: 85 },
+          { name: "Python", focus: "Automation & Development", level: 90 },
+          { name: "Bash", focus: "Shell Scripting", level: 95 },
+          { name: "Javascript", focus: "Full-stack Development", level: 85 }
+        ]
+      },
+      {
+        id: 'monitoring-tools',
+        title: "Monitoring & Tools",
+        color: 'purple',
+        items: [
+          { name: "Grafana", focus: "Data Visualization", level: 90 },
+          { name: "Prometheus", focus: "Metrics Collection", level: 88 },
+          { name: "Victoria Metrics", focus: "Time Series DB", level: 80 },
+          { name: "Uptime Kuma", focus: "Uptime Monitoring", level: 85 }
+        ]
+      },
+      {
+        id: 'automation-iac',
+        title: "Automation & IaC",
+        color: 'orange',
+        items: [
+          { name: "CI/CD", focus: "GitLab CI, Jenkins", level: 90 },
+          { name: "GitLab", focus: "DevOps Platform", level: 95 },
+          { name: "Git", focus: "Version Control", level: 95 },
+          { name: "Ansible", focus: "Configuration Management", level: 85 },
+          { name: "Terraform", focus: "Infrastructure as Code", level: 80 },
+          { name: "Docker/Podman", focus: "Containerization", level: 90 },
+          { name: "n8n", focus: "Automation", level: 90 }
         ]
       }
     ]
@@ -578,10 +649,10 @@ export const componentConfig = {
   // Projects/Portfolio Section Configuration
   projects: {
     enabled: true,
-    title: "Projects & Certifications",
+    title: "Featured Projects",
     showFilters: true,
     animateOnScroll: true,
-    categories: ['All', 'Cloud', 'DevOps', 'Web', 'Automation'],
+    categories: ['All', 'Cloud', 'DevOps', 'Web', 'Automation', 'Open Source'],
     items: [
       {
         id: "astro-portfolio",
@@ -606,7 +677,7 @@ export const componentConfig = {
         link: "https://github.com/Pepryan/openstack-resource",
         github: "https://github.com/Pepryan/openstack-resource",
         featured: true,
-        category: "Cloud",
+        category: "Open Source",
         status: "Active",
         year: "2024"
       },
@@ -661,6 +732,45 @@ export const componentConfig = {
         category: "Web",
         status: "Completed",
         year: "2023"
+      },
+      {
+        id: "aws-serverless-api",
+        title: "AWS Serverless REST API",
+        description: "Scalable serverless REST API using AWS Lambda, API Gateway, and DynamoDB. Includes authentication, CRUD operations, and automated deployment with CloudFormation.",
+        image: null,
+        tags: ["AWS Lambda", "API Gateway", "DynamoDB", "CloudFormation", "Serverless"],
+        link: "https://github.com/Pepryan/aws-serverless-api",
+        github: "https://github.com/Pepryan/aws-serverless-api",
+        featured: true,
+        category: "Cloud",
+        status: "Active",
+        year: "2024"
+      },
+      {
+        id: "terraform-aws-infrastructure",
+        title: "Terraform AWS Infrastructure",
+        description: "Infrastructure as Code for AWS multi-tier architecture. Includes VPC, EC2, RDS, Load Balancer, and Auto Scaling with best practices for security and monitoring.",
+        image: null,
+        tags: ["Terraform", "AWS", "VPC", "EC2", "RDS", "Infrastructure as Code"],
+        link: "https://github.com/Pepryan/terraform-aws-infrastructure",
+        github: "https://github.com/Pepryan/terraform-aws-infrastructure",
+        featured: true,
+        category: "Cloud",
+        status: "Active",
+        year: "2024"
+      },
+      {
+        id: "kubernetes-microservices",
+        title: "Kubernetes Microservices Platform",
+        description: "Complete microservices platform on Kubernetes with service mesh, monitoring, logging, and CI/CD pipeline. Includes Istio, Prometheus, Grafana, and ArgoCD.",
+        image: null,
+        tags: ["Kubernetes", "Istio", "Prometheus", "Grafana", "ArgoCD", "Microservices"],
+        link: "https://github.com/Pepryan/kubernetes-microservices",
+        github: "https://github.com/Pepryan/kubernetes-microservices",
+        featured: true,
+        category: "Cloud",
+        status: "Active",
+        year: "2024"
       }
     ]
   },
