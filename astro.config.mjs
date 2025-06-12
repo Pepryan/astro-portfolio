@@ -3,7 +3,7 @@ import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import react from '@astrojs/react';
 import tailwind from '@astrojs/tailwind';
-import sitemap from '@astrojs/sitemap';
+// Removed @astrojs/sitemap - using custom sitemap implementation
 import remarkGfm from 'remark-gfm';
 import rehypePrettyCode from 'rehype-pretty-code';
 
@@ -48,7 +48,7 @@ export default defineConfig({
     tailwind({
       applyBaseStyles: false
     }),
-    sitemap()
+    // Custom sitemap implementation in src/pages/sitemap.xml.ts
   ],
   markdown: {
     remarkPlugins: [remarkGfm],

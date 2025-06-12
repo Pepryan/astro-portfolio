@@ -494,6 +494,53 @@ For production deployment, configure these environment variables:
 - `BUILD_COMMAND`: "npm run build"
 - `PUBLISH_DIRECTORY`: "dist"
 
+## 🗺️ Enhanced Sitemap & SEO
+
+### Custom Sitemap Implementation
+The portfolio features a comprehensive, custom sitemap implementation that automatically excludes draft posts and includes proper SEO metadata:
+
+#### Features:
+- **Automatic Draft Filtering**: Only published posts (non-draft, non-hidden) are included
+- **Enhanced Metadata**: Includes `lastmod`, `changefreq`, and `priority` for better SEO
+- **Comprehensive Coverage**: All pages, blog posts, tag pages, and static routes
+- **Proper URL Structure**: Clean, SEO-friendly URLs with correct encoding
+- **Sitemap Index**: Organized structure for better search engine crawling
+
+#### Generated Sitemaps:
+- `/sitemap-index.xml` - Main sitemap index
+- `/sitemap.xml` - Complete sitemap with all URLs and metadata
+
+#### URL Priorities:
+- Homepage: 1.0 (highest priority, weekly updates)
+- Blog listing: 0.9 (high priority, daily updates)
+- Projects: 0.8 (high priority, weekly updates)
+- Archive: 0.7 (medium priority, weekly updates)
+- Blog posts: 0.7 (medium priority, monthly updates)
+- Contact/About: 0.6/0.5 (lower priority, monthly updates)
+- Tag pages: 0.5 (medium priority, weekly updates)
+
+#### Implementation Files:
+- `src/utils/sitemap.ts` - Sitemap generation utilities
+- `src/pages/sitemap.xml.ts` - Main sitemap endpoint
+- `src/pages/sitemap-index.xml.ts` - Sitemap index endpoint
+- `public/robots.txt` - Updated with correct sitemap references
+- `scripts/validate-sitemap.js` - Validation script for sitemap integrity
+
+#### Validation:
+```bash
+# Validate sitemap after build
+npm run validate-sitemap
+
+# Build and validate in one command
+npm run build:validate
+```
+
+#### SEO Benefits:
+- **Better Crawling**: Search engines can efficiently discover all pages
+- **Fresh Content**: Automatic lastmod dates help search engines prioritize recent content
+- **Priority Signals**: Clear priority hierarchy guides search engine focus
+- **Clean Structure**: No draft/hidden content cluttering search results
+
 ## 🔧 Technical Configuration
 
 ### Astro Configuration
@@ -517,8 +564,8 @@ export default defineConfig({
       syntaxHighlight: false
     }),
     react(),
-    tailwind({ applyBaseStyles: false }),
-    sitemap()
+    tailwind({ applyBaseStyles: false })
+    // Custom sitemap implementation in src/pages/sitemap.xml.ts
   ]
 });
 ```

@@ -1,9 +1,11 @@
 /**
  * Modern Animation Utilities for 2025 UI/UX
  * Lightweight and performant animations using Framer Motion
+ * Now with performance optimizations and reduced motion support
  */
 
 import type { Variants } from 'framer-motion';
+import { prefersReducedMotion, hasLimitedResources } from './performance';
 
 // Easing curves for modern feel
 export const easings = {
@@ -14,17 +16,18 @@ export const easings = {
   gentle: [0.25, 0.46, 0.45, 0.94],
 } as const;
 
-// Container animations with stagger
+// Container animations with stagger - performance optimized
 export const containerVariants: Variants = {
-  hidden: { 
-    opacity: 0 
+  hidden: {
+    opacity: 0
   },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.1,
-      ease: easings.smooth,
+      staggerChildren: prefersReducedMotion() ? 0 : 0.1,
+      delayChildren: prefersReducedMotion() ? 0 : 0.1,
+      ease: prefersReducedMotion() ? 'linear' : easings.smooth,
+      duration: prefersReducedMotion() ? 0.1 : 0.6
     }
   }
 };
@@ -287,8 +290,109 @@ export const textRevealVariants: Variants = {
 export const magneticVariants = {
   rest: { x: 0, y: 0 },
   hover: (offset: { x: number; y: number }) => ({
-    x: offset.x * 0.3,
-    y: offset.y * 0.3,
-    transition: { duration: 0.2, ease: easings.gentle }
+    x: prefersReducedMotion() ? 0 : offset.x * 0.3,
+    y: prefersReducedMotion() ? 0 : offset.y * 0.3,
+    transition: {
+      duration: prefersReducedMotion() ? 0 : 0.2,
+      ease: prefersReducedMotion() ? 'linear' : easings.gentle
+    }
   })
 };
+
+/**
+ * Performance-optimized animation variants
+ * These automatically adapt based on user preferences and device capabilities
+ */
+
+// Optimized fade in animation
+export const optimizedFadeIn: Variants = {
+  hidden: {
+    opacity: 0,
+    ...(prefersReducedMotion() || hasLimitedResources() ? {} : { y: 20 })
+  },
+  visible: {
+    opacity: 1,
+    ...(prefersReducedMotion() || hasLimitedResources() ? {} : { y: 0 }),
+    transition: {
+      duration: prefersReducedMotion() || hasLimitedResources() ? 0.1 : 0.4,
+      ease: prefersReducedMotion() ? 'linear' : 'easeOut'
+    }
+  }
+};
+
+// Optimized scale animation
+export const optimizedScale: Variants = {
+  hidden: {
+    opacity: 0,
+    ...(prefersReducedMotion() || hasLimitedResources() ? {} : { scale: 0.95 })
+  },
+  visible: {
+    opacity: 1,
+    ...(prefersReducedMotion() || hasLimitedResources() ? {} : { scale: 1 }),
+    transition: {
+      duration: prefersReducedMotion() || hasLimitedResources() ? 0.1 : 0.3,
+      ease: prefersReducedMotion() ? 'linear' : 'easeOut'
+    }
+  }
+};
+
+// Optimized slide animation
+export const optimizedSlide: Variants = {
+  hidden: {
+    opacity: 0,
+    ...(prefersReducedMotion() || hasLimitedResources() ? {} : { x: -30 })
+  },
+  visible: {
+    opacity: 1,
+    ...(prefersReducedMotion() || hasLimitedResources() ? {} : { x: 0 }),
+    transition: {
+      duration: prefersReducedMotion() || hasLimitedResources() ? 0.1 : 0.4,
+      ease: prefersReducedMotion() ? 'linear' : 'easeOut'
+    }
+  }
+};
+
+/**
+ * Get optimized animation props based on performance settings
+ */
+export function getOptimizedAnimationProps(type: 'fade' | 'scale' | 'slide' = 'fade') {
+  const reducedMotion = prefersReducedMotion();
+  const limitedResources = hasLimitedResources();
+
+  if (reducedMotion || limitedResources) {
+    return {
+      initial: { opacity: 0 },
+      animate: { opacity: 1 },
+      transition: { duration: 0.1 },
+      whileHover: {},
+      whileTap: {}
+    };
+  }
+
+  switch (type) {
+    case 'scale':
+      return {
+        initial: { opacity: 0, scale: 0.95 },
+        animate: { opacity: 1, scale: 1 },
+        transition: { duration: 0.3, ease: 'easeOut' },
+        whileHover: { scale: 1.02 },
+        whileTap: { scale: 0.98 }
+      };
+    case 'slide':
+      return {
+        initial: { opacity: 0, x: -30 },
+        animate: { opacity: 1, x: 0 },
+        transition: { duration: 0.4, ease: 'easeOut' },
+        whileHover: { x: 2 },
+        whileTap: { x: -2 }
+      };
+    default: // fade
+      return {
+        initial: { opacity: 0, y: 20 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.4, ease: 'easeOut' },
+        whileHover: { y: -2 },
+        whileTap: { y: 2 }
+      };
+  }
+}
