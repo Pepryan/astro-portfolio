@@ -102,12 +102,6 @@ export default function FeaturedWork() {
       ref={containerRef}
       className="py-16 sm:py-24 relative overflow-hidden"
     >
-      {/* Background */}
-      <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-blue-50/30 via-purple-50/20 to-transparent
-          dark:from-blue-900/10 dark:via-purple-900/10 dark:to-transparent"
-        style={{ y }}
-      />
 
       <div className="max-w-6xl mx-auto px-4 relative">
         {/* Section Header */}
