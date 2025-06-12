@@ -175,11 +175,13 @@ export default function BentoGrid() {
           {bentoGrid.cards.map((card, index) => {
             const colors = getColorClasses(card.color);
             const CardComponent = card.interactive ? motion.a : motion.div;
-            
+
             return (
               <CardComponent
                 key={card.id}
                 href={card.link || undefined}
+                rel={card.interactive && card.link ? "noopener noreferrer" : undefined}
+                aria-label={card.interactive ? `Navigate to ${card.title}` : undefined}
                 className={`
                   ${getCardSize(card.size)}
                   group relative p-6 rounded-2xl border backdrop-blur-sm
@@ -190,7 +192,7 @@ export default function BentoGrid() {
                   ${card.size === 'large' ? 'min-h-[300px] md:min-h-[400px]' : 'min-h-[200px]'}
                 `}
                 variants={cardVariants}
-                whileHover={card.interactive ? { 
+                whileHover={card.interactive ? {
                   y: -4,
                   transition: { type: "spring", stiffness: 300 }
                 } : { scale: 1.01 }}

@@ -92,7 +92,10 @@ const seoData = generateSEO({
     />
 
     <!-- Google Analytics -->
-    <GoogleAnalytics id={seoConfig.analytics.googleAnalyticsId} />
+    <GoogleAnalytics
+      id={seoConfig.analytics.googleAnalyticsId}
+      enabled={seoConfig.analytics.enabled}
+    />
 
     <!-- Theme Script -->
     <script is:inline>

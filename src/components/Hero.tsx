@@ -22,8 +22,10 @@ export default function Hero() {
   useEffect(() => {
     setMounted(true);
 
-    // Story progression animation
-    if (hero.storytellingMotion) {
+    // Story progression animation - only if enabled and user doesn't prefer reduced motion
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (hero.storytellingMotion && !prefersReducedMotion) {
       const interval = setInterval(() => {
         setCurrentStoryIndex((prev) => (prev + 1) % 2);
       }, 4000);
@@ -200,22 +202,29 @@ export default function Hero() {
               </motion.p>
             )}
 
-            {/* Dynamic Story Text */}
+            {/* Dynamic Story Text - Simplified for performance */}
             <motion.div
               className="h-16 flex items-center justify-center"
               variants={storyVariants}
             >
-              <motion.p
-                key={currentStoryIndex}
-                className="text-lg md:text-xl text-neutral-600 dark:text-neutral-400
-                  max-w-3xl mx-auto px-4 leading-relaxed text-center"
-                initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, y: -20, filter: "blur(10px)" }}
-                transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
-              >
-                {storyTexts[currentStoryIndex]}
-              </motion.p>
+              {hero.storytellingMotion ? (
+                <motion.p
+                  key={currentStoryIndex}
+                  className="text-lg md:text-xl text-neutral-600 dark:text-neutral-400
+                    max-w-3xl mx-auto px-4 leading-relaxed text-center"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                >
+                  {storyTexts[currentStoryIndex]}
+                </motion.p>
+              ) : (
+                <p className="text-lg md:text-xl text-neutral-600 dark:text-neutral-400
+                  max-w-3xl mx-auto px-4 leading-relaxed text-center">
+                  {storyTexts[0]}
+                </p>
+              )}
             </motion.div>
           </motion.div>
 

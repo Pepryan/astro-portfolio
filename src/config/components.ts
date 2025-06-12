@@ -69,9 +69,12 @@ export const seoConfig = {
 
   // Analytics and Tracking
   analytics: {
+    enabled: false, // Disabled by default for better performance
     googleAnalyticsId: "G-FEVJVQ6XD9", // Replace with actual GA4 ID
     googleTagManagerId: "", // Optional
     microsoftClarityId: "", // Optional
+    loadOnlyInProduction: true, // Only load analytics in production
+    respectDoNotTrack: true, // Respect user's Do Not Track preference
   },
 
   // Blog Configuration
@@ -113,12 +116,13 @@ export const componentConfig = {
   // Animation Configuration
   animations: {
     enabled: true,
-    reducedMotion: false, // Respect user's motion preferences
+    reducedMotion: true, // Respect user's motion preferences by default
+    performanceMode: true, // Enable performance optimizations
     staggerDelay: 0.1,
     duration: {
-      fast: 0.3,
-      medium: 0.6,
-      slow: 1.0
+      fast: 0.2, // Reduced for better performance
+      medium: 0.4, // Reduced for better performance
+      slow: 0.6 // Reduced for better performance
     },
     easing: {
       smooth: [0.25, 0.1, 0.25, 1],
@@ -152,9 +156,9 @@ export const componentConfig = {
     },
     showSocialLinks: true,
     showScrollIndicator: true,
-    backgroundAnimation: true,
+    backgroundAnimation: false, // Disabled for better performance
     titleAnimation: true,
-    storytellingMotion: true,
+    storytellingMotion: false, // Disabled for better performance - this was causing heavy animations
     socialLinks: [
       { platform: 'github', url: 'https://github.com/Pepryan', enabled: true },
       { platform: 'gitlab', url: 'https://gitlab.com/Pepryan', enabled: true },
