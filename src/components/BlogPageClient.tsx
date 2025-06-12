@@ -106,7 +106,7 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
                   <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-700
                     dark:from-neutral-100 dark:via-neutral-200 dark:to-neutral-300 bg-clip-text text-transparent
                     transition-all duration-500 group-hover:scale-105 cursor-default
-                    drop-shadow-sm relative z-10 leading-tight">
+                    drop-shadow-sm relative z-10 leading-tight pb-3">
                     Blog
                   </h1>
 

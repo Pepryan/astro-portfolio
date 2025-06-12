@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { FiGithub, FiExternalLink, FiCalendar, FiTag } from 'react-icons/fi';
+import { FiGithub, FiExternalLink, FiCalendar, FiTag, FiStar, FiActivity } from 'react-icons/fi';
 
 interface ProjectCardProps {
   project: {
@@ -36,6 +36,7 @@ export default function ProjectCard({
       case 'DevOps': return '⚙️';
       case 'Web': return '🌐';
       case 'Automation': return '🤖';
+      case 'Open Source': return '🌟';
       default: return '🚀';
     }
   };

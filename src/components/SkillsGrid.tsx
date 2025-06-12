@@ -1,3 +1,4 @@
+import React from 'react';
 import { motion } from 'framer-motion';
 import { componentConfig } from '../config/components';
 
@@ -57,16 +58,18 @@ export default function SkillsGrid() {
                   </span>
                 </div>
                 
-                {/* Skill progress bar */}
-                <div className="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-2">
-                  <motion.div
-                    className="bg-gradient-to-r from-blue-500 to-emerald-500 h-2 rounded-full"
-                    initial={{ width: 0 }}
-                    whileInView={{ width: `${85 + (skillIndex * 3)}%` }}
-                    transition={{ duration: 1, delay: (categoryIndex * 0.1) + (skillIndex * 0.1) }}
-                    viewport={{ once: true }}
-                  />
-                </div>
+                {/* Skill progress bar - only show if enabled in config */}
+                {skills.showProgress && (
+                  <div className="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-2">
+                    <motion.div
+                      className="bg-gradient-to-r from-blue-500 to-emerald-500 h-2 rounded-full"
+                      initial={{ width: 0 }}
+                      whileInView={{ width: `${skill.level || 85}%` }}
+                      transition={{ duration: 1, delay: (categoryIndex * 0.1) + (skillIndex * 0.1) }}
+                      viewport={{ once: true }}
+                    />
+                  </div>
+                )}
               </motion.div>
             ))}
           </div>

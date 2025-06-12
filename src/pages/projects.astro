@@ -3,7 +3,9 @@ import Layout from '../layouts/Layout.astro';
 import { ThemeProvider } from '../components/ThemeProvider';
 import LayoutWrapper from '../components/LayoutWrapper';
 import Header from '../components/Header';
-import PortfolioSection from '../components/PortfolioSection';
+import ProjectsWithCategories from '../components/ProjectsWithCategories';
+import SkillsSection from '../components/SkillsSection';
+import CertificationsSection from '../components/CertificationsSection';
 import FloatingNavigation from '../components/FloatingNavigation';
 import Footer from '../components/Footer';
 import { generateSEO } from '../utils/seo';
@@ -50,80 +52,26 @@ try {
             <div class="text-center max-w-4xl mx-auto">
               <h1 class="text-4xl md:text-6xl font-bold bg-clip-text text-transparent
                 bg-gradient-to-r from-blue-600 to-purple-600
-                dark:from-blue-400 dark:to-purple-400 mb-6">
-                My Projects
+                dark:from-blue-400 dark:to-purple-400 mb-6 leading-tight pb-3">
+                Cloud Engineering Portfolio
               </h1>
               <p class="text-lg md:text-xl text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                A showcase of my work in cloud engineering, DevOps automation, and web development. 
-                Each project represents a unique challenge and innovative solution.
+                Explore my journey in cloud infrastructure, DevOps automation, and scalable solutions.
+                Each project showcases modern engineering practices and innovative problem-solving.
               </p>
             </div>
           </section>
 
-          <!-- Projects Grid -->
+          <!-- Projects with Categories -->
           <section id="projects" class="py-16">
-            <PortfolioSection client:load />
+            <ProjectsWithCategories client:load />
           </section>
 
-          <!-- Additional Project Categories -->
-          <section id="categories" class="py-16">
-            <div class="max-w-6xl mx-auto">
-              <h2 class="text-3xl md:text-4xl font-bold text-center text-neutral-900 dark:text-neutral-100 mb-12">
-                Project Categories
-              </h2>
-              
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Cloud Infrastructure -->
-                <div class="p-6 bg-white/80 dark:bg-neutral-800/80 rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700 hover:shadow-xl transition-all duration-300 group cursor-pointer">
-                  <div class="text-4xl mb-4 group-hover:scale-110 transition-transform">☁️</div>
-                  <h3 class="text-xl font-semibold text-neutral-800 dark:text-neutral-200 mb-2">Cloud Infrastructure</h3>
-                  <p class="text-neutral-600 dark:text-neutral-400 text-sm">AWS, OpenStack, and cloud-native solutions</p>
-                  <div class="mt-4 text-blue-600 dark:text-blue-400 text-sm font-medium">5 Projects</div>
-                </div>
+          <!-- Skills Section -->
+          <SkillsSection client:load />
 
-                <!-- DevOps & Automation -->
-                <div class="p-6 bg-white/80 dark:bg-neutral-800/80 rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700 hover:shadow-xl transition-all duration-300 group cursor-pointer">
-                  <div class="text-4xl mb-4 group-hover:scale-110 transition-transform">⚙️</div>
-                  <h3 class="text-xl font-semibold text-neutral-800 dark:text-neutral-200 mb-2">DevOps & Automation</h3>
-                  <p class="text-neutral-600 dark:text-neutral-400 text-sm">CI/CD pipelines, monitoring, and automation</p>
-                  <div class="mt-4 text-green-600 dark:text-green-400 text-sm font-medium">8 Projects</div>
-                </div>
-
-                <!-- Web Development -->
-                <div class="p-6 bg-white/80 dark:bg-neutral-800/80 rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700 hover:shadow-xl transition-all duration-300 group cursor-pointer">
-                  <div class="text-4xl mb-4 group-hover:scale-110 transition-transform">🌐</div>
-                  <h3 class="text-xl font-semibold text-neutral-800 dark:text-neutral-200 mb-2">Web Development</h3>
-                  <p class="text-neutral-600 dark:text-neutral-400 text-sm">Modern web applications and frameworks</p>
-                  <div class="mt-4 text-purple-600 dark:text-purple-400 text-sm font-medium">6 Projects</div>
-                </div>
-
-                <!-- Open Source -->
-                <div class="p-6 bg-white/80 dark:bg-neutral-800/80 rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700 hover:shadow-xl transition-all duration-300 group cursor-pointer">
-                  <div class="text-4xl mb-4 group-hover:scale-110 transition-transform">🔓</div>
-                  <h3 class="text-xl font-semibold text-neutral-800 dark:text-neutral-200 mb-2">Open Source</h3>
-                  <p class="text-neutral-600 dark:text-neutral-400 text-sm">Community contributions and tools</p>
-                  <div class="mt-4 text-orange-600 dark:text-orange-400 text-sm font-medium">3 Projects</div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- Technologies Used -->
-          <section id="technologies" class="py-16">
-            <div class="max-w-6xl mx-auto text-center">
-              <h2 class="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-neutral-100 mb-12">
-                Technologies & Tools
-              </h2>
-              
-              <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                {['AWS', 'Docker', 'Kubernetes', 'Terraform', 'Ansible', 'Python', 'React', 'Node.js', 'PostgreSQL', 'Redis', 'Grafana', 'Prometheus'].map((tech) => (
-                  <div class="p-4 bg-white/80 dark:bg-neutral-800/80 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 hover:shadow-md transition-all duration-300 hover:scale-105">
-                    <div class="text-sm font-medium text-neutral-700 dark:text-neutral-300">{tech}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
+          <!-- Certifications Section -->
+          <CertificationsSection client:load />
 
           <!-- Call to Action -->
           {pages.projects.cta.enabled && (
