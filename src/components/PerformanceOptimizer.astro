@@ -6,24 +6,37 @@
 <script is:inline>
   // Critical performance optimizations
   (function() {
-    // Add loading class to body initially
-    document.body.classList.add('loading');
-    
-    // Remove loading class when DOM is ready
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', function() {
+    // Function to safely add loading classes to body
+    function initializeBodyClasses() {
+      if (document.body) {
+        document.body.classList.add('loading');
+      }
+    }
+
+    // Function to remove loading class when ready
+    function markAsLoaded() {
+      if (document.body) {
         document.body.classList.remove('loading');
         document.body.classList.add('loaded');
+      }
+    }
+
+    // Initialize body classes safely
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        initializeBodyClasses();
+        markAsLoaded();
       });
     } else {
-      document.body.classList.remove('loading');
-      document.body.classList.add('loaded');
+      // DOM is already ready
+      initializeBodyClasses();
+      markAsLoaded();
     }
     
     // Defer non-critical CSS loading
     function loadDeferredStyles() {
       const addStylesNode = document.getElementById('deferred-styles');
-      if (addStylesNode) {
+      if (addStylesNode && document.body) {
         const replacement = document.createElement('div');
         replacement.innerHTML = addStylesNode.textContent;
         document.body.appendChild(replacement);
@@ -137,4 +150,4 @@
 <link rel="dns-prefetch" href="//linkedin.com">
 
 <!-- Preload critical resources -->
-<link rel="modulepreload" href="/_astro/client.js" as="script">
+<!-- Note: client.js preload removed as it was causing 404 errors -->

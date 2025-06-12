@@ -1,5 +1,6 @@
 import { getCollection } from 'astro:content';
 import { seoConfig } from '../config/components';
+import { getEnabledStaticPages } from './pages';
 
 export interface SitemapURL {
   loc: string;
@@ -15,53 +16,13 @@ export async function generateSitemapURLs(): Promise<SitemapURL[]> {
   const urls: SitemapURL[] = [];
   const baseUrl = seoConfig.site.url;
 
-  // Static pages with their priorities and change frequencies
-  const staticPages = [
-    {
-      path: '/',
-      priority: 1.0,
-      changefreq: 'weekly' as const,
-      lastmod: new Date().toISOString()
-    },
-    {
-      path: '/blog',
-      priority: 0.9,
-      changefreq: 'daily' as const,
-      lastmod: new Date().toISOString()
-    },
-    {
-      path: '/projects',
-      priority: 0.8,
-      changefreq: 'weekly' as const,
-      lastmod: new Date().toISOString()
-    },
-    {
-      path: '/archive',
-      priority: 0.7,
-      changefreq: 'weekly' as const,
-      lastmod: new Date().toISOString()
-    },
-    {
-      path: '/contact',
-      priority: 0.6,
-      changefreq: 'monthly' as const,
-      lastmod: new Date().toISOString()
-    },
-    {
-      path: '/about',
-      priority: 0.5,
-      changefreq: 'monthly' as const,
-      lastmod: new Date().toISOString()
-    },
-    {
-      path: '/blog/tags',
-      priority: 0.4,
-      changefreq: 'weekly' as const,
-      lastmod: new Date().toISOString()
-    }
-  ];
+  // Get enabled static pages from utility
+  const staticPages = getEnabledStaticPages().map(page => ({
+    ...page,
+    lastmod: new Date().toISOString()
+  }));
 
-  // Add static pages
+  // Add static pages (already filtered for enabled ones)
   staticPages.forEach(page => {
     urls.push({
       loc: `${baseUrl}${page.path}`,

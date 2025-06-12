@@ -1,6 +1,7 @@
 import { FiHome, FiUser, FiFolder, FiArchive, FiMail, FiEdit3 } from 'react-icons/fi';
 import ThemeToggle from './ThemeToggle';
 import { componentConfig } from '../config/components';
+import { shouldShowInNavigation } from '../utils/pages';
 
 const { pages } = componentConfig;
 
