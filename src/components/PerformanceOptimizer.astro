@@ -3,7 +3,7 @@
 ---
 
 <!-- Performance optimization script -->
-<script is:inline>
+<script>
   // Critical performance optimizations
   (function() {
     // Function to safely add loading classes to body
@@ -98,44 +98,58 @@
     } else {
       preloadCriticalResources();
     }
-    
-    // Performance monitoring
-    if ('performance' in window && 'PerformanceObserver' in window) {
-      try {
-        // Monitor Largest Contentful Paint
-        const lcpObserver = new PerformanceObserver((list) => {
-          const entries = list.getEntries();
-          const lastEntry = entries[entries.length - 1];
+  })();
+</script>
+
+<!-- Performance monitoring script -->
+<script>
+  // Performance monitoring for LCP (Largest Contentful Paint)
+  if (window.location.hostname === 'localhost') {
+    try {
+      const lcpObserver = new PerformanceObserver((entryList) => {
+        const entries = entryList.getEntries();
+        if (entries.length > 0) {
+          const lcpEntry = entries[entries.length - 1];
+          const lcpTime = lcpEntry.startTime;
           
           // Log slow LCP in development
-          if (process.env.NODE_ENV === 'development' && lastEntry.startTime > 2500) {
-            console.warn(`Slow LCP detected: ${lastEntry.startTime.toFixed(2)}ms`);
+          if (lcpTime > 2500) {
+            console.log(`Slow LCP detected: ${lcpTime.toFixed(2)}ms`);
           }
-        });
-        
-        lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
-        
-        // Monitor Cumulative Layout Shift
-        const clsObserver = new PerformanceObserver((list) => {
-          let clsValue = 0;
-          for (const entry of list.getEntries()) {
-            if (!entry.hadRecentInput) {
-              clsValue += entry.value;
-            }
-          }
-          
-          // Log high CLS in development
-          if (process.env.NODE_ENV === 'development' && clsValue > 0.1) {
-            console.warn(`High CLS detected: ${clsValue.toFixed(4)}`);
-          }
-        });
-        
-        clsObserver.observe({ entryTypes: ['layout-shift'] });
-      } catch (error) {
-        // Silently fail if PerformanceObserver is not supported
-      }
+        }
+      });
+      
+      // Only observe LCP entries
+      lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
+    } catch (e) {
+      console.error('LCP monitoring error:', e);
     }
-  })();
+    
+    // Separate observer for CLS (Cumulative Layout Shift)
+    try {
+      const clsObserver = new PerformanceObserver((entryList) => {
+        let clsValue = 0;
+        
+        for (const entry of entryList.getEntries()) {
+          if (!entry.hadRecentInput) {
+            clsValue += entry.value;
+          }
+        }
+        
+        // Log high CLS in development
+        if (clsValue > 0.1) {
+          console.log(`High CLS detected: ${clsValue.toFixed(3)}`);
+        }
+      });
+      
+      // Only observe layout-shift entries if supported
+      if (PerformanceObserver.supportedEntryTypes?.includes('layout-shift')) {
+        clsObserver.observe({ type: 'layout-shift', buffered: true });
+      }
+    } catch (e) {
+      console.error('CLS monitoring error:', e);
+    }
+  }
 </script>
 
 <!-- Deferred styles placeholder -->

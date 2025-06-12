@@ -40,6 +40,7 @@ export default function BackToTop({ showAfter = 300, showProgress = true }: Back
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.8, y: 20 }}
           className="fixed bottom-8 right-8 z-50"
+          style={{ position: 'fixed', willChange: 'transform' }} /* Add willChange property */
         >
           <button
             onClick={scrollToTop}

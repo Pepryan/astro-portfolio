@@ -102,7 +102,8 @@ export default function FloatingNavigation() {
     return (
       <nav className="fixed bottom-8 sm:bottom-12 left-1/2 -translate-x-1/2 px-3 py-3 sm:px-4 sm:py-3
         bg-white/70 dark:bg-neutral-800/70 backdrop-blur-md rounded-full
-        shadow-lg border border-neutral-200 dark:border-neutral-700 z-40 opacity-50">
+        shadow-lg border border-neutral-200 dark:border-neutral-700 z-40 opacity-50"
+        style={{ willChange: 'transform' }}>
         <div className="flex items-center gap-3 sm:gap-4">
           {[...Array(4)].map((_, i) => (
             <div key={i} className="w-10 h-10 bg-neutral-200 dark:bg-neutral-600 rounded-full animate-pulse"></div>
@@ -116,7 +117,8 @@ export default function FloatingNavigation() {
   return (
     <nav className="fixed bottom-8 sm:bottom-12 left-1/2 -translate-x-1/2 px-3 py-3 sm:px-4 sm:py-3
       bg-white/70 dark:bg-neutral-800/70 backdrop-blur-md rounded-full
-      shadow-lg border border-neutral-200 dark:border-neutral-700 z-40">
+      shadow-lg border border-neutral-200 dark:border-neutral-700 z-40"
+      style={{ willChange: 'transform' }}>
       <motion.div
         className="flex items-center gap-3 sm:gap-4"
         initial={{ scale: 0.8, opacity: 0, y: 20 }}
