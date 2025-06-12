@@ -8,6 +8,7 @@ import FloatingNavigation from '../components/FloatingNavigation';
 import Footer from '../components/Footer';
 import { generateSEO } from '../utils/seo';
 import { componentConfig } from '../config/components';
+import { validatePageAccess } from '../utils/pages';
 
 const { pages } = componentConfig;
 
@@ -19,9 +20,15 @@ const projectsSEO = generateSEO({
   keywords: ['projects', 'portfolio', 'cloud engineering', 'devops', 'web development', 'aws', 'kubernetes']
 });
 
-// Check if projects page is enabled
-if (!pages.projects.enabled) {
-  return Astro.redirect('/');
+// Validate page access - this will throw error if page is disabled
+try {
+  validatePageAccess('projects');
+} catch (error) {
+  // Page is disabled, return 404
+  return new Response(null, {
+    status: 404,
+    statusText: 'Page not found'
+  });
 }
 ---
 

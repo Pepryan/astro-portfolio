@@ -14,6 +14,7 @@ import FloatingBlogButton from '../components/FloatingBlogButton';
 import Footer from '../components/Footer';
 import { generateSEO } from '../utils/seo';
 import { componentConfig } from '../config/components';
+import { shouldShowAboutSection, shouldShowContactSection } from '../utils/pages';
 
 const { homepage } = componentConfig;
 
@@ -51,8 +52,8 @@ const homepageSEO = generateSEO({
           </section>
         )}
 
-        {homepage.sections.bentoGrid && (
-          <!-- Bento Grid Section -->
+        {homepage.sections.bentoGrid && shouldShowAboutSection() && (
+          <!-- Bento Grid Section - Only show if about page is enabled -->
           <section id="about" class="relative">
             <BentoGrid client:only="react" />
           </section>

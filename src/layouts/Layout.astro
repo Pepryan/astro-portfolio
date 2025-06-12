@@ -98,9 +98,6 @@ const seoData = generateSEO({
       enabled={seoConfig.analytics.enabled}
     />
 
-    <!-- Performance Optimizations -->
-    <PerformanceOptimizer />
-
     <!-- Theme Script -->
     <script is:inline>
       // Prevent flash of unstyled content (FOUC)
@@ -133,6 +130,9 @@ const seoData = generateSEO({
   </head>
   <body class="bg-white dark:bg-neutral-900 transition-colors">
     <slot />
+
+    <!-- Performance Optimizations - moved to body to ensure DOM is ready -->
+    <PerformanceOptimizer />
 
     <!-- Copy Code Script for all pages -->
     <CopyCodeScript />
