@@ -101,12 +101,6 @@ export default function StoryJourney() {
       className="py-16 sm:py-24 relative overflow-hidden"
       style={{ opacity }}
     >
-      {/* Background Elements */}
-      <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-blue-50/30 via-purple-50/20 to-transparent
-          dark:from-blue-900/10 dark:via-purple-900/10 dark:to-transparent"
-        style={{ y }}
-      />
 
       <div className="max-w-6xl mx-auto px-4">
         {/* Section Header */}
@@ -213,8 +207,8 @@ export default function StoryJourney() {
             </div>
           </div>
 
-          {/* Mobile Layout */}
-          <div className="md:hidden space-y-8">
+          {/* Mobile Layout - widened for better mobile display */}
+          <div className="md:hidden space-y-8 px-2 mx-auto w-full">
             {storyJourney.milestones.map((milestone, index) => (
               <motion.div
                 key={milestone.year}

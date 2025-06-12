@@ -139,11 +139,6 @@ export default function Hero() {
           animate="visible"
           variants={containerVariants}
         >
-          {/* Enhanced Background with Storytelling Elements */}
-          <div
-            className="absolute inset-0 bg-gradient-to-br from-blue-50/30 via-purple-50/20 to-transparent
-              dark:from-blue-900/10 dark:via-purple-900/10 dark:to-transparent -z-10"
-          />
 
           {/* Floating Story Elements */}
           <motion.div
@@ -154,7 +149,7 @@ export default function Hero() {
             💻
           </motion.div>
           <motion.div
-            className="absolute top-32 right-16 text-4xl opacity-20"
+            className="absolute top-32 right-16 text-6xl opacity-20"
             variants={floatingVariants}
             animate="animate"
             transition={{ delay: 1 }}
@@ -162,7 +157,7 @@ export default function Hero() {
             ☁️
           </motion.div>
           <motion.div
-            className="absolute bottom-32 left-20 text-5xl opacity-20"
+            className="absolute bottom-16 left-20 text-5xl opacity-20"
             variants={floatingVariants}
             animate="animate"
             transition={{ delay: 2 }}
