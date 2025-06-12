@@ -1,0 +1,240 @@
+---
+title: 'Deploy Website Statis ke Cloudflare Pages, Gratis & Powerful! 🚀⚡'
+date: '2025-06-12'
+updated: '2025-06-12'
+tags: ['astro', 'cloudflare', 'deployment', 'hosting', 'static site', 'cdn', 'devtool', 'gratis']
+draft: false
+summary: 'Ingin website statis kamu tampil cepat, aman, dan gratis selamanya? Cloudflare Pages jawabannya. Yuk deploy proyek kamu sekarang juga!'
+thumbnail: "/images/cloudflare-logo-cloud-thumbnail.webp"
+author: "Febryan"
+category: "Tutorial"
+difficulty: "Beginner"
+keywords: ["astro deploy", "cloudflare pages", "static site hosting", "gratis hosting", "deploy ke CDN", "dev portfolio", "cloudflare tutorial"]
+openGraph:
+  title: "Tutorial Deploy Website ke Cloudflare Pages ⚡"
+  description: "Langkah-langkah deploy website statis (Astro, Next.js, dll) ke Cloudflare Pages dengan Git integration dan custom domain. Gratis & powerful!"
+  image: "/images/cloudflare-logo-cloud-thumbnail.webp"
+  url: "https://febryan.web.id/blog/deploy-static-site-cloudflare"
+twitter:
+  card: "summary_large_image"
+  title: "Deploy Website Statis ke Cloudflare Pages 🚀"
+  description: "Tutorial lengkap untuk deploy website kamu ke Cloudflare Pages. Gratis, cepat, dan aman!"
+  image: "/images/cloudflare-logo-cloud-thumbnail.webp"
+schema:
+  type: "HowTo"
+  headline: "Deploy Website Statis ke Cloudflare Pages"
+  description: "Tutorial step-by-step deploy website statis ke Cloudflare Pages, lengkap dengan integrasi Git, custom domain, dan fitur unggulan."
+  author:
+    name: "Febryan"
+    url: "https://febryan.web.id"
+  datePublished: "2025-06-12"
+  dateModified: "2025-06-12"
+  publisher:
+    name: "Febryan Portfolio"
+    url: "https://febryan.web.id"
+---
+# Tutorial Deploy Website Statis ke Cloudflare Pages - Gratis Selamanya!
+
+Cloudflare Pages adalah salah satu platform hosting gratis terbaik untuk website statis. Dengan fitur unlimited bandwidth, SSL otomatis, dan integrasi Git yang mudah, platform ini sangat cocok untuk developer yang ingin hosting website tanpa biaya.
+
+Dalam tutorial ini, saya akan menggunakan contoh nyata website saya [febryan.web.id](https://febryan.web.id) yang dibuat dengan **Astro + TypeScript** dengan custom component dan fitur-fitur modern.
+
+## ✅ Persyaratan
+
+Sebelum memulai, pastikan kamu sudah punya:
+- Akun [Cloudflare](https://dash.cloudflare.com/sign-up) (gratis)
+- Repository website di GitHub, GitLab, atau Bitbucket
+- Website yang sudah siap deploy (dalam contoh ini: Astro project)
+
+## Langkah 1: Masuk ke Cloudflare Dashboard
+
+1. Login ke [Cloudflare Dashboard](https://dash.cloudflare.com/)
+2. Di sidebar kiri, pilih **"Workers & Pages"**
+3. Klik tombol **"Create application"**
+4. Pilih tab **"Pages"**
+5. Klik **"Import an existing Git repository"**
+
+![worker-pages](/public/images/blog/cloudflare-pages-worker-pages.webp)
+![connect to git](/public/images/blog/cloudflare-pages-import-github.webp)
+
+## Langkah 2: Hubungkan Repository
+
+1. Pilih Git provider (GitHub, GitLab, atau Bitbucket)
+2. Authorize Cloudflare untuk mengakses repository kamu
+3. Pilih repository yang berisi website yang ingin di-deploy
+4. Klik **"Begin setup"**
+
+## Langkah 3: Konfigurasi Build Settings
+![cloudflare-build](/public/images/blog/cloudflare-pages-build-settings.webp)
+
+Karena saya menggunakan Astro, berikut konfigurasi yang diperlukan:
+
+### Build Settings untuk Astro:
+- **Framework preset**: Astro
+- **Build command**: `npm run build` (biasanya sudah terisi otomatis)
+- **Build output directory**: `dist` (biasanya sudah terisi otomatis)
+- **Root directory**: (kosongkan jika project di root)
+
+### Environment Variables (Opsional):
+Jika website kamu membutuhkan environment variables, tambahkan di bagian ini.
+
+## Langkah 4: Deploy!
+
+1. Review semua pengaturan
+2. Klik **"Save and Deploy"**
+3. Tunggu proses build selesai (biasanya 1-3 menit)
+4. Setelah selesai, kamu akan mendapat URL: `https://nama-project.pages.dev`
+
+![cloudflare-build-deploy](/public/images/blog/cloudflare-pages-build-deploy.webp)
+![cloudflrae-deploy-success](/public/images/blog/cloudflare-pages-build-deploy-success.webp)
+
+## Langkah 5: Setup Custom Domain (Opsional)
+
+Jika kamu ingin menggunakan domain sendiri, ikuti langkah berikut:
+
+### A. Beli Domain
+Beli domain dari provider seperti Namecheap, GoDaddy, Domainesia atau Niagahoster.
+
+### B. Tambahkan Domain ke Cloudflare
+1. Di Cloudflare Dashboard, pilih **"Websites"**
+2. Klik **"Add a site"**
+3. Masukkan nama domain kamu
+4. Pilih plan **"Free"**
+5. Cloudflare akan scan DNS records existing
+
+### C. Ganti Nameserver
+1. Cloudflare akan memberikan 2 nameserver, contoh:
+   - `anya.ns.cloudflare.com`
+   - `bart.ns.cloudflare.com`
+2. Login ke control panel domain provider kamu
+3. Ganti nameserver ke yang diberikan Cloudflare
+4. Tunggu propagasi DNS (bisa sampai 24 jam)
+
+### D. Hubungkan Domain ke Pages
+1. Kembali ke **"Workers & Pages"**
+2. Pilih project kamu
+3. Klik tab **"Custom domains"**
+4. Klik **"Set up a custom domain"**
+5. Masukkan domain kamu
+6. Klik **"Continue"**
+7. Pilih **"Activate domain"**
+
+DNS record akan otomatis dibuat dan domain kamu akan aktif dalam beberapa menit.
+
+## Fitur Bonus Cloudflare Pages
+
+### 🔁 Automatic Deployments
+Setiap kali kamu push ke branch utama, website akan otomatis ter-deploy ulang.
+
+### 🧪 Preview Deployments
+Setiap pull request akan mendapat preview URL tersendiri.
+
+### 📊 Analytics
+Cloudflare menyediakan analytics gratis untuk traffic website kamu.
+
+### 🔐 SSL/TLS Gratis Otomatis
+HTTPS otomatis aktif untuk semua domain.
+
+### 🌎 Edge Locations
+Website kamu akan di-cache di 200+ lokasi di seluruh dunia.
+
+## Tips dan Troubleshooting
+| Masalah                   | Solusi                                     |
+| ------------------------- | ------------------------------------------ |
+| Build error               | Cek `build script`, dependencies, dan logs |
+| Website tidak update      | Pastikan push ke branch yang di-track      |
+| Custom domain tidak aktif | Cek propagasi DNS & status nameserver      |
+
+
+## Kenapa Pilih Cloudflare Pages?
+
+Setelah mencoba berbagai platform hosting gratis, berikut perbandingan lengkap:
+
+### 🏆 Ranking Platform Hosting Gratis 2025
+
+| Platform | Rating | Bandwidth | Build Minutes | Best For |
+|----------|--------|-----------|---------------|----------|
+| **Cloudflare Pages** | ⭐⭐⭐⭐⭐ | ♾️ Unlimited | ♾️ Unlimited | Production websites |
+| **Netlify** | ⭐⭐⭐⭐ | 100GB/bulan | 300 menit/bulan | Prototyping & learning |
+| **Vercel** | ⭐⭐⭐⭐ | 100GB/bulan | 6000 menit/bulan | Next.js projects |
+| **GitHub Pages** | ⭐⭐⭐ | ♾️ Unlimited | ♾️ Unlimited | Blog & documentation |
+| **Surge.sh** | ⭐⭐⭐ | Limited | No build | Quick demos |
+
+### 🔥 Cloudflare Pages (Juara Overall!)
+
+**✅ Kelebihan:**
+- **Unlimited bandwidth** - Tidak ada batasan sama sekali
+- **200+ edge locations** - Loading cepat di seluruh dunia
+- **Build time unlimited** - Tidak ada batasan waktu build
+- **SSL otomatis** - HTTPS langsung aktif
+- **Analytics gratis** - Web analytics lengkap
+- **DDoS protection** - Keamanan enterprise level
+- **Preview deployments** - URL preview untuk setiap PR
+- **Custom domains unlimited** - Bisa tambah domain sebanyak-banyaknya
+
+**❌ Kekurangan:**
+- Setup awal agak ribet untuk pemula
+- Interface dashboard cukup kompleks
+
+### 🚀 Netlify (Terbaik untuk Pemula)
+
+**✅ Kelebihan:**
+- **User-friendly** - Interface paling mudah dipahami
+- **Drag & drop deploy** - Bisa upload folder langsung
+- **Form handling** - Bisa handle form submission
+- **Split testing** - A/B testing built-in
+
+**❌ Kekurangan:**
+- **300 build minutes/bulan** - Terbatas untuk project aktif
+- **100GB bandwidth/bulan** - Bisa habis kalau traffic tinggi
+
+### ⚡ Vercel (Next.js Specialist)
+
+**✅ Kelebihan:**
+- **Next.js native** - Optimasi terbaik untuk Next.js
+- **Edge functions** - Serverless functions di edge
+- **Fast builds** - Build time sangat cepat
+
+**❌ Kekurangan:**
+- **Commercial usage restriction** - Gratis cuma untuk personal
+- **Expensive scaling** - Harga naik drastis pas upgrade
+
+### 📚 GitHub Pages (Simple & Reliable)
+
+**✅ Kelebihan:**
+- **Super simple** - Tinggal aktifkan di repository settings
+- **Jekyll integration** - Built-in Jekyll support
+- **Version control** - Terintegrasi langsung dengan Git
+
+**❌ Kekurangan:**
+- **Static only** - Tidak support serverless functions
+- **No analytics** - Tidak ada web analytics
+- **Jekyll limitation** - Secara default cuma support Jekyll
+
+### 🎯 Cloudflare Pages menang karena
+- Unlimited bandwidth dan build minutes
+- Global CDN (200+ lokasi)
+- SSL otomatis + DDoS protection
+- Analytics gratis
+- Preview deployments
+- Serverless functions support
+
+## Kesimpulan
+
+Cloudflare Pages adalah solusi hosting gratis yang sangat powerful. Dengan setup yang mudah, performa yang cepat, dan fitur-fitur premium tanpa biaya, platform ini sangat cocok untuk website statis modern.
+
+Kalau kamu butuh platform hosting yang:
+- Gratis
+- Cepat
+- Aman
+- Siap production
+
+...maka Cloudflare Pages layak jadi pilihan utama.
+
+Website [febryan.web.id](https://febryan.web.id) sendiri sudah live dan 100% served via Cloudflare. Performanya stabil dan bebas mikirin billing hosting! (modal domain aja hehe)
+
+Selamat mencoba dan semoga website kamu sukses online! 🚀
+
+---
+
+*Artikel ini menggunakan contoh deployment website Astro + TypeScript. Untuk framework lain seperti Next.js, Nuxt, atau Gatsby, prosesnya hampir sama dengan template yang berbeda.*

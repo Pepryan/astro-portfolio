@@ -11,7 +11,8 @@
     "astro": "astro",
     "deploy": "npm run build && touch dist/.nojekyll && gh-pages -d dist --dotfiles",
     "validate-sitemap": "node scripts/validate-sitemap.js",
-    "build:validate": "npm run build && npm run validate-sitemap"
+    "build:validate": "npm run build && npm run validate-sitemap",
+    "compress-images": "node scripts/compress-images.js"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.0.0",

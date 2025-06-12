@@ -16,7 +16,7 @@ A cutting-edge, high-performance personal portfolio and blog built with **Astro 
 🔧 **Architecture**: Static Site Generation with Islands Architecture
 ☁️ **Hosting**: Cloudflare Pages with global CDN
 
-![Portfolio Preview](public/images/preview.png)
+![Portfolio Preview](public/images/preview.webp)
 
 ## 🎯 Project Overview
 
@@ -174,9 +174,9 @@ astro-portfolio/
 │       └── components.ts       # Site configuration
 ├── public/                     # Static assets
 │   ├── images/                 # Image assets
-│   │   ├── default-og-image.png # Default Open Graph image
+│   │   ├── default-og-image.webp # Default Open Graph image
 │   │   ├── default-og-image.svg # SVG version
-│   │   └── preview.png         # Portfolio preview
+│   │   └── preview.webp         # Portfolio preview
 │   ├── documents/              # Downloadable files
 │   ├── favicon.ico             # Site favicon
 │   ├── robots.txt              # Search engine directives

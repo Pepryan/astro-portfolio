@@ -35,7 +35,7 @@ export const seoConfig = {
 
   // Default Images
   images: {
-    default: "https://febryan.web.id/images/default-og-image.png",
+    default: "https://febryan.web.id/images/default-og-image.webp",
     logo: "https://febryan.web.id/images/logo.png",
     favicon: "/favicon.ico",
     appleTouchIcon: "/apple-touch-icon.png"
@@ -180,6 +180,34 @@ export const componentConfig = {
         description: "Started with PC building and hardware optimization",
         icon: "🔧",
         color: "blue"
+      },
+      {
+        year: "2012-2013",
+        title: "Networking Foundation",
+        description: "SMK period learning networking fundamentals at Cisco Academy",
+        icon: "🌐",
+        color: "indigo"
+      },
+      {
+        year: "2014",
+        title: "Linux & Development",
+        description: "Diving into Linux systems, PHP development, and troubleshooting",
+        icon: "🐧",
+        color: "green"
+      },
+      {
+        year: "2014-2017",
+        title: "University Learning",
+        description: "Studying SDLC, algorithms, and business IT at university",
+        icon: "🎓",
+        color: "purple"
+      },
+      {
+        year: "2017-2020",
+        title: "Skill Development",
+        description: "Expanding technical expertise and preparing for professional career",
+        icon: "📚",
+        color: "orange"
       },
       {
         year: "2020",
@@ -505,7 +533,7 @@ export const componentConfig = {
         id: 'smkn3',
         degree: 'Computer and Network Engineering',
         institution: 'SMKN 3 Bogor',
-        period: '2011 - 2014',
+        period: '2012 - 2014',
         location: 'Bogor',
         type: 'Vocational High School',
         gpa: null,

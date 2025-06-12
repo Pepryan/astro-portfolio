@@ -18,7 +18,7 @@ Setelah berbulan-bulan menggunakan Next.js 15 untuk blog pribadi, saya mulai mer
 ### Masalah yang Saya Hadapi dengan Next.js
 
 **1. Build Time yang Lambat**
-Setiap kali saya ingin publish artikel baru, proses build di Vercel memakan waktu 2-3 menit. Untuk blog dengan 10-15 artikel, ini terasa berlebihan.
+Setiap kali saya ingin publish artikel baru, proses build cukup lambat jika nantinya post sudah banyak.
 
 **2. Bundle Size yang Besar**
 Meskipun hanya menampilkan konten statis, JavaScript bundle yang dihasilkan cukup besar karena React runtime dan Next.js overhead.
@@ -54,32 +54,7 @@ cd astro-portfolio
 npm install
 ```
 
-### 2. Konfigurasi Content Collections
-
-Salah satu fitur terbaik Astro adalah Content Collections yang memberikan type safety untuk konten markdown:
-
-```typescript
-// src/content/config.ts
-import { defineCollection, z } from 'astro:content';
-
-const postsCollection = defineCollection({
-  type: 'content',
-  schema: z.object({
-    title: z.string(),
-    date: z.date(),
-    summary: z.string(),
-    tags: z.array(z.string()),
-    draft: z.boolean().default(false),
-    featuredImage: z.string().optional(),
-  }),
-});
-
-export const collections = {
-  posts: postsCollection,
-};
-```
-
-### 3. Migrasi Komponen React
+### 2. Migrasi Komponen React
 
 Untuk komponen yang memerlukan interaktivitas, saya menggunakan React dengan directive `client:load`:
 
@@ -92,7 +67,7 @@ import ThemeToggleReact from './ThemeToggleReact.tsx';
 <ThemeToggleReact client:load />
 ```
 
-### 4. Setup Routing dan Layout
+### 3. Setup Routing dan Layout
 
 Astro menggunakan file-based routing yang sangat intuitif:
 
@@ -121,22 +96,6 @@ const { Content } = await post.render();
   </article>
 </Layout>
 ```
-
-## Hasil Migrasi: Analisis Performa
-
-### Metrics Sebelum (Next.js)
-- **Build Time**: 2-3 menit
-- **Bundle Size**: ~180KB (gzipped)
-- **Lighthouse Score**: 85-90
-- **First Contentful Paint**: 1.2s
-- **Time to Interactive**: 2.1s
-
-### Metrics Sesudah (Astro)
-- **Build Time**: 30-45 detik
-- **Bundle Size**: ~15KB (gzipped)
-- **Lighthouse Score**: 98-100
-- **First Contentful Paint**: 0.6s
-- **Time to Interactive**: 0.8s
 
 ### Insight Penting
 
@@ -179,30 +138,6 @@ Migrasi dari GitHub Pages ke Cloudflare Pages memberikan beberapa keuntungan:
 - **Analytics**: Built-in web analytics
 - **Edge Functions**: Serverless functions di edge (jika diperlukan)
 
-## Tantangan dan Solusi
-
-### 1. Dynamic Imports
-
-**Masalah**: Beberapa komponen React memerlukan dynamic imports.
-
-**Solusi**: Menggunakan `client:visible` directive untuk lazy loading:
-
-```astro
-<HeavyComponent client:visible />
-```
-
-### 3. State Management
-
-**Masalah**: Sharing state antar komponen tanpa React Context.
-
-**Solusi**: Menggunakan Nano Stores untuk state management yang ringan:
-
-```javascript
-// src/stores/theme.js
-import { atom } from 'nanostores';
-
-export const theme = atom('light');
-```
 
 ## Tips Optimasi Lanjutan
 
