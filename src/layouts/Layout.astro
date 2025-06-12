@@ -4,6 +4,7 @@ import CustomHead from '../components/CustomHead.astro';
 import GoogleAnalytics from '../components/GoogleAnalytics.astro';
 import StructuredData from '../components/StructuredData.astro';
 import CopyCodeScript from '../components/CopyCodeScript.astro';
+import PerformanceOptimizer from '../components/PerformanceOptimizer.astro';
 import { seoConfig } from '../config/components';
 import { generateSEO } from '../utils/seo';
 
@@ -96,6 +97,9 @@ const seoData = generateSEO({
       id={seoConfig.analytics.googleAnalyticsId}
       enabled={seoConfig.analytics.enabled}
     />
+
+    <!-- Performance Optimizations -->
+    <PerformanceOptimizer />
 
     <!-- Theme Script -->
     <script is:inline>

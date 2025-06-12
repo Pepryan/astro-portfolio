@@ -1,0 +1,140 @@
+---
+// Performance optimization component for critical CSS and resource loading
+---
+
+<!-- Performance optimization script -->
+<script is:inline>
+  // Critical performance optimizations
+  (function() {
+    // Add loading class to body initially
+    document.body.classList.add('loading');
+    
+    // Remove loading class when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        document.body.classList.remove('loading');
+        document.body.classList.add('loaded');
+      });
+    } else {
+      document.body.classList.remove('loading');
+      document.body.classList.add('loaded');
+    }
+    
+    // Defer non-critical CSS loading
+    function loadDeferredStyles() {
+      const addStylesNode = document.getElementById('deferred-styles');
+      if (addStylesNode) {
+        const replacement = document.createElement('div');
+        replacement.innerHTML = addStylesNode.textContent;
+        document.body.appendChild(replacement);
+        addStylesNode.parentElement.removeChild(addStylesNode);
+      }
+    }
+    
+    // Load deferred styles after page load
+    if (window.addEventListener) {
+      window.addEventListener('load', loadDeferredStyles, false);
+    } else if (window.attachEvent) {
+      window.attachEvent('onload', loadDeferredStyles);
+    }
+    
+    // Optimize images with lazy loading
+    if ('IntersectionObserver' in window) {
+      const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            if (img.dataset.src) {
+              img.src = img.dataset.src;
+              img.classList.remove('lazy');
+              observer.unobserve(img);
+            }
+          }
+        });
+      });
+      
+      // Observe all lazy images when DOM is ready
+      function observeLazyImages() {
+        const lazyImages = document.querySelectorAll('img[data-src]');
+        lazyImages.forEach(img => imageObserver.observe(img));
+      }
+      
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', observeLazyImages);
+      } else {
+        observeLazyImages();
+      }
+    }
+    
+    // Preload critical resources
+    function preloadCriticalResources() {
+      // Preload hero image if exists
+      const heroImg = document.querySelector('.hero-image');
+      if (heroImg && heroImg.dataset.src) {
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'image';
+        link.href = heroImg.dataset.src;
+        document.head.appendChild(link);
+      }
+    }
+    
+    // Run preload after DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', preloadCriticalResources);
+    } else {
+      preloadCriticalResources();
+    }
+    
+    // Performance monitoring
+    if ('performance' in window && 'PerformanceObserver' in window) {
+      try {
+        // Monitor Largest Contentful Paint
+        const lcpObserver = new PerformanceObserver((list) => {
+          const entries = list.getEntries();
+          const lastEntry = entries[entries.length - 1];
+          
+          // Log slow LCP in development
+          if (process.env.NODE_ENV === 'development' && lastEntry.startTime > 2500) {
+            console.warn(`Slow LCP detected: ${lastEntry.startTime.toFixed(2)}ms`);
+          }
+        });
+        
+        lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
+        
+        // Monitor Cumulative Layout Shift
+        const clsObserver = new PerformanceObserver((list) => {
+          let clsValue = 0;
+          for (const entry of list.getEntries()) {
+            if (!entry.hadRecentInput) {
+              clsValue += entry.value;
+            }
+          }
+          
+          // Log high CLS in development
+          if (process.env.NODE_ENV === 'development' && clsValue > 0.1) {
+            console.warn(`High CLS detected: ${clsValue.toFixed(4)}`);
+          }
+        });
+        
+        clsObserver.observe({ entryTypes: ['layout-shift'] });
+      } catch (error) {
+        // Silently fail if PerformanceObserver is not supported
+      }
+    }
+  })();
+</script>
+
+<!-- Deferred styles placeholder -->
+<noscript id="deferred-styles">
+  <!-- Non-critical CSS will be loaded here -->
+</noscript>
+
+<!-- Resource hints for better performance -->
+<link rel="dns-prefetch" href="//fonts.googleapis.com">
+<link rel="dns-prefetch" href="//fonts.gstatic.com">
+<link rel="dns-prefetch" href="//github.com">
+<link rel="dns-prefetch" href="//linkedin.com">
+
+<!-- Preload critical resources -->
+<link rel="modulepreload" href="/_astro/client.js" as="script">
