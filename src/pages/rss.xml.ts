@@ -13,7 +13,7 @@ export async function GET(context: APIContext) {
   return rss({
     title: 'Febryan Ramadhan Blog',
     description: 'Technical articles about cloud engineering, DevOps, infrastructure, automation, and modern web development.',
-    site: context.site ?? 'https://pepryan.github.io',
+    site: context.site ?? 'https://febryan.web.id',
     items: publishedPosts.map((post) => ({
       title: post.data.title,
       pubDate: post.data.date,
