@@ -1,26 +1,47 @@
 ---
+import { seoConfig } from '../config/components';
+
 export interface Props {
   id?: string;
+  enabled?: boolean;
 }
 
-const { id = "G-XXXXXXXXXX" } = Astro.props;
+const {
+  id = seoConfig.analytics.googleAnalyticsId,
+  enabled = seoConfig.analytics.enabled
+} = Astro.props;
 
-// Only load in production
+// Only load if enabled and in production (or if loadOnlyInProduction is false)
 const isProduction = import.meta.env.PROD;
+const shouldLoad = enabled &&
+  id &&
+  id !== "G-XXXXXXXXXX" &&
+  (seoConfig.analytics.loadOnlyInProduction ? isProduction : true);
+
+// Check for Do Not Track if respectDoNotTrack is enabled
+const respectDoNotTrack = seoConfig.analytics.respectDoNotTrack;
 ---
 
-{isProduction && id && (
+{shouldLoad && (
   <>
     <!-- Google tag (gtag.js) -->
-    <script async src={`https://www.googletagmanager.com/gtag/js?id=${id}`}></script>
-    <script is:inline define:vars={{ id }}>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', id, {
-        page_title: document.title,
-        page_location: window.location.href,
-      });
+    <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${id}`}></script>
+    <script is:inline define:vars={{ id, respectDoNotTrack }}>
+      // Check for Do Not Track preference
+      if (respectDoNotTrack && (navigator.doNotTrack === '1' || window.doNotTrack === '1')) {
+        console.log('Google Analytics disabled due to Do Not Track preference');
+      } else {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', id, {
+          page_title: document.title,
+          page_location: window.location.href,
+          anonymize_ip: true, // Enhanced privacy
+          allow_google_signals: false, // Enhanced privacy
+          allow_ad_personalization_signals: false // Enhanced privacy
+        });
+      }
     </script>
   </>
 )}
