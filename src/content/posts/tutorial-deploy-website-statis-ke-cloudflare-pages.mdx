@@ -123,11 +123,11 @@ DNS record akan otomatis dibuat dan domain kamu akan aktif dalam beberapa menit.
 
 ## Fitur Bonus Cloudflare Pages
 
-### 🔁 Automatic Deployments
-Setiap kali kamu push ke branch utama, website akan otomatis ter-deploy ulang.
+### 🔁 Built-in CI/CD Pipeline
+Setiap kali kamu push ke branch utama, website akan otomatis ter-build dan deploy ulang tanpa perlu setup tambahan.
 
 ### 🧪 Preview Deployments
-Setiap pull request akan mendapat preview URL tersendiri.
+Setiap pull request akan mendapat preview URL tersendiri untuk testing sebelum merge.
 
 ### 📊 Analytics
 Cloudflare menyediakan analytics gratis untuk traffic website kamu.
@@ -137,6 +137,9 @@ HTTPS otomatis aktif untuk semua domain.
 
 ### 🌎 Edge Locations
 Website kamu akan di-cache di 200+ lokasi di seluruh dunia.
+
+### ⚠️ Batasan Build
+Pada plan gratis, Cloudflare Pages membatasi hingga 100 builds per bulan [referensi](https://developers.cloudflare.com/pages/platform/limits/).
 
 ## Tips dan Troubleshooting
 | Masalah                   | Solusi                                     |
@@ -154,18 +157,18 @@ Setelah mencoba berbagai platform hosting gratis, berikut perbandingan lengkap:
 
 | Platform | Rating | Bandwidth | Build Minutes | Best For |
 |----------|--------|-----------|---------------|----------|
-| **Cloudflare Pages** | ⭐⭐⭐⭐⭐ | ♾️ Unlimited | ♾️ Unlimited | Production websites |
+| **Cloudflare Pages** | ⭐⭐⭐⭐⭐ | ♾️ Unlimited | 500 builds/bulan | Production websites |
 | **Netlify** | ⭐⭐⭐⭐ | 100GB/bulan | 300 menit/bulan | Prototyping & learning |
 | **Vercel** | ⭐⭐⭐⭐ | 100GB/bulan | 6000 menit/bulan | Next.js projects |
-| **GitHub Pages** | ⭐⭐⭐ | ♾️ Unlimited | ♾️ Unlimited | Blog & documentation |
+| **GitHub Pages** | ⭐⭐⭐⭐ | ♾️ Unlimited | ♾️ Unlimited (tapi lebih lambat dibanding cloudflare) | Blog & documentation |
 | **Surge.sh** | ⭐⭐⭐ | Limited | No build | Quick demos |
 
 ### 🔥 Cloudflare Pages (Juara Overall!)
 
 **✅ Kelebihan:**
 - **Unlimited bandwidth** - Tidak ada batasan sama sekali
-- **200+ edge locations** - Loading cepat di seluruh dunia
-- **Build time unlimited** - Tidak ada batasan waktu build
+- **200+ edge locations** - Loading cepat di seluruh dunia (Ini yang membedakan dengan github-pages)
+- **Built-in CI/CD** - Otomatis build & deploy dari Git
 - **SSL otomatis** - HTTPS langsung aktif
 - **Analytics gratis** - Web analytics lengkap
 - **DDoS protection** - Keamanan enterprise level
@@ -173,6 +176,8 @@ Setelah mencoba berbagai platform hosting gratis, berikut perbandingan lengkap:
 - **Custom domains unlimited** - Bisa tambah domain sebanyak-banyaknya
 
 **❌ Kekurangan:**
+- **500 builds/bulan limit**. [referensi](https://developers.cloudflare.com/pages/platform/limits/)
+- Terbatas untuk project yang sering update
 - Setup awal agak ribet untuk pemula
 - Interface dashboard cukup kompleks
 
@@ -212,8 +217,9 @@ Setelah mencoba berbagai platform hosting gratis, berikut perbandingan lengkap:
 - **Jekyll limitation** - Secara default cuma support Jekyll
 
 ### 🎯 Cloudflare Pages menang karena
-- Unlimited bandwidth dan build minutes
+- Unlimited bandwidth
 - Global CDN (200+ lokasi)
+- Built-in CI/CD pipeline
 - SSL otomatis + DDoS protection
 - Analytics gratis
 - Preview deployments
@@ -236,5 +242,6 @@ Website [febryan.web.id](https://febryan.web.id) sendiri sudah live dan 100% ser
 Selamat mencoba dan semoga website kamu sukses online! 🚀
 
 ---
+*Rating dan perbandingan di atas merupakan opini pribadi berdasarkan pengalaman penggunaan.*
 
 *Artikel ini menggunakan contoh deployment website Astro + TypeScript. Untuk framework lain seperti Next.js, Nuxt, atau Gatsby, prosesnya hampir sama dengan template yang berbeda.*
