@@ -224,7 +224,7 @@ export default function Hero() {
           </motion.div>
 
           <motion.div
-            className="flex justify-center gap-6 px-4"
+            className="flex flex-wrap justify-center gap-3 sm:gap-4 md:gap-6 px-4 max-w-md mx-auto"
             variants={itemVariants}
           >
             {socialLinks.map(({ icon: Icon, href, label }) => (
@@ -233,15 +233,16 @@ export default function Hero() {
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="relative p-4 text-neutral-600 dark:text-neutral-400
+                className="relative p-3 sm:p-4 text-neutral-600 dark:text-neutral-400
                   hover:text-blue-600 dark:hover:text-blue-400
                   hover:bg-blue-50 dark:hover:bg-blue-900/20
-                  rounded-full transition-all duration-300 group"
+                  rounded-full transition-all duration-300 group
+                  min-w-[48px] min-h-[48px] flex items-center justify-center"
                 whileHover={{ scale: 1.1, y: -4 }}
                 whileTap={{ scale: 0.95 }}
                 aria-label={label}
               >
-                <Icon className="w-6 h-6 relative z-10" />
+                <Icon className="w-5 h-5 sm:w-6 sm:h-6 relative z-10 flex-shrink-0" />
 
                 {/* Hover glow effect */}
                 <motion.div
