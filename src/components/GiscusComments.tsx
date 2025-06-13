@@ -26,10 +26,10 @@ export default function GiscusComments({ slug, title }: GiscusCommentsProps) {
 
     const script = document.createElement('script');
     script.src = 'https://giscus.app/client.js';
-    script.setAttribute('data-repo', 'pepryan/portfolio');
-    script.setAttribute('data-repo-id', 'R_kgDONJYGJw');
+    script.setAttribute('data-repo', 'pepryan/astro-portfolio');
+    script.setAttribute('data-repo-id', 'R_kgDOO5SeXA');
     script.setAttribute('data-category', 'General');
-    script.setAttribute('data-category-id', 'DIC_kwDONJYGJ84CkwQs');
+    script.setAttribute('data-category-id', 'DIC_kwDOO5SeXM4CrbXV');
     script.setAttribute('data-mapping', 'pathname');
     script.setAttribute('data-strict', '0');
     script.setAttribute('data-reactions-enabled', '1');
