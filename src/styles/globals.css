@@ -2,6 +2,62 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom properties for header transparency */
+:root {
+  --header-bg-opacity: 0.7;
+  --header-border-opacity: 0.2;
+  --header-shadow-opacity: 0.05;
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --header-shadow-opacity: 0.2;
+  }
+}
+
+/* Floating header styles */
+.floating-header {
+  background: rgba(255, 255, 255, 1);
+  border: 1px solid rgba(230, 230, 230, 1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.dark .floating-header {
+  background: rgba(23, 23, 23, 0.95);
+  border: 2px solid rgba(50, 50, 50, 0.9);
+}
+
+/* Utility classes for adjusting transparency */
+.header-opacity-50 {
+  --header-bg-opacity: 0.5;
+}
+
+.header-opacity-60 {
+  --header-bg-opacity: 0.6;
+}
+
+.header-opacity-70 {
+  --header-bg-opacity: 0.7;
+}
+
+.header-opacity-80 {
+  --header-bg-opacity: 0.8;
+}
+
+.header-opacity-90 {
+  --header-bg-opacity: 0.9;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+  .floating-header {
+    margin: 0 8px;
+    border-radius: 16px;
+  }
+}
+
 /* Responsive container untuk mencegah overflow */
 .prose {
   max-width: 100% !important;
