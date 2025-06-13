@@ -177,11 +177,11 @@ export default function BlogPostLayout({
             <header className="mb-8">
               {/* Featured image */}
               {post.data.thumbnail && (
-                <div className="relative w-full h-64 md:h-80 mb-8 rounded-xl overflow-hidden">
+                <div className="relative w-full h-64 md:h-80 mb-8 rounded-xl overflow-hidden bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center">
                   <img
                     src={post.data.thumbnail}
                     alt={post.data.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                     loading="eager"
                   />
                 </div>
