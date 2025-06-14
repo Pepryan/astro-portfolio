@@ -424,7 +424,7 @@ export const componentConfig = {
           name: "Cloud",
           description: "Cloud infrastructure and architecture",
           icon: "☁️",
-          count: 3
+          count: 0
         },
         {
           id: "devops",
@@ -438,7 +438,7 @@ export const componentConfig = {
           name: "Automation",
           description: "Process automation and scripting",
           icon: "🤖",
-          count: 0
+          count: 1
         },
         {
           id: "open-source",
@@ -734,44 +734,57 @@ export const componentConfig = {
         year: "2023"
       },
       {
-        id: "aws-serverless-api",
-        title: "AWS Serverless REST API",
-        description: "Scalable serverless REST API using AWS Lambda, API Gateway, and DynamoDB. Includes authentication, CRUD operations, and automated deployment with CloudFormation.",
+        id: "n8n-finance-tracker",
+        title: "Finance Tracker with n8n + Telegram + Gemini + Notion",
+        description: "Built automation backend for finance tracker with n8n, Telegram, Gemini, and Notion. n8n is used for workflow automation, while Telegram and Gemini are used for financial data collection and analysis, and Notion is used for financial data storage.",
         image: null,
-        tags: ["AWS Lambda", "API Gateway", "DynamoDB", "CloudFormation", "Serverless"],
-        link: "https://github.com/Pepryan/aws-serverless-api",
-        github: "https://github.com/Pepryan/aws-serverless-api",
-        featured: true,
-        category: "Cloud",
+        tags: ["n8n", "Telegram", "Gemini", "Notion"],
+        link: "https://febryan.web.id/blog/automated-finance-tracker-with-ai/",
+        github: "",
+        featured: false,
+        category: "Automation",
         status: "Active",
-        year: "2024"
-      },
-      {
-        id: "terraform-aws-infrastructure",
-        title: "Terraform AWS Infrastructure",
-        description: "Infrastructure as Code for AWS multi-tier architecture. Includes VPC, EC2, RDS, Load Balancer, and Auto Scaling with best practices for security and monitoring.",
-        image: null,
-        tags: ["Terraform", "AWS", "VPC", "EC2", "RDS", "Infrastructure as Code"],
-        link: "https://github.com/Pepryan/terraform-aws-infrastructure",
-        github: "https://github.com/Pepryan/terraform-aws-infrastructure",
-        featured: true,
-        category: "Cloud",
-        status: "Active",
-        year: "2024"
-      },
-      {
-        id: "kubernetes-microservices",
-        title: "Kubernetes Microservices Platform",
-        description: "Complete microservices platform on Kubernetes with service mesh, monitoring, logging, and CI/CD pipeline. Includes Istio, Prometheus, Grafana, and ArgoCD.",
-        image: null,
-        tags: ["Kubernetes", "Istio", "Prometheus", "Grafana", "ArgoCD", "Microservices"],
-        link: "https://github.com/Pepryan/kubernetes-microservices",
-        github: "https://github.com/Pepryan/kubernetes-microservices",
-        featured: true,
-        category: "Cloud",
-        status: "Active",
-        year: "2024"
+        year: "2025"
       }
+      // {
+      //   id: "aws-serverless-api",
+      //   title: "AWS Serverless REST API",
+      //   description: "Scalable serverless REST API using AWS Lambda, API Gateway, and DynamoDB. Includes authentication, CRUD operations, and automated deployment with CloudFormation.",
+      //   image: null,
+      //   tags: ["AWS Lambda", "API Gateway", "DynamoDB", "CloudFormation", "Serverless"],
+      //   link: "https://github.com/Pepryan/aws-serverless-api",
+      //   github: "https://github.com/Pepryan/aws-serverless-api",
+      //   featured: true,
+      //   category: "Cloud",
+      //   status: "Active",
+      //   year: "2024"
+      // },
+      // {
+      //   id: "terraform-aws-infrastructure",
+      //   title: "Terraform AWS Infrastructure",
+      //   description: "Infrastructure as Code for AWS multi-tier architecture. Includes VPC, EC2, RDS, Load Balancer, and Auto Scaling with best practices for security and monitoring.",
+      //   image: null,
+      //   tags: ["Terraform", "AWS", "VPC", "EC2", "RDS", "Infrastructure as Code"],
+      //   link: "https://github.com/Pepryan/terraform-aws-infrastructure",
+      //   github: "https://github.com/Pepryan/terraform-aws-infrastructure",
+      //   featured: true,
+      //   category: "Cloud",
+      //   status: "Active",
+      //   year: "2024"
+      // },
+      // {
+      //   id: "kubernetes-microservices",
+      //   title: "Kubernetes Microservices Platform",
+      //   description: "Complete microservices platform on Kubernetes with service mesh, monitoring, logging, and CI/CD pipeline. Includes Istio, Prometheus, Grafana, and ArgoCD.",
+      //   image: null,
+      //   tags: ["Kubernetes", "Istio", "Prometheus", "Grafana", "ArgoCD", "Microservices"],
+      //   link: "https://github.com/Pepryan/kubernetes-microservices",
+      //   github: "https://github.com/Pepryan/kubernetes-microservices",
+      //   featured: true,
+      //   category: "Cloud",
+      //   status: "Active",
+      //   year: "2024"
+      // }
     ]
   },
   // Contact Section Configuration
