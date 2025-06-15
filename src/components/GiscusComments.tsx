@@ -90,7 +90,7 @@ export default function GiscusComments({ slug, title }: GiscusCommentsProps) {
     const checkForGiscus = () => {
       const iframe = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame');
       if (iframe) {
-        console.log('✅ Giscus iframe detected, setting up theme listeners');
+        // console.log('✅ Giscus iframe detected, setting up theme listeners');
         cleanup = setupThemeListeners();
       } else {
         setTimeout(checkForGiscus, 500);

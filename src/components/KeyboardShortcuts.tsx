@@ -51,7 +51,7 @@ export default function KeyboardShortcuts({ onToggleShortcuts }: KeyboardShortcu
           break;
         case 't':
           e.preventDefault();
-          console.log('Keyboard shortcut "t" pressed, calling toggleDarkMode');
+          // console.log('Keyboard shortcut "t" pressed, calling toggleDarkMode');
           toggleDarkMode();
           break;
         case 'k':
