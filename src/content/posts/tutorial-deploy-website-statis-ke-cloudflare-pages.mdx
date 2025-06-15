@@ -139,7 +139,7 @@ HTTPS otomatis aktif untuk semua domain.
 Website kamu akan di-cache di 200+ lokasi di seluruh dunia.
 
 ### ⚠️ Batasan Build
-Pada plan gratis, Cloudflare Pages membatasi hingga 100 builds per bulan [referensi](https://developers.cloudflare.com/pages/platform/limits/).
+Pada plan gratis, Cloudflare Pages membatasi hingga 500 builds per bulan tapi sangat cepat. (Kalau custom domain 100 builds per bulan) - [referensi](https://developers.cloudflare.com/pages/platform/limits/).
 
 ## Tips dan Troubleshooting
 | Masalah                   | Solusi                                     |
@@ -154,14 +154,21 @@ Pada plan gratis, Cloudflare Pages membatasi hingga 100 builds per bulan [refere
 Setelah mencoba berbagai platform hosting gratis, berikut perbandingan lengkap:
 
 ### 🏆 Ranking Platform Hosting Gratis 2025
-
-| Platform | Rating | Bandwidth | Build Minutes | Best For |
-|----------|--------|-----------|---------------|----------|
-| **Cloudflare Pages** | ⭐⭐⭐⭐⭐ | ♾️ Unlimited | 500 builds/bulan | Production websites |
-| **Netlify** | ⭐⭐⭐⭐ | 100GB/bulan | 300 menit/bulan | Prototyping & learning |
-| **Vercel** | ⭐⭐⭐⭐ | 100GB/bulan | 6000 menit/bulan | Next.js projects |
-| **GitHub Pages** | ⭐⭐⭐⭐ | ♾️ Unlimited | ♾️ Unlimited (tapi lebih lambat dibanding cloudflare) | Blog & documentation |
-| **Surge.sh** | ⭐⭐⭐ | Limited | No build | Quick demos |
+| Fitur / Platform         | **Cloudflare Pages**      | **Netlify**                    | **Vercel**                   | **GitHub Pages**             | **Surge.sh**                    |
+| ------------------------ | ------------------------- | ------------------------------ | ---------------------------- | ---------------------------- | ------------------------------- |
+| **Harga**                | Free, unlimited, no hidden cost    | Free (100GB/month)       | Free (100GB bandwidth/month) | Free, unlimited                     | Gratis (1 domain di free)       |
+| **Build Minutes (Free)** | ✅ Unlimited minutes ⚡ (namun dibatasi 500 builds/month)            | ⛔ 300 build minutes/month    | ⛔ 100 build hours/month    | ✅ GitHub Actions (2000 mins) | ✅ Instant (local build)         |
+| **Deploy**               | Git-based CI/CD           | Git-based CI/CD                | Git-based CI/CD              | Manual / GitHub Actions      | Manual via CLI                  |
+| **Preview PR**           | ✅                         | ✅                              | ✅                            | ❌                            | ❌                               |
+| **Custom Domain**        | ✅ Gratis       | ✅ Gratis & mudah               | ✅ Gratis & mudah             | ✅ Tapi SSL manual            | ✅ Gratis (limit 1 domain)       |
+| **SSL Otomatis**         | ✅ Cloudflare Native       | ✅                              | ✅                            | ❌ Manual (kecuali via CF)    | ✅ via Let’s Encrypt             |
+| **CDN**                  | 200+ PoP Cloudflare CDN   | Netlify Global CDN             | Edge CDN (Fastly/own infra)  | GitHub CDN basic             | Basic CDN (nggak edge-heavy)    |
+| **Framework Support**    | JAMstack ready (semua static site generator)        | Semua static framework         | Optimal buat Next.js              | Jekyll / HTML                | Semua static (HTML, Astro, etc) |
+| **Serverless Function**  | ✅ (harus via Workers)     | ✅ Netlify Functions            | ✅ Vercel Edge Functions      | ❌                            | ❌                               |
+| **Analytics**            | Basic CF Analytics        | ✅                              | ✅                            | ❌                            | ❌                               |
+| **Uptime**               | Sangat stabil             | Stabil                         | Stabil (kadang throttle)     | Stabil                       | Cukup stabil                    |
+| **Keunggulan**           | Cepat, gratis, unlimited  | Lengkap, bisa function         | Best for Next.js           | GitHub-native                | Super ringan & cepat deploy     |
+| **Kelemahan**            | Gak ada function built-in | Build minutes bisa cepat habis | Cepat limit, naik pricing    | SSL manual, fitur terbatas   | Gak ada preview, no CI/CD       |
 
 ### 🔥 Cloudflare Pages (Juara Overall!)
 
