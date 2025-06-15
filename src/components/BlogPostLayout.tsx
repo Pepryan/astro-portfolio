@@ -55,18 +55,18 @@ export default function BlogPostLayout({
   // Add lightbox functionality to images
   useEffect(() => {
     const addLightboxToImages = () => {
-      console.log('Adding lightbox to images...');
+      // console.log('Adding lightbox to images...');
       const images = document.querySelectorAll('.prose img') as NodeListOf<HTMLImageElement>;
-      console.log('Found images:', images.length);
+      // console.log('Found images:', images.length);
 
       images.forEach((img, index) => {
         // Skip if already processed
         if (img.parentElement?.classList.contains('lightbox-wrapper')) {
-          console.log('Image already processed:', index);
+          // console.log('Image already processed:', index);
           return;
         }
 
-        console.log('Processing image:', index, img.src);
+        // console.log('Processing image:', index, img.src);
 
         // Create wrapper
         const wrapper = document.createElement('span');
@@ -77,14 +77,14 @@ export default function BlogPostLayout({
 
         // Add click handler
         const handleClick = () => {
-          console.log('Image clicked, opening lightbox for:', img.src);
+          // console.log('Image clicked, opening lightbox for:', img.src);
           openLightbox(img.src, img.alt || '');
         };
 
         wrapper.addEventListener('click', handleClick);
         wrapper.addEventListener('keydown', (e) => {
           if (e.key === 'Enter') {
-            console.log('Enter pressed on image');
+            // console.log('Enter pressed on image');
             handleClick();
           }
         });
@@ -99,7 +99,7 @@ export default function BlogPostLayout({
     };
 
     const openLightbox = (src: string, alt: string) => {
-      console.log('Opening lightbox for:', src);
+      // console.log('Opening lightbox for:', src);
 
       // Create modal
       const modal = document.createElement('div');
@@ -121,7 +121,7 @@ export default function BlogPostLayout({
 
       // Close handlers
       const closeModal = () => {
-        console.log('Closing lightbox');
+        // console.log('Closing lightbox');
         document.body.removeChild(modal);
       };
 

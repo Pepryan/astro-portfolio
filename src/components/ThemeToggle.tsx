@@ -37,13 +37,13 @@ export default function ThemeToggle() {
 
   // Define functions after hooks but before conditional returns
   const handleToggle = () => {
-    console.log('ThemeToggle clicked');
+    // console.log('ThemeToggle clicked');
 
     // Get current state from DOM (most reliable source)
     const currentDark = document.documentElement.classList.contains('dark');
     const newMode = !currentDark;
 
-    console.log('Current dark mode:', currentDark, '-> New mode:', newMode);
+    // console.log('Current dark mode:', currentDark, '-> New mode:', newMode);
 
     // Update DOM immediately
     if (newMode) {
