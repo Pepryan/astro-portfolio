@@ -14,21 +14,21 @@ const PreBlock = ({ children, ...props }: any) => {
 
     try {
       await navigator.clipboard.writeText(textToCopy);
-      console.log('✅ Code copied successfully (MDX):', textToCopy.substring(0, 50) + '...');
+      // console.log('✅ Code copied successfully (MDX):', textToCopy.substring(0, 50) + '...');
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error('❌ Failed to copy (MDX):', err);
+      // console.error('❌ Failed to copy (MDX):', err);
     }
   };
 
   const handleMobileTouch = () => {
     if (window.innerWidth <= 768) {
       setShowButton(true);
-      console.log('📱 MDX Copy button shown on mobile');
+      // console.log('📱 MDX Copy button shown on mobile');
       setTimeout(() => {
         setShowButton(false);
-        console.log('📱 MDX Copy button hidden on mobile');
+        // console.log('📱 MDX Copy button hidden on mobile');
       }, 3000);
     }
   };
