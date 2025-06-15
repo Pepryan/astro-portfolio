@@ -58,15 +58,15 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     // Only run on client side
     if (typeof window === 'undefined') return;
 
-    console.log('ThemeProvider mounting...'); // Debug log
+    // console.log('ThemeProvider mounting...'); // Debug log
     setMounted(true);
 
     // Get the actual theme state
     const initialTheme = getInitialTheme();
     const domHasDark = document.documentElement.classList.contains('dark');
 
-    console.log('Initial theme from storage:', initialTheme);
-    console.log('DOM has dark class:', domHasDark);
+    // console.log('Initial theme from storage:', initialTheme);
+    // console.log('DOM has dark class:', domHasDark);
 
     // Sync React state with DOM state
     setDarkMode(domHasDark);
