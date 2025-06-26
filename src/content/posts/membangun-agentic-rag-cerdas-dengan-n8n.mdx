@@ -1,0 +1,162 @@
+---
+title: 'Sistem RAG Cerdas dengan n8n: Eksperimen Agentic RAG'
+date: '2025-06-26'
+tags: ['ai', 'n8n', 'agentic-rag', 'gemini', 'deepseek', 'supabase']
+draft: false
+summary: 'Eksperimen membangun sistem Agentic RAG menggunakan n8n dengan kombinasi Gemini AI dan Deepseek AI. Sistem ini mampu memutuskan sendiri kapan menggunakan semantic search, SQL query, atau full document retrieval untuk memberikan respons yang akurat.'
+thumbnail: "/images/blog/agentic-rag-n8n.svg"
+author: "Febryan Ramadhan"
+category: "Technology"
+difficulty: "Advanced"
+keywords: ["Agentic RAG", "n8n", "workflow automation", "Gemini AI", "Deepseek AI", "Supabase", "vector database", "semantic search", "AI automation", "intelligent RAG"]
+openGraph:
+title: "Membangun Sistem RAG Cerdas dengan n8n: Eksperimen Agentic RAG"
+description: "Pelajari cara membangun sistem Agentic RAG menggunakan n8n yang dapat memutuskan sendiri strategi terbaik untuk menjawab query dengan akurat."
+image: "/images/blog/agentic-rag-n8n.svg"
+url: "https://febryan.web.id/blog/membangun-agentic-rag-cerdas-dengan-n8n"
+twitter:
+card: "summary_large_image"
+title: "Membangun Sistem RAG Cerdas dengan n8n: Eksperimen Agentic RAG"
+description: "Eksperimen membangun Agentic RAG dengan n8n, Gemini AI, dan Deepseek AI untuk sistem knowledge management yang intelligent."
+image: "/images/blog/agentic-rag-n8n.svg"
+schema:
+type: "Article"
+headline: "Membangun Sistem RAG Cerdas dengan n8n: Eksperimen Agentic RAG yang Menakjubkan"
+description: "Panduan lengkap eksperimen membangun sistem Agentic RAG menggunakan n8n dengan kombinasi Gemini AI dan Deepseek AI. Sistem ini mampu reasoning dan memilih strategi optimal antara semantic search, SQL query, atau full document retrieval."
+author:
+name: "Febryan Ramadhan"
+url: "https://febryan.web.id"
+datePublished: "2025-06-26"
+dateModified: "2025-06-26"
+publisher:
+name: "Febryan Ramadhan Portfolio"
+url: "https://febryan.web.id"
+---
+
+# Membangun Sistem RAG Cerdas dengan n8n: Eksperimen Agentic RAG 🚀
+
+Pernahkah temen-temen membayangkan memiliki asisten AI yang tidak hanya bisa mencari dokumen, tetapi juga bisa memutuskan kapan harus melakukan perhitungan SQL atau semantic search? Dalam eksperimen kali ini, saya akan berbagi pengalaman membangun sistem **Agentic RAG** menggunakan n8n yang bisa "berpikir" dan mengambil keputusan cerdas.
+
+## 🛠️ Stack Teknologi yang Digunakan
+Proyek ini dimulai dari template yang dibuat oleh Cole Medin yang kemudian saya modifikasi agar kompatibel dengan model AI yang saya miliki. Template asli menggunakan kombinasi teknologi yang menarik:
+
+- **n8n** - Sebagai workflow automation engine
+- **Google Drive** (OAuth2) - Storage untuk dokumen
+- **Supabase** 
+  - PostgreSQL untuk database relasional
+  - Vector Database untuk semantic search
+- **Gemini AI** (free tier, model gemini-2.0-flash-001)
+- **Deepseek AI** (paid, model deepseek-reasoner)
+
+Yang menarik dari setup ini adalah saya sengaja tidak menggunakan OpenAI karena tidak memiliki akun berbayar, dan ternyata kombinasi Gemini + Deepseek memberikan hasil yang cukup memuaskan untuk temen-temen yang budget-conscious!
+
+## 🧠 Mengapa Agentic RAG Berbeda?
+
+Berbeda dengan RAG tradisional yang hanya melakukan pencarian sederhana, sistem Agentic RAG ini memiliki kemampuan **reasoning** - bisa memutuskan sendiri strategi terbaik untuk menjawab pertanyaan:
+
+- **Vector Database**: Optimal untuk semantic search dan pencarian kontekstual
+- **SQL Query**: Ideal untuk perhitungan matematis dan analisis data tabular
+- **Full Document Retrieval**: Ketika butuh konteks lengkap dokumen
+
+## 💪 Tantangan Teknis dan Solusinya
+
+### 1. Resource Terbatas, Hasil Maksimal
+Saya menjalankan n8n di spesifikasi yang sangat terbatas:
+- **512MB RAM**
+- **0.5 Core vCPU**
+- Platform: Claw Cloud Run
+
+Meskipun kadang mengalami OOM (Out of Memory), sistem tetap bisa berjalan dengan baik untuk sebagian besar use case.
+![agentic-rag-oom.webp](/images/blog/agentic-rag-oom.webp)
+
+### 2. Penyesuaian Vector Embedding
+Salah satu tantangan teknis yang menarik adalah perbedaan ukuran vector embedding:
+- Template asli menggunakan OpenAI embedding (1568 dimensi)
+- Saya menggunakan Gemini embedding (768 dimensi)
+
+Solusinya adalah menyesuaikan konfigurasi vector database di Supabase agar kompatibel.
+![vector-embedding-size-google.webp](/images/blog/agentic-rag-vector-embedding-size-google.webp)
+
+### 3. Format Dokumen Kompleks
+Dokumen Word dengan format kompleks (tabel, gambar, dll.) kadang menyebabkan error saat parsing. Solusinya adalah preprocessing dokumen untuk memastikan format yang clean.
+![agentic-rag-error-insert-vector.webp](/images/blog/agentic-rag-error-insert-vector.webp)
+
+## 🔬 Hasil Eksperimen
+
+### Gemini AI (Free Tier)
+- **Kemampuan**: Bisa membaca dan memahami dokumen dengan baik
+- **Kelemahan**: Prompt engineering sangat berpengaruh
+- **Kelebihan**: Gratis dan cukup akurat untuk use case sederhana
+
+Contoh: Ketika diminta analisis dari dokumen, Gemini butuh beberapa kali iterasi untuk memberikan jawaban yang akurat.
+
+![agentic-rag-google-itteration.webp](/images/blog/agentic-rag-google-itteration.webp)
+![agentic-rag-grafana2.webp](/images/blog/agentic-rag-grafana2.webp)
+![agentic-rag-grafana1.webp](/images/blog/agentic-rag-grafana1.webp)
+
+### Deepseek AI (Paid)
+- **Kemampuan**: Langsung akurat dalam perhitungan
+- **Hasil**: Berhasil menghitung total vCPU = 146 dengan tepat dalam sekali percobaan
+- **Kelebihan**: Lebih reliable untuk analisis numerik
+
+![agentic-rag-deepseek-vcpu.webp](/images/blog/agentic-rag-deepseek-vcpu.webp)
+![agentic-rag-deepseek-reasoning.webp](/images/blog/agentic-rag-deepseek-reasoning.webp)
+
+
+## 📊 Format File yang Didukung
+
+Sistem ini mendukung 4 jenis file:
+1. **PDF** - Ekstraksi teks dengan OCR
+2. **Excel/XLSX** - Parsing data tabular
+3. **CSV** - Import langsung ke database
+4. **Word/DOCX** - Konversi ke teks
+
+Untuk eksperimen ini, saya fokus pada testing dengan:
+- PDF (data dummy dari internet)
+- Google Docs (naskah ringkasan aplikasi Aether)
+- XLSX (data list-instance dari Aether, 1 header + 20 rows)
+
+![agentic-rag-gdrive.webp](/images/blog/agentic-rag-gdrive.webp)
+
+## 🏗️ Arsitektur Workflow
+
+Workflow n8n yang saya bangun memiliki flow sebagai berikut:
+
+1. **Document Ingestion**: Upload via Google Drive
+2. **Content Extraction**: Parse berbagai format file
+3. **Intelligent Chunking**: Pembagian konten yang optimal
+4. **Vector Storage**: Simpan embedding di Supabase
+5. **Agentic Query Processing**: AI memutuskan strategi pencarian
+6. **Response Generation**: Menghasilkan jawaban kontekstual
+
+## 💡 Key Learnings
+
+1. **Model Selection Matters**: Deepseek lebih akurat untuk perhitungan, Gemini bagus untuk pemahaman konteks
+2. **Resource Optimization**: Sistem bisa berjalan di spek rendah dengan optimasi yang tepat
+3. **Prompt Engineering**: Sangat kritikal, terutama untuk model free tier
+4. **Data Quality**: Input yang bersih menghasilkan output yang lebih akurat
+
+## 🚀 What's Next?
+
+Eksperimen ini membuka banyak kemungkinan untuk pengembangan lebih lanjut:
+
+- **Optimasi Performance**: Meningkatkan efisiensi memory usage
+- **Multi-Modal Support**: Menambah dukungan untuk gambar dan audio
+- **Advanced RAG Techniques**: Implementing hierarchical retrieval
+- **Local Deployment**: Versi yang bisa dijalankan secara offline
+
+## 🎯 Kesimpulan
+
+Agentic RAG dengan n8n terbukti sangat powerful untuk membangun sistem knowledge management yang cerdas. Meskipun ada tantangan teknis, kombinasi tools yang tepat dan strategi yang baik bisa menghasilkan sistem yang robust dan cost-effective.
+
+Yang paling menarik adalah kemampuan sistem untuk "berpikir" dan memilih strategi yang tepat - apakah perlu semantic search, SQL query, atau full document retrieval. Ini adalah langkah signifikan menuju AI yang lebih intelligent dan practical untuk kebutuhan temen-temen semua.
+
+## Sumber Bacaan Lainnya Tentang Agentic RAG
+https://www.ibm.com/think/topics/agentic-rag
+https://weaviate.io/blog/what-is-agentic-rag
+
+---
+
+*Tertarik mencoba? Template n8n versi yang sudah saya modifikasi tersedia di [GitHub repository ini](https://github.com/Pepryan/n8n/blob/main/Ultimate_RAG_Modified.json), bisa disesuaikan dengan kebutuhan temen-temen. Happy experimenting! 🤖*
+
+**Credit:** Template asli dibuat oleh [Cole Medin](https://www.youtube.com/@ColeMedin) - terima kasih atas inspirasi dan foundation yang luar biasa!
