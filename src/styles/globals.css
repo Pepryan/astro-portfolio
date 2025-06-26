@@ -4,13 +4,17 @@
 
 /* Floating header styles - optimized for performance */
 .floating-header {
-  background: rgb(255, 255, 255);
-  border: 1px solid rgb(230, 230, 230);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(230, 230, 230, 0);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
 }
 
 .dark .floating-header {
-  background: rgb(23, 23, 23);
-  border: 1px solid rgb(50, 50, 50);
+  background: rgba(23, 23, 23, 0.7);
+  border: 1px solid rgba(50, 50, 50, 0);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
 }
 
 /* Responsive adjustments for mobile */
