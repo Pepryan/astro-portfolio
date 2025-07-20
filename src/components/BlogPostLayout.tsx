@@ -6,6 +6,8 @@ import BackToTop from './BackToTop';
 import GiscusComments from './GiscusComments';
 import RelatedPosts from './RelatedPosts';
 import PostNavigation from './PostNavigation';
+import SeriesIndicator from './SeriesIndicator';
+import SeriesNavigation from './SeriesNavigation';
 
 interface BlogPostData {
   title: string;
@@ -17,6 +19,15 @@ interface BlogPostData {
   category?: string;
   thumbnail?: string;
   author?: string;
+  series?: {
+    name: string;
+    slug: string;
+    part: number;
+    total?: number;
+    description?: string;
+    thumbnail?: string;
+    order?: number;
+  };
 }
 
 interface BlogPost {
@@ -35,6 +46,29 @@ interface BlogPostLayoutProps {
   wordCount: number;
   postUrl: string;
   allPosts?: BlogPost[];
+  seriesNavigation?: {
+    series: {
+      name: string;
+      slug: string;
+      description: string;
+      thumbnail?: string;
+      status: 'ongoing' | 'completed' | 'planned';
+      tags: string[];
+      category?: string;
+      difficulty?: string;
+      totalParts: number;
+      completedParts: number;
+      startDate?: Date;
+      endDate?: Date;
+      featured: boolean;
+      posts: BlogPost[];
+    };
+    currentPart: number;
+    totalParts: number;
+    previousPost?: BlogPost | null;
+    nextPost?: BlogPost | null;
+    progress: number;
+  } | null;
   children: React.ReactNode;
 }
 
@@ -44,6 +78,7 @@ export default function BlogPostLayout({
   wordCount,
   postUrl,
   allPosts = [],
+  seriesNavigation = null,
   children
 }: BlogPostLayoutProps) {
   const [mounted, setMounted] = useState(false);
@@ -192,6 +227,13 @@ export default function BlogPostLayout({
                 {post.data.title}
               </h1>
 
+              {/* Series Indicator */}
+              {post.data.series && (
+                <div className="mb-6">
+                  <SeriesIndicator series={post.data.series} />
+                </div>
+              )}
+
               {/* Metadata */}
               <div className="flex flex-wrap items-center gap-4 text-sm text-neutral-600 dark:text-neutral-400 mb-6">
                 <div className="flex items-center gap-2">
@@ -308,6 +350,20 @@ export default function BlogPostLayout({
               data: p.data,
             }))}
           />
+        )}
+
+        {/* Series Navigation */}
+        {mounted && seriesNavigation && (
+          <div className="mt-8">
+            <SeriesNavigation
+              series={seriesNavigation.series}
+              currentPart={seriesNavigation.currentPart}
+              totalParts={seriesNavigation.totalParts}
+              previousPost={seriesNavigation.previousPost}
+              nextPost={seriesNavigation.nextPost}
+              progress={seriesNavigation.progress}
+            />
+          </div>
         )}
 
         {/* Related Posts */}

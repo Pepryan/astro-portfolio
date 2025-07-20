@@ -46,12 +46,12 @@ export default function BlogSearch({ onSearch, placeholder = "Search posts..." }
   }, []);
 
   return (
-    <div className="relative w-full z-30">
+    <div className="relative w-full z-10">
       <div className={`relative transition-all duration-300 ease-out ${
         isFocused
           ? 'ring-2 ring-blue-500/50 shadow-lg shadow-blue-500/10'
           : 'shadow-sm hover:shadow-md'
-      } rounded-xl overflow-hidden z-30`}>
+      } rounded-xl overflow-hidden z-10`}>
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
           <FiSearch className={`w-4 h-4 transition-all duration-300 ${
             isFocused ? 'text-blue-500 scale-110' : 'text-neutral-400'
@@ -67,10 +67,11 @@ export default function BlogSearch({ onSearch, placeholder = "Search posts..." }
           onBlur={() => setIsFocused(false)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className="w-full pl-10 pr-20 py-3 bg-white/90 dark:bg-neutral-800/90 backdrop-blur-sm
-            border border-neutral-200/50 dark:border-neutral-700/50
+          className="w-full pl-10 pr-12 py-3 bg-white dark:bg-neutral-800
+            border border-neutral-200 dark:border-neutral-700
             text-neutral-900 dark:text-neutral-100 placeholder-neutral-500 dark:placeholder-neutral-400
-            focus:outline-none focus:bg-white dark:focus:bg-neutral-800
+            focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300
+            hover:border-neutral-300 dark:hover:border-neutral-600
             transition-all duration-300 text-sm
             rounded-xl"
         />
@@ -79,12 +80,12 @@ export default function BlogSearch({ onSearch, placeholder = "Search posts..." }
           <button
             onClick={handleClear}
             className="absolute inset-y-0 right-0 pr-3 flex items-center z-10
-              text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300
-              hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-full
-              transition-all duration-200 w-8 h-8 mr-1 my-auto"
+              text-neutral-400 hover:text-red-500 dark:hover:text-red-400
+              hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full
+              transition-all duration-200 w-8 h-8 mr-1 my-auto hover:scale-110"
             aria-label="Clear search"
           >
-            <FiX className="w-3 h-3 mx-auto" />
+            <FiX className="w-3.5 h-3.5 mx-auto" />
           </button>
         )}
 
@@ -117,9 +118,9 @@ export default function BlogSearch({ onSearch, placeholder = "Search posts..." }
 
       {query && (
         <div className="absolute top-full left-0 right-0 mt-2 px-4 py-2 text-sm
-          text-neutral-600 dark:text-neutral-400 bg-white/95 dark:bg-neutral-800/95
-          backdrop-blur-sm rounded-lg border border-neutral-200/50 dark:border-neutral-700/50
-          shadow-lg animate-in slide-in-from-top-2 duration-200 z-40">
+          text-neutral-600 dark:text-neutral-400 bg-white dark:bg-neutral-800
+          rounded-lg border border-neutral-200 dark:border-neutral-700
+          shadow-lg animate-in slide-in-from-top-2 duration-200 z-20">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
             <span>Searching for "<span className="font-medium text-neutral-900 dark:text-neutral-100">{query}</span>"...</span>

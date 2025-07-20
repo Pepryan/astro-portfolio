@@ -10,6 +10,12 @@ interface BlogPost {
     tags?: string[];
     thumbnail?: string;
     readingTime?: number;
+    series?: {
+      name: string;
+      slug: string;
+      part: number;
+      total?: number;
+    };
   };
 }
 
@@ -108,6 +114,20 @@ export default function BlogCard({ post, readingTime }: BlogCardProps) {
                   +{post.data.tags.length - 1} more
                 </span>
               )}
+            </div>
+          )}
+
+          {/* Series Indicator */}
+          {post.data.series && (
+            <div className="flex items-center gap-2 text-sm">
+              <div className="flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 dark:bg-blue-900/20
+                text-blue-600 dark:text-blue-400 rounded-lg font-medium">
+                <FiBookOpen className="w-3 h-3" />
+                <span>{post.data.series.name}</span>
+              </div>
+              <span className="text-neutral-500 dark:text-neutral-400 text-xs">
+                Part {post.data.series.part}{post.data.series.total ? ` of ${post.data.series.total}` : ''}
+              </span>
             </div>
           )}
 

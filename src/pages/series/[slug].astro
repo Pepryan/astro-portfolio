@@ -1,0 +1,49 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { ThemeProvider } from '../../components/ThemeProvider';
+import LayoutWrapper from '../../components/LayoutWrapper';
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
+import SeriesDetailClient from '../../components/SeriesDetailClient';
+import { getAllSeries, getSeriesBySlug } from '../../utils/series';
+import { generateSeriesSEO, generateSeriesStructuredData } from '../../utils/seo';
+
+export async function getStaticPaths() {
+  const allSeries = await getAllSeries();
+  return allSeries.map((series) => ({
+    params: { slug: series.slug },
+    props: { series },
+  }));
+}
+
+const { series } = Astro.props;
+
+if (!series) {
+  return Astro.redirect('/404');
+}
+
+// Generate SEO data for series detail page
+const seoData = generateSeriesSEO(series);
+
+// Generate structured data for the series
+const structuredData = generateSeriesStructuredData(series, series.posts);
+---
+
+<Layout
+  title={seoData.title}
+  description={seoData.description}
+  canonical={seoData.canonical}
+  type={seoData.type}
+  keywords={seoData.keywords}
+  image={seoData.image}
+>
+  <ThemeProvider client:load>
+    <LayoutWrapper client:load>
+      <div class="min-h-screen bg-white dark:bg-neutral-900">
+        <Header client:load />
+        <SeriesDetailClient series={series} client:load />
+        <Footer client:load />
+      </div>
+    </LayoutWrapper>
+  </ThemeProvider>
+</Layout>

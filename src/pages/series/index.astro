@@ -1,0 +1,34 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { ThemeProvider } from '../../components/ThemeProvider';
+import LayoutWrapper from '../../components/LayoutWrapper';
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
+import SeriesPageClient from '../../components/SeriesPageClient';
+import { getAllSeries } from '../../utils/series';
+import { generateSeriesListingSEO } from '../../utils/seo';
+
+// Get all series data
+const allSeries = await getAllSeries();
+
+// Generate SEO data for series listing page
+const seoData = generateSeriesListingSEO(allSeries);
+---
+
+<Layout
+  title={seoData.title}
+  description={seoData.description}
+  canonical={seoData.canonical}
+  type={seoData.type}
+  keywords={seoData.keywords}
+>
+  <ThemeProvider client:load>
+    <LayoutWrapper client:load>
+      <div class="min-h-screen bg-white dark:bg-neutral-900">
+        <Header client:load />
+        <SeriesPageClient series={allSeries} client:load />
+        <Footer client:load />
+      </div>
+    </LayoutWrapper>
+  </ThemeProvider>
+</Layout>
