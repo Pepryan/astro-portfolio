@@ -1,12 +1,19 @@
 ---
 title: 'Pengen Ngulik Infra? Setup KVM di WSL2 aja! Modal Laptop Biasa Cukup'
 date: '2025-06-04'
+update: '2025-06-17'
 tags: ['kvm', 'wsl2', 'terraform']
 category: 'DevOps'
 summary: 'Tutorial lengkap bikin homelab KVM di laptop biasa pakai WSL2. Gak perlu sewa cloud mahal-mahal, cukup modal laptop kentang!'
 author: 'Febryan Ramadhan'
 difficulty: 'Intermediate'
 keywords: ['kvm', 'wsl2', 'virtualization', 'homelab', 'linux', 'windows']
+series:
+  name: "Kubernetes Lab on KVM WSL Journey"
+  slug: "kubernetes-lab-kvm-wsl"
+  part: 1
+  total: 20
+  description: "Comprehensive guide to deploy Kubernetes on KVM WSL"
 openGraph:
   title: 'Install KVM di WSL2: Homelab Virtualization Setup'
   description: 'Tutorial lengkap setup homelab KVM di WSL2 untuk virtualization di laptop biasa.'
@@ -177,12 +184,12 @@ mkdir -p ~/.local/share/terraform/plugins/registry.terraform.io/dmacvicar/libvir
 
 # Download libvirt provider (adjust version as needed)
 cd /tmp
-wget https://github.com/dmacvicar/terraform-provider-libvirt/releases/download/v0.7.1/terraform-provider-libvirt-0.7.1+git.1f9b302.Ubuntu.amd64.tar.gz
+wget https://github.com/dmacvicar/terraform-provider-libvirt/releases/download/v0.8.3/terraform-provider-libvirt_0.8.3_linux_amd64.zip
 
 # Extract dan install
-tar -xvf terraform-provider-libvirt-*.tar.gz
-mv terraform-provider-libvirt ~/.local/share/terraform/plugins/registry.terraform.io/dmacvicar/libvirt/0.7.1/linux_amd64/
-chmod +x ~/.local/share/terraform/plugins/registry.terraform.io/dmacvicar/libvirt/0.7.1/linux_amd64/terraform-provider-libvirt
+unzip 
+mv terraform-provider-libvirt_v0.8.3 ~/.local/share/terraform/plugins/registry.terraform.io/dmacvicar/libvirt/0.8.3/linux_amd64/terraform-provider-libvirt
+chmod +x ~/.local/share/terraform/plugins/registry.terraform.io/dmacvicar/libvirt/0.8.3/linux_amd64/terraform-provider-libvirt
 ```
 
 ---
@@ -198,8 +205,8 @@ sudo mkdir -p /data/vms
 sudo chown -R $USER:$USER /data/
 
 # Define storage pools
-virsh pool-define-as vms dir - - - - "/data/vms"
-virsh pool-define-as isos dir - - - - "/data/isos"
+virsh pool-define-as vms dir - - - - "/mnt/d/kvm/vms" # Adjust path as needed
+virsh pool-define-as isos dir - - - - "/mnt/d/kvm/isos" # Adjust path as needed
 
 # Set autostart (biar otomatis start pas boot)
 virsh pool-autostart vms
@@ -259,22 +266,31 @@ Mari kita test setup dengan download ISO dan create VM pertama:
 
 ```bash
 # Download Ubuntu Server ISO (lightweight option)
-cd /data/isos
-wget https://releases.ubuntu.com/22.04/ubuntu-22.04.3-live-server-amd64.iso
+cd /mnt/d/kvm/isos
+wget https://releases.ubuntu.com/noble/ubuntu-24.04.2-live-server-amd64.iso
 
 # Create your first VM via command line
 virt-install \
   --name test-vm \
   --ram 1024 \
-  --disk path=/data/vms/test-vm.qcow2,size=10 \
   --vcpus 1 \
-  --os-variant ubuntu22.04 \
+  --disk path=/mnt/d/kvm/vms/test-vm.qcow2,size=10 \
+  --os-variant ubuntu24.04 \
   --network network=net-lab \
   --graphics none \
   --console pty,target_type=serial \
-  --location /data/isos/ubuntu-22.04.3-live-server-amd64.iso \
-  --extra-args 'console=ttyS0,115200n8 serial'
+  --location /mnt/d/kvm/isos/ubuntu-24.04.2-live-server-amd64.iso,\
+initrd=casper/initrd,\
+kernel=casper/vmlinuz \
+  --extra-args 'console=ttyS0,115200n8 serial --- quiet'
 ```
+
+# Alternatif pakai script libvirt terraform
+Source 
+```bash
+
+```
+
 
 ---
 

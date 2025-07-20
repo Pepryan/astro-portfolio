@@ -1,0 +1,14 @@
+{
+  "name": "Ansible Automation Journey",
+  "slug": "ansible-automation-journey",
+  "description": "Series blog tentang Ansible automation, dari dasar hingga praktik, cocok untuk pemula.",
+  "thumbnail": "",
+  "status": "ongoing",
+  "tags": ["ansible", "automation"],
+  "category": "Cloud Engineering",
+  "difficulty": "Beginner",
+  "estimatedParts": 20,
+  "startDate": "2025-07-01",
+  "featured": true,
+  "order": 1
+}

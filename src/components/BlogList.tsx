@@ -11,6 +11,12 @@ interface BlogPost {
     updated?: Date;
     tags?: string[];
     thumbnail?: string;
+    series?: {
+      name: string;
+      slug: string;
+      part: number;
+      total?: number;
+    };
   };
   readingTime: number;
 }
@@ -19,6 +25,7 @@ interface BlogListProps {
   posts: BlogPost[];
   searchQuery?: string;
   selectedTag?: string;
+  selectedSeries?: string;
   postsPerPage?: number;
   showPaginationInfo?: boolean;
   compactLayout?: boolean;
@@ -28,13 +35,14 @@ export default function BlogList({
   posts,
   searchQuery = '',
   selectedTag = '',
+  selectedSeries = '',
   postsPerPage = 6,
   showPaginationInfo = false,
   compactLayout = true
 }: BlogListProps) {
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Filter posts based on search query and selected tag
+  // Filter posts based on search query, selected tag, and selected series
   const filteredPosts = useMemo(() => {
     let filtered = posts;
 
@@ -42,6 +50,13 @@ export default function BlogList({
     if (selectedTag) {
       filtered = filtered.filter(post =>
         post.data.tags?.includes(selectedTag)
+      );
+    }
+
+    // Filter by series
+    if (selectedSeries) {
+      filtered = filtered.filter(post =>
+        post.data.series?.name === selectedSeries
       );
     }
 
@@ -54,13 +69,14 @@ export default function BlogList({
         const tagsMatch = post.data.tags?.some(tag =>
           tag.toLowerCase().includes(query)
         );
+        const seriesMatch = post.data.series?.name.toLowerCase().includes(query);
 
-        return titleMatch || summaryMatch || tagsMatch;
+        return titleMatch || summaryMatch || tagsMatch || seriesMatch;
       });
     }
 
     return filtered;
-  }, [posts, searchQuery, selectedTag]);
+  }, [posts, searchQuery, selectedTag, selectedSeries]);
 
   // Calculate pagination
   const totalPages = Math.ceil(filteredPosts.length / postsPerPage);

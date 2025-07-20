@@ -1,0 +1,14 @@
+{
+  "name": "Kubernetes Lab on KVM WSL Journey",
+  "slug": "kubernetes-lab-kvm-wsl",
+  "description": "Series blog tentang install kvm di wsl2 windows hingga bisa deploy kubernetes di dalamnya",
+  "thumbnail": "",
+  "status": "ongoing",
+  "tags": ["kvm", "wsl", "kubernetes"],
+  "category": "Cloud Engineering",
+  "difficulty": "Beginner",
+  "estimatedParts": 20,
+  "startDate": "2025-07-01",
+  "featured": true,
+  "order": 1
+}

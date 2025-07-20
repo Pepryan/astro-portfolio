@@ -8,6 +8,7 @@ import BlogPostLayout from '../../components/BlogPostLayout';
 import Footer from '../../components/Footer';
 import { calculateReadingTime } from '../../utils/readingTime';
 import { generateBlogPostSEO } from '../../utils/seo';
+import { getSeriesNavigation } from '../../utils/series';
 
 export async function getStaticPaths() {
   const posts = await getCollection('posts');
@@ -45,6 +46,13 @@ const publishedPosts = allPosts
     };
   });
 
+// Get series navigation if this post is part of a series
+const seriesNavigation = post.data.series ? await getSeriesNavigation({
+  slug: post.slug,
+  data: post.data,
+  readingTime: readingTime
+}) : null;
+
 // Generate SEO data for blog post
 const blogPostSEO = generateBlogPostSEO({
   title: post.data.title,
@@ -57,7 +65,8 @@ const blogPostSEO = generateBlogPostSEO({
   thumbnail: post.data.thumbnail,
   keywords: post.data.keywords,
   author: post.data.author,
-  slug: post.slug
+  slug: post.slug,
+  series: post.data.series
 });
 ---
 
@@ -83,6 +92,7 @@ const blogPostSEO = generateBlogPostSEO({
         wordCount={words}
         postUrl={blogPostSEO.canonical || `/blog/${post.slug}`}
         allPosts={publishedPosts}
+        seriesNavigation={seriesNavigation}
         client:load
       >
         <Content />

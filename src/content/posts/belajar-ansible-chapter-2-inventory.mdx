@@ -1,0 +1,728 @@
+---
+title: "Belajar Ansible - Chapter 2 Inventory: Menyusun Dasar Automasi Infrastruktur untuk Playbook"
+date: "2025-07-15"
+tags: ["ansible", "automation"]
+category: "Technology"
+summary: "Panduan praktis menyusun inventaris host di Ansible, dari format static INI hingga dynamic inventory dan validasi via ansible-navigator. Foundation penting untuk automation yang scalable."
+thumbnail: ""
+author: "Febryan Ramadhan"
+difficulty: "Beginner"
+keywords: ["ansible inventory", "host management", "infrastructure automation", "ansible groups", "dynamic inventory", "ansible-navigator"]
+draft: true
+# Series Configuration
+series:
+  name: "Ansible Automation Journey"
+  slug: "ansible-automation-journey"
+  part: 2
+  total: 20
+  description: "Comprehensive guide to mastering Ansible automation from basics to advanced enterprise scenarios"
+# Open Graph metadata for social media
+openGraph:
+  title: "Belajar Ansible - Chapter 2 Inventory: Menyusun Dasar Automasi Infrastruktur untuk Playbook"
+  description: "Panduan praktis menyusun inventaris host di Ansible, dari format static INI hingga dynamic inventory dan validasi via ansible-navigator."
+  image: ""
+  type: "article"
+# Twitter Card metadata
+twitter:
+  card: "summary_large_image"
+  title: "Ansible Inventory: Menyusun Dasar Automasi Infrastruktur dengan Playbook"
+  description: "Foundation penting untuk automation yang scalable - panduan lengkap Ansible inventory management."
+  image: ""
+# Schema.org structured data
+schema:
+  type: "BlogPosting"
+  author:
+    name: "Febryan Ramadhan"
+    url: "https://febryan.web.id"
+    sameAs: [
+      "https://twitter.com/pepryan",
+      "https://instagram.com/nayrbef",
+      "https://linkedin.com/in/febryanramadhan"
+    ]
+  publisher:
+    name: "Febryan Ramadhan Portfolio"
+    url: "https://febryan.web.id"
+---
+
+Di chapter sebelumnya, kita sudah install Ansible dan memahami konsep dasar automation. Sekarang saatnya deep dive ke **inventory management** - foundation yang akan menentukan seberapa scalable dan maintainable automation infrastructure kamu.
+
+Bayangkan kamu punya 100+ server dengan berbagai roles: web servers, database servers, load balancers, monitoring systems. Tanpa inventory yang terstruktur dengan baik, automation kamu akan jadi nightmare untuk di-maintain.
+
+## 🎯 Apa itu Inventory di Ansible?
+
+**Inventory** adalah daftar host (server, VM, container, network devices) yang dikelola oleh Ansible. Ini seperti "address book" untuk automation kamu - tanpa inventory yang proper, Ansible gak tau mau ngapain kemana.
+
+Inventory bisa berupa:
+- **Static inventory**: File dengan format INI atau YAML
+- **Dynamic inventory**: Generated secara real-time dari cloud APIs, databases, atau external systems
+- **Hybrid**: Kombinasi keduanya
+
+### Mengapa Inventory Management Penting?
+
+1. **Scalability**: Manage ratusan server dengan grouping yang logical
+2. **Flexibility**: Different environments (dev, staging, prod) dengan config berbeda
+3. **Security**: Isolasi akses berdasarkan environment atau role
+4. **Maintainability**: Structured approach untuk infrastructure changes
+
+## 📋 Static Inventory: Format INI
+
+Mari mulai dari yang paling basic - inventory format INI:
+
+### Simple Host List:
+```ini
+# inventory/hosts
+web1.example.com
+web2.example.com
+192.0.2.42
+db1.example.com
+```
+
+### Grouping Hosts:
+```ini
+[webservers]
+web1.example.com
+web2.example.com
+192.0.2.42
+
+[databases]
+db1.example.com
+db2.example.com
+
+[monitoring]
+monitor1.example.com
+```
+
+### Host dengan Custom SSH Port:
+```ini
+[webservers]
+web1.example.com:2222
+web2.example.com ansible_port=2222
+192.0.2.42 ansible_port=22
+```
+
+### Multiple Group Membership:
+```ini
+[webservers]
+web1.example.com
+web2.example.com
+
+[frontend]
+web1.example.com
+web2.example.com
+lb1.example.com
+
+[production]
+web1.example.com
+web2.example.com
+db1.example.com
+lb1.example.com
+```
+
+## 🏗️ Advanced Inventory: Nested Groups & Ranges
+
+### Nested Groups (Groups of Groups):
+```ini
+[east-datacenter]
+web-east1.example.com
+db-east1.example.com
+
+[west-datacenter]
+web-west1.example.com
+db-west1.example.com
+
+[production:children]
+east-datacenter
+west-datacenter
+
+[all-databases:children]
+east-datacenter
+west-datacenter
+```
+
+### Host Ranges (Pattern Matching):
+```ini
+# Numeric ranges
+[webservers]
+web[1:3].example.com    # web1, web2, web3
+web[01:03].example.com  # web01, web02, web03
+
+# Alphabetic ranges
+[databases]
+db[a:c].example.com     # dba, dbb, dbc
+
+# Complex patterns
+[kubernetes]
+k8s-master[1:3].prod.example.com
+k8s-worker[01:10].prod.example.com
+```
+
+**⚠️ Penting**: Pattern `[01:03]` akan generate `web01.example.com`, bukan `web1.example.com`. Perhatikan zero-padding!
+
+## 📝 Static Inventory: Format YAML
+
+Format YAML lebih flexible untuk complex configurations:
+
+```yaml
+# inventory/hosts.yml
+all:
+  children:
+    webservers:
+      hosts:
+        web1.example.com:
+          ansible_host: 192.0.2.10
+          http_port: 80
+          https_port: 443
+        web2.example.com:
+          ansible_host: 192.0.2.11
+          http_port: 80
+          https_port: 443
+      vars:
+        ansible_user: webadmin
+        environment: production
+        
+    databases:
+      hosts:
+        db1.example.com:
+          ansible_host: 192.0.2.20
+          mysql_port: 3306
+        db2.example.com:
+          ansible_host: 192.0.2.21
+          mysql_port: 3306
+      vars:
+        ansible_user: dbadmin
+        environment: production
+        
+    monitoring:
+      hosts:
+        monitor1.example.com:
+          ansible_host: 192.0.2.30
+          grafana_port: 3000
+          prometheus_port: 9090
+      vars:
+        ansible_user: monitor
+        environment: production
+```
+
+## 🔍 Inventory Validation dengan ansible-navigator
+
+### Community Edition (via pip):
+```bash
+# Install ansible-navigator via pip
+$ pip install ansible-navigator
+
+# List all hosts
+$ ansible-navigator inventory -i inventory/hosts --list --mode stdout
+
+# List hosts dalam format JSON
+$ ansible-navigator inventory -i inventory/hosts --list --mode stdout --format json
+```
+
+### Red Hat AAP:
+```bash
+# List all hosts dan groups
+$ ansible-navigator inventory -i inventory/hosts -m stdout --list
+
+# Detail specific host
+$ ansible-navigator inventory -i inventory/hosts -m stdout --host web1.example.com
+
+# Show group structure
+$ ansible-navigator inventory -i inventory/hosts -m stdout --graph webservers
+
+# Interactive mode (recommended)
+$ ansible-navigator inventory -i inventory/hosts
+```
+
+### Interactive Navigation:
+```bash
+# Masuk interactive mode
+$ ansible-navigator inventory -i inventory/hosts
+
+# Navigasi shortcuts:
+# :0 - Browse groups
+# :1 - Browse hosts
+# :2 - Browse group vars
+# :3 - Browse host vars
+# :q - Quit
+# :help - Show help
+```
+
+## ⚙️ Inventory Configuration & Location
+
+### Default Inventory Location:
+```bash
+# System-wide default
+/etc/ansible/hosts
+
+# Project-specific (recommended)
+./inventory/hosts
+./inventory.ini
+./hosts
+```
+
+### Override via Command Line:
+```bash
+# Red Hat AAP
+$ ansible-navigator run playbook.yml -i inventory/production
+
+# Community Edition
+$ ansible-playbook playbook.yml -i inventory/production
+```
+
+### Configure Default di ansible.cfg:
+```ini
+# ansible.cfg
+[defaults]
+inventory = ./inventory/hosts
+host_key_checking = False
+remote_user = ansible
+private_key_file = ~/.ssh/ansible_key
+
+[inventory]
+enable_plugins = host_list, script, auto, yaml, ini
+```
+
+## 🌐 Dynamic Inventory: Cloud Integration
+
+Dynamic inventory powerful untuk cloud environments yang scaling otomatis:
+
+### AWS EC2 Dynamic Inventory:
+```bash
+# Install AWS collection
+$ ansible-galaxy collection install amazon.aws
+
+# Create inventory plugin config
+$ cat > inventory/aws_ec2.yml << EOF
+plugin: amazon.aws.aws_ec2
+regions:
+  - us-east-1
+  - us-west-2
+filters:
+  instance-state-name: running
+keyed_groups:
+  - key: tags.Environment
+    prefix: env
+  - key: tags.Role
+    prefix: role
+  - key: instance_type
+    prefix: type
+hostnames:
+  - network-interface.association.public-ip
+  - dns-name
+  - private-dns-name
+EOF
+
+# Test dynamic inventory
+$ ansible-navigator inventory -i inventory/aws_ec2.yml --list --mode stdout
+```
+
+### Google Cloud Platform (GCP):
+```bash
+# Install GCP collection
+$ ansible-galaxy collection install google.cloud
+
+# Create GCP inventory config
+$ cat > inventory/gcp_compute.yml << EOF
+plugin: google.cloud.gcp_compute
+projects:
+  - my-project-id
+zones:
+  - us-central1-a
+  - us-central1-b
+filters:
+  - status = RUNNING
+keyed_groups:
+  - key: labels.environment
+    prefix: env
+  - key: labels.role
+    prefix: role
+  - key: machineType
+    prefix: type
+hostnames:
+  - networkInterfaces[0].accessConfigs[0].natIP
+  - name
+EOF
+```
+
+### OpenStack Dynamic Inventory:
+```bash
+# Install OpenStack collection
+$ ansible-galaxy collection install openstack.cloud
+
+# Create OpenStack inventory config
+$ cat > inventory/openstack.yml << EOF
+plugin: openstack.cloud.openstack
+expand_hostvars: true
+fail_on_errors: true
+all_projects: false
+keyed_groups:
+  - key: metadata.environment
+    prefix: env
+  - key: metadata.role
+    prefix: role
+  - key: flavor.name
+    prefix: flavor
+EOF
+```
+
+## 🏢 Real-World Inventory Structure
+
+Untuk production environment, structure inventory seperti ini:
+
+```
+inventory/
+├── production/
+│   ├── hosts.yml                 # Production hosts
+│   ├── group_vars/
+│   │   ├── all.yml              # Global vars
+│   │   ├── webservers.yml       # Web server vars
+│   │   └── databases.yml        # Database vars
+│   └── host_vars/
+│       ├── web1.example.com.yml # Host-specific vars
+│       └── db1.example.com.yml
+├── staging/
+│   ├── hosts.yml
+│   ├── group_vars/
+│   └── host_vars/
+└── development/
+    ├── hosts.yml
+    ├── group_vars/
+    └── host_vars/
+```
+
+### Example Production Inventory:
+```yaml
+# inventory/production/hosts.yml
+all:
+  children:
+    frontend:
+      children:
+        webservers:
+          hosts:
+            web[1:3].prod.example.com:
+        loadbalancers:
+          hosts:
+            lb[1:2].prod.example.com:
+              
+    backend:
+      children:
+        databases:
+          hosts:
+            db[1:2].prod.example.com:
+        cache:
+          hosts:
+            redis[1:3].prod.example.com:
+            
+    monitoring:
+      hosts:
+        monitor1.prod.example.com:
+        grafana1.prod.example.com:
+        
+    kubernetes:
+      children:
+        k8s_masters:
+          hosts:
+            k8s-master[1:3].prod.example.com:
+        k8s_workers:
+          hosts:
+            k8s-worker[01:10].prod.example.com:
+```
+
+## 🔧 Advanced Inventory Tips & Tricks
+
+### 1. Inventory Variables:
+```yaml
+# Group variables
+webservers:
+  vars:
+    http_port: 80
+    max_clients: 200
+    environment: production
+    
+# Host variables
+web1.example.com:
+  http_port: 8080  # Override group var
+  custom_config: true
+```
+
+### 2. Connection Parameters:
+```ini
+[webservers]
+web1.example.com ansible_host=192.0.2.10 ansible_user=webadmin
+web2.example.com ansible_host=192.0.2.11 ansible_user=webadmin ansible_port=2222
+web3.example.com ansible_host=192.0.2.12 ansible_ssh_private_key_file=~/.ssh/web3_key
+```
+
+### 3. Multiple Inventory Sources:
+```bash
+# Combine static and dynamic
+$ ansible-navigator inventory -i inventory/static.yml -i inventory/aws_ec2.yml --list
+```
+
+### 4. Inventory Plugins Priority:
+```ini
+# ansible.cfg
+[inventory]
+enable_plugins = host_list, script, auto, yaml, ini, advanced_host_list
+```
+
+## ⚡ Performance & Best Practices
+
+### 1. Inventory Organization:
+```bash
+# Good structure
+inventory/
+├── production.yml        # Production hosts
+├── staging.yml          # Staging hosts
+├── group_vars/
+│   ├── all.yml          # Global variables
+│   ├── webservers.yml   # Web server variables
+│   └── databases.yml    # Database variables
+└── host_vars/
+    └── special-host.yml # Host-specific variables
+```
+
+### 2. Naming Conventions:
+```ini
+# Consistent naming
+[webservers]
+web01.prod.example.com
+web02.prod.example.com
+
+[webservers_staging]
+web01.staging.example.com
+web02.staging.example.com
+
+# Avoid conflicts
+[production]  # Group name
+prod-web01.example.com  # Host name (different from group)
+```
+
+### 3. Security Considerations:
+```yaml
+# Use ansible-vault for sensitive data
+# inventory/group_vars/databases.yml
+database_password: !vault |
+  $ANSIBLE_VAULT;1.1;AES256
+  66386439653738353...
+
+# Separate credential management
+ansible_user: "{{ vault_ansible_user }}"
+ansible_ssh_private_key_file: "{{ vault_ssh_key_path }}"
+```
+
+## 🧪 Hands-on Lab: Complete Inventory Setup
+
+Mari kita buat inventory lengkap untuk lab environment:
+
+### 1. Create Directory Structure:
+```bash
+mkdir -p inventory/{production,staging,development}/{group_vars,host_vars}
+```
+
+### 2. Production Inventory:
+```yaml
+# inventory/production/hosts.yml
+all:
+  children:
+    webservers:
+      hosts:
+        web1.prod.local:
+          ansible_host: 192.168.1.10
+        web2.prod.local:
+          ansible_host: 192.168.1.11
+      vars:
+        environment: production
+        http_port: 80
+        
+    databases:
+      hosts:
+        db1.prod.local:
+          ansible_host: 192.168.1.20
+        db2.prod.local:
+          ansible_host: 192.168.1.21
+      vars:
+        environment: production
+        mysql_port: 3306
+```
+
+### 3. Test Inventory:
+```bash
+# Red Hat AAP
+$ ansible-navigator inventory -i inventory/production/hosts.yml --list --mode stdout
+
+# Community Edition
+$ ansible-inventory -i inventory/production/hosts.yml --list
+
+# Test connectivity
+$ ansible-navigator run -i inventory/production/hosts.yml -m ping all --mode stdout
+```
+
+### 4. Create Test Playbook:
+```yaml
+# test-inventory.yml
+---
+- name: Test Inventory Setup
+  hosts: all
+  gather_facts: yes
+  
+  tasks:
+    - name: Display host information
+      debug:
+        msg: |
+          Host: {{ inventory_hostname }}
+          IP: {{ ansible_host | default(inventory_hostname) }}
+          Environment: {{ environment }}
+          Groups: {{ group_names }}
+          
+    - name: Test connectivity
+      ping:
+```
+
+### 5. Run Test:
+```bash
+# Red Hat AAP
+$ ansible-navigator run test-inventory.yml -i inventory/production/hosts.yml --mode stdout
+
+# Community Edition
+$ ansible-playbook test-inventory.yml -i inventory/production/hosts.yml
+```
+
+## 🎯 Common Pitfalls & Solutions
+
+### 1. **Duplicate Host Names**:
+```ini
+# ❌ Wrong - conflict between group and host name
+[webserver]
+webserver.example.com
+
+# ✅ Correct - distinct names
+[webservers]
+web1.example.com
+```
+
+### 2. **Incorrect Range Patterns**:
+```ini
+# ❌ Wrong - inconsistent padding
+[servers]
+server[1:3].example.com    # server1, server2, server3
+server[01:03].example.com  # server01, server02, server03
+
+# ✅ Correct - consistent approach
+[servers]
+server[01:03].example.com  # All with zero padding
+```
+
+### 3. **Missing Host Variables**:
+```yaml
+# ❌ Wrong - undefined variables in playbook
+- hosts: databases
+  tasks:
+    - name: Configure MySQL
+      template:
+        src: my.cnf.j2
+        dest: /etc/mysql/my.cnf
+      # Error: mysql_port not defined
+
+# ✅ Correct - define in inventory
+databases:
+  vars:
+    mysql_port: 3306
+    mysql_root_password: "{{ vault_mysql_root_password }}"
+```
+
+## 📊 Monitoring & Debugging Inventory
+
+### Inventory Debugging Commands:
+```bash
+# List all hosts
+$ ansible-navigator inventory -i inventory/hosts.yml --list --mode stdout
+
+# Show specific host details
+$ ansible-navigator inventory -i inventory/hosts.yml --host web1.example.com --mode stdout
+
+# Graph view of groups
+$ ansible-navigator inventory -i inventory/hosts.yml --graph all --mode stdout
+
+# Debug connection issues
+$ ansible-navigator run -i inventory/hosts.yml -m ping all --mode stdout -vvv
+```
+
+### Inventory Validation Script:
+```python
+#!/usr/bin/env python3
+# validate_inventory.py
+import yaml
+import sys
+from ansible.inventory.manager import InventoryManager
+from ansible.parsing.dataloader import DataLoader
+
+def validate_inventory(inventory_file):
+    loader = DataLoader()
+    inventory = InventoryManager(loader=loader, sources=[inventory_file])
+    
+    # Check for duplicate hosts
+    hosts = inventory.get_hosts()
+    host_names = [host.name for host in hosts]
+    duplicates = set([x for x in host_names if host_names.count(x) > 1])
+    
+    if duplicates:
+        print(f"⚠️  Duplicate hosts found: {duplicates}")
+        return False
+    
+    print("✅ Inventory validation passed!")
+    return True
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: python validate_inventory.py <inventory_file>")
+        sys.exit(1)
+    
+    inventory_file = sys.argv[1]
+    validate_inventory(inventory_file)
+```
+
+## 🚀 What's Next in Chapter 3?
+
+Sekarang kita sudah punya foundation yang solid dengan inventory management. Di chapter berikutnya, kita akan explore:
+
+**Ansible Configuration Management**:
+- `ansible.cfg` structure dan hierarchy
+- Environment-specific configurations
+- Performance tuning untuk large inventories
+- Security best practices dengan ansible-vault
+- Integration dengan CI/CD pipelines
+
+**Advanced Inventory Patterns**:
+- Multi-cloud inventory management
+- Service discovery integration
+- Custom inventory plugins
+- Inventory caching strategies
+
+## 📌 Key Takeaways
+
+**Inventory adalah backbone** dari Ansible automation. Tanpa inventory yang well-structured, scaling automation akan jadi nightmare.
+
+**Static vs Dynamic** inventory punya use cases masing-masing: static untuk stable environments, dynamic untuk cloud-native yang auto-scaling.
+
+**Organization matters** - proper directory structure, naming conventions, dan variable management akan save kamu banyak waktu di masa depan.
+
+**Testing dan validation** inventory sama pentingnya dengan testing playbooks. Gunakan ansible-navigator untuk debugging dan validation.
+
+**Security considerations** harus dari awal - jangan commit credentials, pakai ansible-vault, dan proper access controls.
+
+## 🔗 Resources & References
+
+- [Ansible Inventory Documentation](https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html)
+- [Dynamic Inventory Guide](https://docs.ansible.com/ansible/latest/user_guide/intro_dynamic_inventory.html)
+- [Ansible Navigator Documentation](https://ansible-navigator.readthedocs.io/)
+- [Sample Inventory Repository](https://github.com/febryanramadhan/ansible-inventory-examples)
+
+Feel free untuk experiment dengan inventory structure yang sesuai dengan infrastructure kamu. Setiap environment punya kebutuhan yang berbeda, tapi principles yang kita bahas di sini universal.
+
+Next chapter akan lebih deep ke configuration management - how to make Ansible behavior sesuai dengan workflow kamu!
+
+---
+
+*Catatan dari perjalanan belajar Red Hat DO294 yang saya adaptasi untuk kebutuhan praktis sehari-hari. Semoga bermanfaat untuk teman-teman yang sedang membangun automation infrastructure!*
+
+#ansible #inventory #automation #devops #infrastructureascode #systemadmin #ansible-navigator

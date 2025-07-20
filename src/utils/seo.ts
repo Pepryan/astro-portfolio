@@ -28,6 +28,29 @@ export interface BlogPostSEO {
   keywords?: string[];
   author?: string;
   slug: string;
+  series?: {
+    name: string;
+    slug: string;
+    part: number;
+    total?: number;
+    description?: string;
+  };
+}
+
+export interface SeriesSEO {
+  name: string;
+  slug: string;
+  description: string;
+  thumbnail?: string;
+  status: 'ongoing' | 'completed' | 'planned';
+  tags: string[];
+  category?: string;
+  difficulty?: string;
+  totalParts: number;
+  completedParts: number;
+  startDate?: Date;
+  endDate?: Date;
+  featured: boolean;
 }
 
 /**
@@ -96,9 +119,14 @@ export function generateSEO(data: Partial<SEOData> = {}): SEOData {
 export function generateBlogPostSEO(post: BlogPostSEO): SEOData {
   const postUrl = `/blog/${post.slug}`;
   const postImage = post.thumbnail || seoConfig.images.default;
-  const postDescription = post.summary || post.description || `Read ${post.title} on ${seoConfig.blog.title}`;
-  
-  // Generate keywords from tags and post keywords
+
+  // Enhanced description for series posts
+  let postDescription = post.summary || post.description || `Read ${post.title} on ${seoConfig.blog.title}`;
+  if (post.series) {
+    postDescription = `${postDescription} Part ${post.series.part}${post.series.total ? ` of ${post.series.total}` : ''} in the ${post.series.name} series.`;
+  }
+
+  // Generate keywords from tags, post keywords, and series
   const postKeywords = [
     ...(post.keywords || []),
     ...(post.tags || []),
@@ -106,8 +134,15 @@ export function generateBlogPostSEO(post: BlogPostSEO): SEOData {
     'tutorial'
   ];
 
-  // Generate structured title
-  const structuredTitle = post.title;
+  if (post.series) {
+    postKeywords.push('series', 'guide', 'multi-part');
+  }
+
+  // Generate structured title with series information
+  let structuredTitle = post.title;
+  if (post.series) {
+    structuredTitle = `${post.title} - ${post.series.name} Part ${post.series.part}`;
+  }
 
   return generateSEO({
     title: structuredTitle,
@@ -156,6 +191,69 @@ export function generateTagPageSEO(tag: string, posts: any[] = []): SEOData {
     canonical: `/tags/${tag}`,
     type: 'website',
     keywords: [tag, 'articles', 'tutorials', 'blog']
+  });
+}
+
+/**
+ * Generate SEO data for series listing page
+ */
+export function generateSeriesListingSEO(series: SeriesSEO[] = []): SEOData {
+  const seriesCount = series.length;
+  const featuredSeries = series.filter(s => s.featured);
+  const ongoingSeries = series.filter(s => s.status === 'ongoing');
+
+  const dynamicDescription = `Explore ${seriesCount} comprehensive blog series covering cloud engineering, DevOps, web development, and modern technology topics. ${featuredSeries.length} featured series and ${ongoingSeries.length} ongoing series with structured, multi-part tutorials and guides.`;
+
+  return generateSEO({
+    title: 'Blog Series - Comprehensive Learning Guides',
+    description: dynamicDescription,
+    canonical: '/series',
+    type: 'website',
+    keywords: ['blog series', 'tutorials', 'guides', 'multi-part', 'learning', 'structured content']
+  });
+}
+
+/**
+ * Generate SEO data for individual series pages
+ */
+export function generateSeriesSEO(series: SeriesSEO): SEOData {
+  const seriesUrl = `/series/${series.slug}`;
+  const seriesImage = series.thumbnail || seoConfig.images.default;
+
+  // Enhanced description with series details
+  let seriesDescription = series.description;
+  if (series.completedParts > 0) {
+    seriesDescription += ` This ${series.status} series has ${series.completedParts} of ${series.totalParts} parts completed.`;
+  }
+  if (series.difficulty) {
+    seriesDescription += ` Difficulty level: ${series.difficulty}.`;
+  }
+
+  // Generate keywords from series tags and metadata
+  const seriesKeywords = [
+    ...series.tags,
+    'series',
+    'tutorial',
+    'guide',
+    'multi-part',
+    series.status,
+    ...(series.difficulty ? [series.difficulty.toLowerCase()] : []),
+    ...(series.category ? [series.category.toLowerCase()] : [])
+  ];
+
+  // Generate structured title
+  const structuredTitle = `${series.name} - ${series.status.charAt(0).toUpperCase() + series.status.slice(1)} Series`;
+
+  return generateSEO({
+    title: structuredTitle,
+    description: seriesDescription,
+    canonical: seriesUrl,
+    image: seriesImage,
+    type: 'website',
+    keywords: seriesKeywords,
+    publishedTime: series.startDate?.toISOString(),
+    modifiedTime: series.endDate?.toISOString(),
+    section: series.category
   });
 }
 
@@ -273,6 +371,85 @@ export function truncateText(text: string, maxLength: number = 160): string {
   return lastSpace > 0 
     ? truncated.substring(0, lastSpace) + '...'
     : truncated + '...';
+}
+
+/**
+ * Generate structured data for blog series
+ */
+export function generateSeriesStructuredData(series: SeriesSEO, posts: any[] = []) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    "name": series.name,
+    "description": series.description,
+    "url": `${seoConfig.site.url}/series/${series.slug}`,
+    "image": series.thumbnail || seoConfig.images.default,
+    "provider": {
+      "@type": "Person",
+      "name": seoConfig.author.name,
+      "url": seoConfig.author.url
+    },
+    "author": {
+      "@type": "Person",
+      "name": seoConfig.author.name,
+      "url": seoConfig.author.url,
+      "jobTitle": seoConfig.author.jobTitle
+    },
+    "courseCode": series.slug,
+    "educationalLevel": series.difficulty || "Intermediate",
+    "teaches": series.tags,
+    "numberOfCredits": series.totalParts,
+    "timeRequired": `PT${series.totalParts * 10}M`, // Estimated 10 minutes per part
+    "coursePrerequisites": series.difficulty === "Advanced" ? "Basic knowledge of the topic" : "No prerequisites",
+    "hasPart": posts.map((post, index) => ({
+      "@type": "LearningResource",
+      "name": post.data?.title || post.title,
+      "description": post.data?.summary || post.summary,
+      "url": `${seoConfig.site.url}/blog/${post.slug}`,
+      "position": index + 1,
+      "learningResourceType": "Article",
+      "timeRequired": `PT${post.readingTime || 5}M`
+    })),
+    "inLanguage": seoConfig.site.language,
+    "dateCreated": series.startDate?.toISOString(),
+    "dateModified": series.endDate?.toISOString() || new Date().toISOString(),
+    "courseStatus": series.status === "completed" ? "Completed" : "Active"
+  };
+}
+
+/**
+ * Generate structured data for series posts (part of a series)
+ */
+export function generateSeriesPostStructuredData(post: BlogPostSEO, series: SeriesSEO) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": post.title,
+    "description": post.summary || post.description,
+    "url": `${seoConfig.site.url}/blog/${post.slug}`,
+    "image": post.thumbnail || seoConfig.images.default,
+    "datePublished": post.date.toISOString(),
+    "dateModified": post.updated?.toISOString() || post.date.toISOString(),
+    "author": {
+      "@type": "Person",
+      "name": post.author || seoConfig.author.name,
+      "url": seoConfig.author.url
+    },
+    "publisher": {
+      "@type": "Person",
+      "name": seoConfig.author.name,
+      "url": seoConfig.site.url
+    },
+    "isPartOf": {
+      "@type": "Course",
+      "name": series.name,
+      "url": `${seoConfig.site.url}/series/${series.slug}`
+    },
+    "position": post.series?.part,
+    "articleSection": post.category,
+    "keywords": [...(post.keywords || []), ...(post.tags || []), 'series', 'tutorial'].join(', '),
+    "inLanguage": seoConfig.site.language
+  };
 }
 
 /**
