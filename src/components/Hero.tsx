@@ -170,6 +170,75 @@ export default function Hero() {
             className="space-y-8 mt-10 relative z-10"
             variants={itemVariants}
           >
+            {/* Profile Photo */}
+            <motion.div
+              className="flex justify-center mb-8"
+              variants={itemVariants}
+            >
+              <motion.div
+                className="relative group"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {/* Gradient ring around photo */}
+                <motion.div
+                  className="absolute -inset-1 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 rounded-full opacity-75 group-hover:opacity-100 blur-sm"
+                  animate={{
+                    rotate: [0, 360],
+                  }}
+                  transition={{
+                    duration: 8,
+                    repeat: Infinity,
+                    ease: "linear"
+                  }}
+                />
+
+                {/* Photo container */}
+                <motion.div
+                  className="relative w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 rounded-full overflow-hidden bg-white dark:bg-neutral-800 p-1"
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                >
+                  <img
+                    src="/images/photo-web-febryan.png"
+                    alt="Febryan Ramadhan"
+                    className="w-full h-full object-cover rounded-full"
+                  />
+
+                  {/* Subtle inner shadow for depth */}
+                  <div className="absolute inset-0 rounded-full shadow-inner opacity-20" />
+                </motion.div>
+
+                {/* Floating particles around photo */}
+                <motion.div
+                  className="absolute top-4 -right-2 w-2 h-2 bg-blue-400 rounded-full opacity-60"
+                  animate={{
+                    y: [-10, 10, -10],
+                    opacity: [0.6, 1, 0.6]
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                />
+                <motion.div
+                  className="absolute -bottom-2 -left-4 w-3 h-3 bg-purple-400 rounded-full opacity-40"
+                  animate={{
+                    y: [10, -10, 10],
+                    opacity: [0.4, 0.8, 0.4]
+                  }}
+                  transition={{
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 1
+                  }}
+                />
+              </motion.div>
+            </motion.div>
+
             {/* Title with Enhanced Animation */}
             <motion.h1
               className="text-4xl md:text-6xl lg:text-7xl font-bold text-neutral-900 dark:text-neutral-100 px-4"
