@@ -103,6 +103,13 @@ export function getEnabledStaticPages() {
       changefreq: 'weekly' as const,
       enabled: true, // Blog tags always enabled
       name: 'blog-tags'
+    },
+    {
+      path: '/series',
+      priority: 0.8,
+      changefreq: 'weekly' as const,
+      enabled: true, // Series always enabled
+      name: 'series'
     }
   ];
   

@@ -183,9 +183,6 @@ export default function Hero() {
                 {/* Gradient ring around photo */}
                 <motion.div
                   className="absolute -inset-1 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 rounded-full opacity-75 group-hover:opacity-100 blur-sm"
-                  animate={{
-                    rotate: [0, 360],
-                  }}
                   transition={{
                     duration: 8,
                     repeat: Infinity,
