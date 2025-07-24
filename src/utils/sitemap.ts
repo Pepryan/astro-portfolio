@@ -1,6 +1,7 @@
 import { getCollection } from 'astro:content';
 import { seoConfig } from '../config/components';
 import { getEnabledStaticPages } from './pages';
+import { getAllSeries } from './series';
 
 export interface SitemapURL {
   loc: string;
@@ -72,6 +73,43 @@ export async function generateSitemapURLs(): Promise<SitemapURL[]> {
       priority: 0.5
     });
   });
+
+  // Get all series and add series pages
+  try {
+    const allSeries = await getAllSeries();
+
+    // Add series listing page
+    urls.push({
+      loc: `${baseUrl}/series`,
+      lastmod: new Date().toISOString(),
+      changefreq: 'weekly',
+      priority: 0.8
+    });
+
+    // Add individual series detail pages
+    allSeries.forEach(series => {
+      // Calculate last modified date based on the latest post in the series
+      let lastmod = new Date().toISOString();
+      if (series.posts && series.posts.length > 0) {
+        const latestPost = series.posts.reduce((latest, post) => {
+          const postDate = post.data.updated || post.data.date;
+          const latestDate = latest.data.updated || latest.data.date;
+          return postDate > latestDate ? post : latest;
+        });
+        lastmod = (latestPost.data.updated || latestPost.data.date).toISOString();
+      }
+
+      urls.push({
+        loc: `${baseUrl}/series/${series.slug}`,
+        lastmod: lastmod,
+        changefreq: 'weekly',
+        priority: 0.7
+      });
+    });
+  } catch (error) {
+    console.warn('Error loading series for sitemap:', error);
+    // Continue without series pages if there's an error
+  }
 
   return urls;
 }
