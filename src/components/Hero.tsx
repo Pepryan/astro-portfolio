@@ -198,7 +198,7 @@ export default function Hero() {
                   transition={{ duration: 0.6, delay: 0.3 }}
                 >
                   <img
-                    src="/images/photo-web-febryan.png"
+                    src="/images/photo-web-febryan.webp"
                     alt="Febryan Ramadhan"
                     className="w-full h-full object-cover rounded-full"
                   />
