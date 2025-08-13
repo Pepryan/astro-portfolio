@@ -86,30 +86,10 @@ Perfect banget buat learning environment atau development setup yang ga butuh cl
 
 ## Step-by-Step Installation
 
-### 1. Persiapan Release Files
+Pertama, temen-temen perlu siapin network dan server bastion/manager yang diperlukan sebagain penyedia berbagai service/layanan untuk node OKD nantinya. 
 
-Pertama, temen-temen perlu download tools yang diperlukan. Dalam tutorial ini, kita bakal pake OKD versi 4.19.0-okd-scos.11:
-
-```bash
-# Download openshift-install dan oc client
-wget https://github.com/okd-project/okd/releases/download/4.19.0-okd-scos.11/openshift-install-linux-4.19.0-okd-scos.11.tar.gz
-wget https://github.com/okd-project/okd/releases/download/4.19.0-okd-scos.11/openshift-client-linux-4.19.0-okd-scos.11.tar.gz
-
-# Extract tools
-tar -xzf openshift-install-linux-4.19.0-okd-scos.11.tar.gz
-tar -xzf openshift-client-linux-4.19.0-okd-scos.11.tar.gz
-
-# Move to PATH
-sudo mv openshift-install oc kubectl /usr/local/bin/
-```
-
-**Pro tip**: Buat upgrade toolsnya, temen-temen bisa pake command ini:
-```bash
-oc adm release extract --tools quay.io/okd/scos-release:4.19.0-okd-scos.15 
-# sesuaikan versi terbaru
-```
-
-### 2. Setup KVM Network
+## Eksek di host KVM (WSL2 Ubuntu)
+### 1. Setup KVM Network
 ![okd-febryan-web-network-architecture](/images/blog/okd-febryan-web-network-architecture.webp)
 
 Kita butuh custom network buat isolasi VMs kita:
@@ -139,7 +119,7 @@ sudo virsh net-autostart okd4
 sudo virsh net-start okd4
 ```
 
-### 3. Deploy Bastion Server
+### 2. Deploy Bastion Server
 
 Bastion server ini bakal jadi NTP, DNS, DHCP server buat environment kita.
 
@@ -168,6 +148,30 @@ sudo virt-install \
 
 # Set autostart
 sudo virsh autostart okd-bastion-server
+```
+
+## Eksek di Server Bastion
+### 3. Persiapan Release Files
+
+Lalu siapkan tools yang diperlukan, download tools ini di dalam server bastion/manager. Dalam tutorial ini, kita bakal pake OKD versi 4.19.0-okd-scos.11:
+
+```bash
+# Download openshift-install dan oc client
+wget https://github.com/okd-project/okd/releases/download/4.19.0-okd-scos.11/openshift-install-linux-4.19.0-okd-scos.11.tar.gz
+wget https://github.com/okd-project/okd/releases/download/4.19.0-okd-scos.11/openshift-client-linux-4.19.0-okd-scos.11.tar.gz
+
+# Extract tools
+tar -xzf openshift-install-linux-4.19.0-okd-scos.11.tar.gz
+tar -xzf openshift-client-linux-4.19.0-okd-scos.11.tar.gz
+
+# Move to PATH
+sudo mv openshift-install oc kubectl /usr/local/bin/
+```
+
+**Pro tip**: Buat upgrade toolsnya, temen-temen bisa pake command ini:
+```bash
+oc adm release extract --tools quay.io/okd/scos-release:4.19.0-okd-scos.15 
+# sesuaikan versi terbaru
 ```
 
 ### 4. Configure Bastion Server
@@ -566,7 +570,7 @@ coreos-installer iso kargs modify \
 # Verify ignition embedded
 coreos-installer iso ignition show scos-live.iso | jq
 ```
-
+## Eksek kembali di host KVM (WSL2 Ubuntu)
 ### 11. Deploy OKD Single Node
 
 Kembali ke WSL2 host dan deploy VM:
@@ -609,6 +613,7 @@ Installation bakal makan waktu sekitar 30-45 menit. Temen-temen bisa monitor pro
 
 ```bash
 # Via virt-manager
+# Eksek di host KVM
 virt-manager
 
 # Via VNC (lebih user-friendly)
@@ -621,7 +626,7 @@ journalctl -f -u dhcpd
 # Dari dalam node OKD
 journalctl -b -f -u release-image.service -u bootkube.service
 
-# Monitor di bastion openshift wait-for
+# Monitor di bastion server openshift wait-for
 openshift-install wait-for install-complete --dir=/root/okd-sno --log-level=debug # (debug atau info)
 
 ```
@@ -634,6 +639,7 @@ openshift-install wait-for install-complete --dir=/root/okd-sno --log-level=debu
 Setelah installation selesai, temen-temen bisa access cluster:
 
 ```bash
+# Eksek di bastion servre
 # Copy kubeconfig dari node (via bastion)
 scp core@192.168.101.20:/opt/openshift/auth/kubeconfig ~/.kube/config
 scp core@192.168.101.20:/opt/openshift/auth/kubeadmin-password ./
