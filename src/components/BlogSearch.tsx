@@ -79,13 +79,14 @@ export default function BlogSearch({ onSearch, placeholder = "Search posts..." }
         {query && (
           <button
             onClick={handleClear}
-            className="absolute inset-y-0 right-0 pr-3 flex items-center z-10
+            className="absolute inset-y-0 right-0 pr-3 flex items-center justify-center z-10
               text-neutral-400 hover:text-red-500 dark:hover:text-red-400
-              hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full
-              transition-all duration-200 w-8 h-8 mr-1 my-auto hover:scale-110"
+              transition-all duration-200 hover:scale-110"
             aria-label="Clear search"
           >
-            <FiX className="w-3.5 h-3.5 mx-auto" />
+            <div className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20">
+              <FiX className="w-3.5 h-3.5" />
+            </div>
           </button>
         )}
 
