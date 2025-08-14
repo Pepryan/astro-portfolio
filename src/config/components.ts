@@ -689,7 +689,8 @@ export const componentConfig = {
         tags: ["Mobile App", "Islamic", "Prayer", "Spiritual", "Offline"],
         link: "https://github.com/Pepryan/dzikir-pagi-petang",
         github: "https://github.com/Pepryan/dzikir-pagi-petang",
-        featured: false,
+        demo: "https://dzikirapp.my.id",
+        featured: true,
         category: "Web",
         status: "Completed",
         year: "2023"
@@ -702,6 +703,7 @@ export const componentConfig = {
         tags: ["Next.js", "React", "TypeScript", "TailwindCSS", "Vercel"],
         link: "https://github.com/Pepryan/portfolio",
         github: "https://github.com/Pepryan/portfolio",
+        demo: "https://pepryan.github.io/portfolio",
         featured: false,
         category: "Web",
         status: "Archived",

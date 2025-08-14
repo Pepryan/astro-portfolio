@@ -249,7 +249,7 @@ firewall-cmd --permanent --add-service=ntp
 firewall-cmd --reload
 ```
 
-#### Verify NTP pada SNO Node (setelah deployment)
+#### Verify NTP pada SNO Node (setelah deployment node OKD selesai nantinya)
 
 Setelah SNO node running, verify time sync:
 
@@ -312,7 +312,7 @@ systemctl restart dhcpd
 systemctl status dhcpd
 ```
 
-### 6. Setup DNS Server (BIND)
+### 7. Setup DNS Server (BIND)
 
 DNS setup yang proper sangat crucial buat OKD:
 
@@ -444,7 +444,7 @@ nmcli connection modify enp1s0 ipv4.dns "192.168.101.254"
 nmcli connection reload
 ```
 
-### 7. Test DNS Resolution
+### 8. Test DNS Resolution
 
 ```bash
 # Test forward lookup
@@ -471,7 +471,7 @@ Address: 192.168.101.20
 sno.okd4.febryan.web.id has address 192.168.101.20
 ```
 
-### 8. Configure Firewall
+### 9. Configure Firewall
 
 ```bash
 firewall-cmd --permanent \
@@ -495,7 +495,7 @@ firewall-cmd --list-all
 ```
 
 # Install OKD
-### 9. Prepare OKD Installation Files
+### 10. Prepare OKD Installation Files
 
 ```bash
 mkdir -p /root/okd-sno
@@ -548,7 +548,7 @@ EOF
 openshift-install create single-node-ignition-config
 ```
 
-### 10. Create Custom CoreOS ISO
+### 11. Create Custom CoreOS ISO
 
 ```bash
 # Install coreos-installer
@@ -571,7 +571,7 @@ coreos-installer iso kargs modify \
 coreos-installer iso ignition show scos-live.iso | jq
 ```
 ## Eksek kembali di host KVM (WSL2 Ubuntu)
-### 11. Deploy OKD Single Node
+### 12. Deploy OKD Single Node
 
 Kembali ke WSL2 host dan deploy VM:
 
@@ -607,7 +607,7 @@ virsh start sno.okd4.febryan.web.id
 ## Installation Process Flow
 ![okd-febryan-web-flow-proses-instalasi](/images/blog/okd-febryan-web-flow-proses-instalasi.webp)
 
-### 12. Monitor Installation Progress
+### 13. Monitor Installation Progress
 
 Installation bakal makan waktu sekitar 30-45 menit. Temen-temen bisa monitor progress dengan beberapa cara:
 
@@ -634,7 +634,7 @@ openshift-install wait-for install-complete --dir=/root/okd-sno --log-level=debu
 ![okd-febryan-web-bootstrap-complete](/images/blog/okd-febryan-web-bootstrap-complete.webp)
 ![okd-febryan-web-bootstraping-process-1](/images/blog/okd-febryan-web-bootstraping-process-1.webp)
 
-### 13. Post-Installation Access
+### 14. Post-Installation Access
 
 Setelah installation selesai, temen-temen bisa access cluster:
 
