@@ -92,12 +92,11 @@ export default function ReadingProgress({
           >
             {/* Progress bar container - minimal design without background track */}
             <div className="relative w-full overflow-hidden" style={{ height: `${finalHeight}px` }}>
-              {/* Progress fill with enhanced gradient - no background track */}
+              {/* Progress fill with clean gradient - no background track or shadows */}
               <motion.div
                 className={`absolute top-0 left-0 h-full bg-gradient-to-r ${finalGradient} overflow-hidden`}
                 style={{
                   width: `${scrollProgress}%`,
-                  boxShadow: '0 0 20px rgba(99, 102, 241, 0.4), 0 0 40px rgba(147, 51, 234, 0.2)',
                   background: `linear-gradient(90deg,
                     rgb(37, 99, 235) 0%,
                     rgb(79, 70, 229) 25%,
@@ -141,27 +140,7 @@ export default function ReadingProgress({
                 )}
               </motion.div>
 
-              {/* Subtle glow effect at the end of progress */}
-              {scrollProgress > 5 && (
-                <motion.div
-                  className="absolute top-0 h-full w-8 opacity-80"
-                  style={{
-                    left: `${Math.max(0, scrollProgress - 2)}%`,
-                    background: 'linear-gradient(90deg, transparent 0%, rgba(147, 51, 234, 0.8) 100%)',
-                    filter: 'blur(2px)',
-                    willChange: 'left, opacity',
-                    backfaceVisibility: 'hidden',
-                    transform: 'translateZ(0)',
-                  }}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 0.8 }}
-                  transition={{
-                    duration: 0.2,
-                    ease: 'linear',
-                    type: 'tween'
-                  }}
-                />
-              )}
+
             </div>
           </motion.div>
         )}
