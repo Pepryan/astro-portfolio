@@ -37,6 +37,51 @@
   box-sizing: border-box;
 }
 
+/* Additional prose optimizations for compact layout */
+.prose h1:first-child,
+.prose h2:first-child,
+.prose h3:first-child,
+.prose h4:first-child,
+.prose h5:first-child,
+.prose h6:first-child {
+  margin-top: 0 !important;
+}
+
+/* Tighter spacing for consecutive headings */
+.prose h1 + h2,
+.prose h2 + h3,
+.prose h3 + h4 {
+  margin-top: 0.5rem !important;
+}
+
+/* Optimize spacing around code blocks */
+.prose pre {
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* Tighter spacing for lists */
+.prose ul ul,
+.prose ol ol,
+.prose ul ol,
+.prose ol ul {
+  margin-top: 0.25rem !important;
+  margin-bottom: 0.25rem !important;
+}
+
+/* Tighter spacing for consecutive paragraphs */
+.prose p + p {
+  margin-top: 0.375rem !important;
+}
+
+/* Reduce spacing between paragraphs and other elements */
+.prose p + ul,
+.prose p + ol,
+.prose ul + p,
+.prose ol + p {
+  margin-top: 0.375rem !important;
+}
+
 /* Responsive images */
 .prose img {
   max-width: 100%;
@@ -61,7 +106,7 @@
     border-radius: 0;
   }
 
-  /* Larger font size for code blocks on mobile */
+  /* Optimized font size for code blocks on mobile */
   pre code {
     font-size: 14px !important;
     line-height: 1.5;
@@ -78,11 +123,12 @@
   }
 }
 
-/* Code block styling */
+/* Code block styling - optimized for compact layout */
 pre {
   @apply relative rounded-lg overflow-hidden;
   overflow-x: auto;
-  padding: 1rem;
+  padding: 0.75rem;
+  margin: 0.5rem 0;
   max-width: 100%;
   width: 100%;
 }
@@ -113,14 +159,15 @@ pre:not([data-rehype-pretty-code-title]) > pre[data-language]:before {
   letter-spacing: 0.5px;
 }
 
-/* Code content */
+/* Code content - optimized for compact layout with improved readability */
 pre > code {
-  @apply grid min-w-full break-words rounded-none border-0 bg-transparent p-0 text-sm pt-2;
+  @apply grid min-w-full break-words rounded-none border-0 bg-transparent p-0 text-sm pt-1.5;
   counter-reset: line;
   box-decoration-break: clone;
   white-space: pre;
   overflow-x: auto;
   word-wrap: normal;
+  line-height: 1.5;
 }
 
 code[data-line-numbers] {

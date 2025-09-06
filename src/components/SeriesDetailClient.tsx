@@ -1,7 +1,7 @@
 import { FiBookOpen, FiCalendar, FiClock, FiCheck, FiPlay, FiArrowRight, FiTag, FiTrendingUp } from 'react-icons/fi';
 import SeriesHeader from './SeriesHeader';
 import BlogCard from './BlogCard';
-import BackToTop from './BackToTop';
+import ReadingProgress from './ReadingProgress';
 
 interface SeriesPost {
   slug: string;
@@ -275,7 +275,7 @@ export default function SeriesDetailClient({ series }: SeriesDetailProps) {
         </div>
       </div>
 
-      <BackToTop />
+      <ReadingProgress />
     </main>
   );
 }

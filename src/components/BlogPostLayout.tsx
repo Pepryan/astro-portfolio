@@ -2,7 +2,7 @@ import { FiArrowLeft, FiCalendar, FiClock, FiTag, FiUser } from 'react-icons/fi'
 import ShareButtons from './ShareButtons';
 import { useEffect, useState } from 'react';
 import TableOfContents from './TableOfContents';
-import BackToTop from './BackToTop';
+import ReadingProgress from './ReadingProgress';
 import GiscusComments from './GiscusComments';
 import RelatedPosts from './RelatedPosts';
 import PostNavigation from './PostNavigation';
@@ -388,8 +388,8 @@ export default function BlogPostLayout({
         )}
       </main>
 
-      {/* Back to Top with Reading Progress */}
-      <BackToTop showProgress={true} />
+      {/* Reading Progress Indicator */}
+      <ReadingProgress />
     </div>
   );
 }

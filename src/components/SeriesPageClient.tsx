@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { FiSearch, FiFilter, FiGrid, FiList, FiBookOpen, FiTrendingUp } from 'react-icons/fi';
 import SeriesCard from './SeriesCard';
-import BackToTop from './BackToTop';
+import ReadingProgress from './ReadingProgress';
 
 interface SeriesInfo {
   name: string;
@@ -267,7 +267,7 @@ export default function SeriesPageClient({ series }: SeriesPageClientProps) {
         )}
       </div>
 
-      <BackToTop />
+      <ReadingProgress />
     </main>
   );
 }
