@@ -8,7 +8,7 @@ const { pages } = componentConfig;
 export default function Header() {
 
   return (
-    <header className="fixed top-4 left-4 right-4 z-40">
+    <header className="fixed top-6 left-4 right-4 z-40">
       <div className="max-w-4xl mx-auto">
         <div className="floating-header rounded-2xl transition-all duration-300">
           <div className="flex items-center justify-between h-14 px-6">

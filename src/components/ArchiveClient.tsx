@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiCalendar, FiClock, FiTag, FiSearch, FiFilter, FiArchive, FiTrendingUp } from 'react-icons/fi';
 import BlogSearch from './BlogSearch';
-import BackToTop from './BackToTop';
+import ReadingProgress from './ReadingProgress';
 
 interface BlogPost {
   slug: string;
@@ -376,8 +376,8 @@ export default function ArchiveClient({ posts }: ArchiveClientProps) {
         </AnimatePresence>
       </div>
 
-      {/* Back to Top Button */}
-      <BackToTop showAfter={400} showProgress={true} />
+      {/* Reading Progress Indicator */}
+      <ReadingProgress />
     </main>
   );
 }

@@ -183,8 +183,8 @@ export default function TableOfContents({ content, defaultExpanded = true, isMob
   const scrollToHeading = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
-      // Calculate proper offset based on fixed header height
-      const headerOffset = 100; // Account for fixed header + some padding
+      // Calculate proper offset based on fixed header height + reading progress bar
+      const headerOffset = 110; // Account for fixed header + reading progress bar + some padding
       const elementPosition = element.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.scrollY - headerOffset;
 

@@ -844,6 +844,19 @@ export const componentConfig = {
     }
   },
 
+  // Reading Progress Configuration
+  readingProgress: {
+    enabled: true,
+    showAfter: 200, // Show after scrolling this many pixels
+    height: 4, // Height of progress bar in pixels
+    showBackToTop: true, // Show back to top button when progress is visible
+    gradient: 'from-blue-600 via-indigo-600 to-purple-600', // Tailwind gradient classes
+    animation: {
+      shimmer: true, // Enable shimmer effect
+      duration: 0.3, // Animation duration in seconds
+    }
+  },
+
   // Layout Configuration
   layout: {
     maxWidth: '7xl', // Tailwind max-width class

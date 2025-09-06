@@ -4,7 +4,7 @@ import Header from './Header';
 import BlogList from './BlogList';
 import BlogSearch from './BlogSearch';
 import PostsPerPageSelector from './PostsPerPageSelector';
-import BackToTop from './BackToTop';
+import ReadingProgress from './ReadingProgress';
 import { seoConfig } from '../config/components';
 
 interface BlogPost {
@@ -556,8 +556,8 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
         />
       </main>
 
-      {/* Back to Top Button */}
-      <BackToTop showAfter={400} showProgress={true} />
+      {/* Reading Progress Indicator */}
+      <ReadingProgress />
     </>
   );
 }

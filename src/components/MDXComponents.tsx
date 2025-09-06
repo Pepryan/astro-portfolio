@@ -154,16 +154,19 @@ const MDXComponents = {
     </a>
   ),
   pre: PreBlock,
-  // Custom components can be added here
-  h1: (props: any) => <h1 className="text-3xl font-bold mb-4 text-neutral-900 dark:text-neutral-100" {...props} />,
-  h2: (props: any) => <h2 className="text-2xl font-semibold mb-3 text-neutral-900 dark:text-neutral-100" {...props} />,
-  h3: (props: any) => <h3 className="text-xl font-medium mb-2 text-neutral-900 dark:text-neutral-100" {...props} />,
-  p: (props: any) => <p className="mb-4 text-neutral-700 dark:text-neutral-300 leading-relaxed" {...props} />,
-  ul: (props: any) => <ul className="mb-4 pl-6 list-disc text-neutral-700 dark:text-neutral-300" {...props} />,
-  ol: (props: any) => <ol className="mb-4 pl-6 list-decimal text-neutral-700 dark:text-neutral-300" {...props} />,
-  li: (props: any) => <li className="mb-1" {...props} />,
+  // Custom components with optimized spacing for compact layout
+  h1: (props: any) => <h1 className="text-3xl font-bold mt-6 mb-3 text-neutral-900 dark:text-neutral-100 leading-tight first:mt-0" {...props} />,
+  h2: (props: any) => <h2 className="text-2xl font-semibold mt-5 mb-2 text-neutral-900 dark:text-neutral-100 leading-snug" {...props} />,
+  h3: (props: any) => <h3 className="text-xl font-medium mt-4 mb-1.5 text-neutral-900 dark:text-neutral-100 leading-snug" {...props} />,
+  h4: (props: any) => <h4 className="text-lg font-medium mt-3 mb-1 text-neutral-900 dark:text-neutral-100 leading-snug" {...props} />,
+  h5: (props: any) => <h5 className="text-base font-medium mt-2 mb-1 text-neutral-900 dark:text-neutral-100 leading-snug" {...props} />,
+  h6: (props: any) => <h6 className="text-sm font-medium mt-2 mb-1 text-neutral-900 dark:text-neutral-100 leading-snug" {...props} />,
+  p: (props: any) => <p className="mb-2 text-neutral-700 dark:text-neutral-300 leading-relaxed" {...props} />,
+  ul: (props: any) => <ul className="mb-2 pl-6 list-disc text-neutral-700 dark:text-neutral-300 space-y-0.5" {...props} />,
+  ol: (props: any) => <ol className="mb-2 pl-6 list-decimal text-neutral-700 dark:text-neutral-300 space-y-0.5" {...props} />,
+  li: (props: any) => <li className="leading-relaxed" {...props} />,
   blockquote: (props: any) => (
-    <blockquote className="border-l-4 border-blue-500 pl-4 py-2 mb-4 italic text-neutral-600 dark:text-neutral-400 bg-neutral-50 dark:bg-neutral-800/50 rounded-r" {...props} />
+    <blockquote className="border-l-4 border-blue-500 pl-4 py-2 mb-2 mt-2 italic text-neutral-600 dark:text-neutral-400 bg-neutral-50 dark:bg-neutral-800/50 rounded-r" {...props} />
   ),
   code: (props: any) => {
     // Inline code
@@ -174,15 +177,15 @@ const MDXComponents = {
     return <code {...props} />;
   },
   table: (props: any) => (
-    <div className="overflow-x-auto mb-4">
+    <div className="overflow-x-auto mb-2 mt-2">
       <table className="min-w-full border-collapse border border-neutral-300 dark:border-neutral-700" {...props} />
     </div>
   ),
   th: (props: any) => (
-    <th className="border border-neutral-300 dark:border-neutral-700 px-4 py-2 bg-neutral-100 dark:bg-neutral-800 font-semibold text-left" {...props} />
+    <th className="border border-neutral-300 dark:border-neutral-700 px-3 py-1.5 bg-neutral-100 dark:bg-neutral-800 font-semibold text-left text-sm" {...props} />
   ),
   td: (props: any) => (
-    <td className="border border-neutral-300 dark:border-neutral-700 px-4 py-2" {...props} />
+    <td className="border border-neutral-300 dark:border-neutral-700 px-3 py-1.5 text-sm" {...props} />
   ),
 };
 
