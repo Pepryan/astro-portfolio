@@ -1,7 +1,7 @@
 {
-  "name": "Deep Dive on Linux Journey - From Beginner to Expert",
-  "slug": "deep-dive-linux-journey-from-beginner-to-expert",
-  "description": "Series blog tentang memasuki dunia Linux dari dasar sampai mahir",
+  "name": "Deep Dive on Linux Journey",
+  "slug": "deep-dive-linux-journey",
+  "description": "Series blog tentang memasuki dunia Linux lebih dalam",
   "thumbnail": "",
   "status": "ongoing",
   "tags": ["linux", "sysadmin"],
