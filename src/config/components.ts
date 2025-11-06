@@ -476,6 +476,12 @@ export const componentConfig = {
       title: "Contact",
       description: "Get in touch for collaborations, opportunities, or just to say hello!"
     },
+    series: {
+      enabled: true,
+      showInNavigation: true,
+      title: "Series",
+      description: "Comprehensive learning series and tutorials"
+    },
     resume: {
       enabled: false,
       showInNavigation: false, // Hidden by default, accessible via direct link
