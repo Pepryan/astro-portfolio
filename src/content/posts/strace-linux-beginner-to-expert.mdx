@@ -64,7 +64,7 @@ Without strace, you're debugging in the dark. With strace, you can see:
 
 ### Real-World Impact
 
-At my work managing OpenStack infrastructure, strace helped me identify a misconfigured library path that was causing intermittent service failures - an issue that would have taken days to debug without it.
+In my career, I encountered a classic example. A critical service randomly failed to start.
 
 The application logs showed nothing useful. Traditional debugging tools couldn't help because the service would randomly fail. But with strace, I saw exactly which `.so` file it was looking for and where it was searching. Problem solved in 15 minutes.
 
