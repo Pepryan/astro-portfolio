@@ -1,7 +1,7 @@
 {
-  "name": "Deep Dive on Linux Journey",
-  "slug": "deep-dive-linux-journey",
-  "description": "Series blog tentang memasuki dunia Linux lebih dalam",
+  "name": "Deep Dive Linux & Networking: The Real Engineering Path",
+  "slug": "deep-dive-linux-networking-the-real-engineering-path",
+  "description": "Catatan perjalanan memahami Linux dan Networking lebih dalam, dari dari sudut pandang orang yang masih terus belajar biar makin jago.",
   "thumbnail": "",
   "status": "ongoing",
   "tags": ["linux", "sysadmin"],
