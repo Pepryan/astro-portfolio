@@ -14,19 +14,19 @@ export default {
             'code::before': false,
             'code::after': false,
 
-            // Optimize spacing for compact layout
-            '--tw-prose-body': '16px',
+            // Optimize spacing for compact layout with improved readability
+            '--tw-prose-body': '17px',
             '--tw-prose-headings': '1.2em',
             '--tw-prose-lead': '1.4em',
-            '--tw-prose-links': '16px',
-            '--tw-prose-bold': '16px',
-            '--tw-prose-counters': '16px',
-            '--tw-prose-bullets': '16px',
+            '--tw-prose-links': '17px',
+            '--tw-prose-bold': '17px',
+            '--tw-prose-counters': '17px',
+            '--tw-prose-bullets': '17px',
             '--tw-prose-hr': '1px',
-            '--tw-prose-quotes': '18px',
+            '--tw-prose-quotes': '19px',
             '--tw-prose-quote-borders': '4px',
-            '--tw-prose-captions': '14px',
-            '--tw-prose-kbd': '14px',
+            '--tw-prose-captions': '15px',
+            '--tw-prose-kbd': '15px',
             '--tw-prose-th-borders': '1px',
             '--tw-prose-td-borders': '1px',
 
@@ -52,27 +52,72 @@ export default {
               lineHeight: '1.4',
             },
             'p': {
-              marginTop: '0.5rem',
-              marginBottom: '0.5rem',
-              lineHeight: '1.6',
+              marginTop: '0.375rem',
+              marginBottom: '0.375rem',
+              lineHeight: '1.65',
+              fontSize: '17px',
+            },
+            // Tighter spacing for paragraphs adjacent to code blocks
+            'p + pre': {
+              marginTop: '0.25rem',
+            },
+            'pre + p': {
+              marginTop: '0.25rem',
+            },
+            // Tighter spacing for paragraphs adjacent to images
+            'p + img': {
+              marginTop: '0.25rem',
+            },
+            'img + p': {
+              marginTop: '0.25rem',
+            },
+            // Image spacing
+            'img': {
+              marginTop: '0.25rem',
+              marginBottom: '0.25rem',
+            },
+            // Figure spacing
+            'figure': {
+              marginTop: '0.25rem',
+              marginBottom: '0.25rem',
+            },
+            'p + figure': {
+              marginTop: '0.25rem',
+            },
+            'figure + p': {
+              marginTop: '0.25rem',
             },
             'ul': {
-              marginTop: '0.5rem',
-              marginBottom: '0.5rem',
+              marginTop: '0.375rem',
+              marginBottom: '0.375rem',
+              fontSize: '17px',
             },
             'ol': {
-              marginTop: '0.5rem',
-              marginBottom: '0.5rem',
+              marginTop: '0.375rem',
+              marginBottom: '0.375rem',
+              fontSize: '17px',
             },
             'li': {
+              marginTop: '0.0625rem',
+              marginBottom: '0.0625rem',
+              lineHeight: '1.6',
+            },
+            // Nested lists with tighter spacing
+            'ul ul, ol ol, ul ol, ol ul': {
               marginTop: '0.125rem',
               marginBottom: '0.125rem',
             },
             'blockquote': {
-              marginTop: '0.5rem',
-              marginBottom: '0.5rem',
+              marginTop: '0.25rem',
+              marginBottom: '0.25rem',
               paddingTop: '0.5rem',
               paddingBottom: '0.5rem',
+            },
+            'p + blockquote': {
+              marginTop: '0.25rem',
+            },
+            'blockquote + p': {
+              marginTop: '0.25rem',
             },
             // First element should not have top margin
             '> :first-child': {
