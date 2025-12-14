@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 # Original images backup
 images-original/
+
+# vscode settings
+.vscode/

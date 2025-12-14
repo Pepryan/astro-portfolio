@@ -84,11 +84,10 @@ export default function ThemeToggle() {
       {/* Enhanced Toggle Switch */}
       <button
         onClick={handleToggle}
-        className={`relative inline-flex h-8 w-16 items-center rounded-full transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-neutral-900 shadow-lg border-2 ${
-          isDarkMode
+        className={`relative inline-flex h-8 w-16 items-center rounded-full transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-neutral-900 shadow-lg border-2 ${isDarkMode
             ? 'bg-gradient-to-r from-purple-600 to-blue-600 border-purple-500 focus:ring-purple-500'
             : 'bg-gradient-to-r from-orange-400 to-yellow-400 border-orange-300 focus:ring-orange-500'
-        }`}
+          }`}
         role="switch"
         aria-checked={isDarkMode}
         aria-label={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
@@ -96,26 +95,23 @@ export default function ThemeToggle() {
         {/* Background Icons */}
         <div className="absolute inset-0 flex items-center justify-between px-2">
           <FiSun
-            className={`w-3 h-3 transition-all duration-300 ${
-              !isDarkMode
+            className={`w-3 h-3 transition-all duration-300 ${!isDarkMode
                 ? 'text-white opacity-100 scale-110'
                 : 'text-white/50 opacity-60 scale-90'
-            }`}
+              }`}
           />
           <FiMoon
-            className={`w-3 h-3 transition-all duration-300 ${
-              isDarkMode
+            className={`w-3 h-3 transition-all duration-300 ${isDarkMode
                 ? 'text-white opacity-100 scale-110'
                 : 'text-white/50 opacity-60 scale-90'
-            }`}
+              }`}
           />
         </div>
 
         {/* Moving Circle */}
         <span
-          className={`relative inline-block h-6 w-6 transform rounded-full bg-white shadow-xl transition-all duration-300 ease-in-out flex items-center justify-center ${
-            isDarkMode ? 'translate-x-8' : 'translate-x-1'
-          }`}
+          className={`relative inline-block h-6 w-6 transform rounded-full bg-white shadow-xl transition-all duration-300 ease-in-out flex items-center justify-center ${isDarkMode ? 'translate-x-8' : 'translate-x-1'
+            }`}
         >
           {/* Active Icon in Circle */}
           {isDarkMode ? (

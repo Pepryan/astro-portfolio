@@ -95,21 +95,13 @@ try {
                     {pages.projects.cta.subtitle}
                   </p>
                   <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href={pages.projects.cta.primaryAction.link} class={`inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-semibold transition-colors ${
-                      pages.projects.cta.backgroundStyle === 'minimal'
-                        ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600'
-                        : 'bg-white text-neutral-900 hover:bg-neutral-100'
-                    }`}>
+                    <a href={pages.projects.cta.primaryAction.link} class="btn-stylized">
                       <span>{pages.projects.cta.primaryAction.text}</span>
                       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
                       </svg>
                     </a>
-                    <a href={pages.projects.cta.secondaryAction.link} class={`inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-semibold transition-all ${
-                      pages.projects.cta.backgroundStyle === 'minimal'
-                        ? 'border-2 border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-300 hover:border-neutral-400 dark:hover:border-neutral-500'
-                        : 'border-2 border-white/30 text-white hover:border-white/50 hover:bg-white/10'
-                    }`}>
+                    <a href={pages.projects.cta.secondaryAction.link} class="btn-stylized-outline">
                       <span>{pages.projects.cta.secondaryAction.text}</span>
                       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>

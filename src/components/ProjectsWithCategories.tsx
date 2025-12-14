@@ -45,37 +45,19 @@ export default function ProjectsWithCategories() {
       {/* Category Filters */}
       <div className="flex flex-wrap justify-center gap-3 md:gap-4">
         {categories.map((category) => (
-          <motion.button
+          <button
             key={category.id}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
             onClick={() => setActiveCategory(category.id)}
-            className={`group relative px-6 py-3 rounded-2xl font-medium transition-all duration-300 ${
-              activeCategory === category.id
-                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-500/25'
-                : 'bg-white/80 dark:bg-neutral-800/80 text-neutral-700 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700 hover:border-blue-300 dark:hover:border-blue-600'
-            }`}
+            className={`project-tab ${activeCategory === category.id ? 'project-tab-active' : ''}`}
           >
-            <div className="flex items-center gap-2">
-              <span className="text-lg">{category.icon}</span>
-              <span>{category.name}</span>
-              {category.count > 0 && (
-                <span className={`text-xs px-2 py-1 rounded-full ${
-                  activeCategory === category.id
-                    ? 'bg-white/20 text-white'
-                    : 'bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-400'
-                }`}>
-                  {category.count}
-                </span>
-              )}
-            </div>
-            
-            {/* Hover effect */}
-            <motion.div
-              className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/10 to-purple-600/10 opacity-0 group-hover:opacity-100 transition-opacity"
-              layoutId="categoryHover"
-            />
-          </motion.button>
+            <span className="text-lg">{category.icon}</span>
+            <span>{category.name}</span>
+            {category.count > 0 && (
+              <span className={`project-tab-count ${activeCategory === category.id ? 'project-tab-count-active' : ''}`}>
+                {category.count}
+              </span>
+            )}
+          </button>
         ))}
       </div>
 

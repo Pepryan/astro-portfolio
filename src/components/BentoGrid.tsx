@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useRef, useEffect, useState } from 'react';
 import { FiArrowUpRight, FiTrendingUp } from 'react-icons/fi';
 import { componentConfig } from '../config/components';
@@ -9,17 +9,9 @@ export default function BentoGrid() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
 
-  // Initialize scroll progress with safe defaults
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
-  });
-
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
 
   // Early return if not enabled
   if (!bentoGrid.enabled) return null;
@@ -48,26 +40,26 @@ export default function BentoGrid() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: bentoGrid.animationType === 'stagger' ? 0.1 : 0.2,
-        delayChildren: 0.1
+        staggerChildren: bentoGrid.animationType === 'stagger' ? 0.08 : 0.15,
+        delayChildren: 0.05
       }
     }
   };
 
   const cardVariants = {
-    hidden: { 
-      opacity: 0, 
-      y: 30,
-      scale: 0.95
+    hidden: {
+      opacity: 0,
+      y: 20,
+      scale: 0.98
     },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
       scale: 1,
       transition: {
         type: "spring",
-        damping: 20,
-        stiffness: 100
+        damping: 25,
+        stiffness: 120
       }
     }
   };
@@ -128,16 +120,12 @@ export default function BentoGrid() {
   };
 
   return (
-    <motion.section
+    <section
       ref={containerRef}
       className="py-16 sm:py-24 relative overflow-hidden"
     >
-      {/* Background */}
-      <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-neutral-50/50 to-transparent
-          dark:from-neutral-900/50 dark:to-transparent"
-        style={{ y }}
-      />
+      {/* Subtle Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-neutral-50/50 to-transparent dark:from-neutral-900/50 dark:to-transparent pointer-events-none" />
 
       <div className="max-w-6xl mx-auto px-4 relative">
         {/* Section Header */}
@@ -175,8 +163,6 @@ export default function BentoGrid() {
           {bentoGrid.cards.map((card, index) => {
             const colors = getColorClasses(card.color);
             const CardComponent = card.interactive ? motion.a : motion.div;
-
-            // Determine the href - use link if available, otherwise use a fallback
             const cardHref = card.interactive ? (card.link || `#${card.id}`) : undefined;
 
             return (
@@ -192,37 +178,29 @@ export default function BentoGrid() {
                   bg-gradient-to-br ${colors.bg} ${colors.border}
                   hover:bg-gradient-to-br ${colors.hover}
                   transition-all duration-300 ${card.interactive ? 'cursor-pointer' : 'cursor-default'}
-                  ${card.interactive ? 'hover:scale-[1.02] hover:shadow-xl' : 'hover:scale-[1.01]'}
+                  ${card.interactive ? 'hover:shadow-xl hover-glow' : 'hover:shadow-lg'}
                   ${card.size === 'large' ? 'min-h-[300px] md:min-h-[400px]' : 'min-h-[200px]'}
                 `}
                 variants={cardVariants}
                 whileHover={card.interactive ? {
                   y: -4,
+                  scale: 1.02,
                   transition: { type: "spring", stiffness: 300 }
-                } : { scale: 1.01 }}
+                } : {}}
                 whileTap={card.interactive ? { scale: 0.98 } : {}}
               >
                 {/* Card Content */}
                 <div className="flex flex-col h-full">
                   {/* Header */}
                   <div className="flex items-start justify-between mb-4">
-                    <motion.div
-                      className={`text-3xl ${card.size === 'large' ? 'md:text-4xl' : ''}`}
-                      whileHover={card.interactive ? { 
-                        rotate: [0, -5, 5, 0],
-                        transition: { duration: 0.5 }
-                      } : {}}
-                    >
+                    <div className={`text-3xl ${card.size === 'large' ? 'md:text-4xl' : ''} group-hover:scale-110 transition-transform duration-300`}>
                       {card.icon}
-                    </motion.div>
-                    
+                    </div>
+
                     {card.interactive && (
-                      <motion.div
-                        className={`${colors.text} opacity-0 group-hover:opacity-100 transition-opacity`}
-                        whileHover={{ scale: 1.1 }}
-                      >
+                      <div className={`${colors.text} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}>
                         <FiArrowUpRight className="w-5 h-5" />
-                      </motion.div>
+                      </div>
                     )}
                   </div>
 
@@ -238,12 +216,7 @@ export default function BentoGrid() {
 
                   {/* Stats (if available) */}
                   {card.stats && (
-                    <motion.div
-                      className="mt-4 pt-4 border-t border-neutral-200/50 dark:border-neutral-700/50"
-                      initial={{ opacity: 0, y: 10 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 + 0.5 }}
-                    >
+                    <div className="mt-4 pt-4 border-t border-neutral-200/50 dark:border-neutral-700/50">
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-neutral-500 dark:text-neutral-400">
                           {card.stats.label}
@@ -255,22 +228,14 @@ export default function BentoGrid() {
                           <FiTrendingUp className={`w-4 h-4 ${colors.text}`} />
                         </div>
                       </div>
-                    </motion.div>
+                    </div>
                   )}
-
-                  {/* Hover Overlay */}
-                  <motion.div
-                    className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/10 to-transparent
-                      dark:from-white/5 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
-                    initial={{ opacity: 0 }}
-                    whileHover={{ opacity: 1 }}
-                  />
                 </div>
               </CardComponent>
             );
           })}
         </motion.div>
       </div>
-    </motion.section>
+    </section>
   );
 }
