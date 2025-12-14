@@ -1,25 +1,13 @@
 import { FiBookOpen, FiClock, FiCheck, FiPlay, FiArrowUpRight, FiTrendingUp, FiCalendar } from 'react-icons/fi';
+import type { SeriesInfo } from '../types';
 
 interface SeriesCardProps {
-  series: {
-    name: string;
-    slug: string;
-    description: string;
-    thumbnail?: string;
-    status: 'ongoing' | 'completed' | 'planned';
-    tags: string[];
-    category?: string;
-    difficulty?: string;
-    totalParts: number;
-    completedParts: number;
-    startDate?: Date;
-    featured: boolean;
-  };
+  series: SeriesInfo;
 }
 
 export default function SeriesCard({ series }: SeriesCardProps) {
   const progressPercentage = (series.completedParts / series.totalParts) * 100;
-  
+
   const getStatusIcon = () => {
     switch (series.status) {
       case 'completed':
@@ -119,7 +107,7 @@ export default function SeriesCard({ series }: SeriesCardProps) {
               </div>
             </div>
           )}
-          
+
           {/* Overlay with status */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <div className="absolute bottom-4 left-4 right-4">
@@ -170,7 +158,7 @@ export default function SeriesCard({ series }: SeriesCardProps) {
               <span>{Math.round(progressPercentage)}%</span>
             </div>
             <div className="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-1.5">
-              <div 
+              <div
                 className="bg-gradient-to-r from-blue-500 to-purple-500 h-1.5 rounded-full transition-all duration-500 ease-out"
                 style={{ width: `${progressPercentage}%` }}
               ></div>
@@ -214,7 +202,7 @@ export default function SeriesCard({ series }: SeriesCardProps) {
                   })}
                 </time>
               )}
-              
+
               <div className="flex items-center gap-1.5">
                 <FiBookOpen className="w-4 h-4" />
                 <span>{series.totalParts} parts</span>

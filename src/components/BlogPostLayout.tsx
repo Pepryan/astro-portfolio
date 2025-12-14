@@ -1,3 +1,31 @@
+/**
+ * BlogPostLayout Component
+ * 
+ * Full-featured layout for individual blog post pages with rich content support.
+ * 
+ * Features:
+ * - Responsive two-column layout (content + sidebar TOC on desktop)
+ * - Lightbox functionality for images (added dynamically after mount)
+ * - Reading progress indicator
+ * - Series navigation for multi-part posts
+ * - Related posts section with similarity scoring
+ * - Giscus comments integration
+ * - Share buttons for social sharing
+ * 
+ * @example
+ * ```tsx
+ * <BlogPostLayout
+ *   post={post}
+ *   readingTime={5}
+ *   wordCount={1200}
+ *   postUrl={url}
+ *   allPosts={allBlogPosts}
+ *   seriesNavigation={seriesNav}
+ * >
+ *   <Content />
+ * </BlogPostLayout>
+ * ```
+ */
 import { FiArrowLeft, FiCalendar, FiClock, FiTag, FiUser } from 'react-icons/fi';
 import ShareButtons from './ShareButtons';
 import { useEffect, useState } from 'react';

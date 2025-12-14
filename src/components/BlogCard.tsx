@@ -1,23 +1,5 @@
 import { FiCalendar, FiTag, FiArrowUpRight, FiBookOpen, FiFileText } from 'react-icons/fi';
-
-interface BlogPost {
-  slug: string;
-  data: {
-    title: string;
-    summary?: string;
-    date: Date;
-    updated?: Date;
-    tags?: string[];
-    thumbnail?: string;
-    readingTime?: number;
-    series?: {
-      name: string;
-      slug: string;
-      part: number;
-      total?: number;
-    };
-  };
-}
+import type { BlogPost } from '../types';
 
 interface BlogCardProps {
   post: BlogPost;

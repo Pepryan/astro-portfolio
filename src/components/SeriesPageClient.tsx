@@ -1,26 +1,8 @@
 import { useState, useMemo } from 'react';
-import { FiSearch, FiFilter, FiGrid, FiList, FiBookOpen, FiTrendingUp } from 'react-icons/fi';
+import { FiSearch, FiGrid, FiList, FiBookOpen, FiTrendingUp } from 'react-icons/fi';
 import SeriesCard from './SeriesCard';
 import ReadingProgress from './ReadingProgress';
-
-interface SeriesInfo {
-  name: string;
-  slug: string;
-  description: string;
-  thumbnail?: string;
-  status: 'ongoing' | 'completed' | 'planned';
-  tags: string[];
-  category?: string;
-  difficulty?: string;
-  totalParts: number;
-  completedParts: number;
-  startDate?: Date;
-  featured: boolean;
-}
-
-interface SeriesPageClientProps {
-  series: SeriesInfo[];
-}
+import type { SeriesInfo, SeriesPageClientProps } from '../types';
 
 export default function SeriesPageClient({ series }: SeriesPageClientProps) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -44,11 +26,11 @@ export default function SeriesPageClient({ series }: SeriesPageClientProps) {
   // Filter and sort series
   const filteredAndSortedSeries = useMemo(() => {
     let filtered = series.filter(s => {
-      const matchesSearch = searchQuery === '' || 
+      const matchesSearch = searchQuery === '' ||
         s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         s.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
         s.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-      
+
       const matchesCategory = selectedCategory === 'all' || s.category === selectedCategory;
       const matchesStatus = selectedStatus === 'all' || s.status === selectedStatus;
       const matchesDifficulty = selectedDifficulty === 'all' || s.difficulty === selectedDifficulty;
@@ -103,13 +85,13 @@ export default function SeriesPageClient({ series }: SeriesPageClientProps) {
             <FiBookOpen className="w-4 h-4" />
             <span>Blog Series Collection</span>
           </div>
-          
+
           <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 dark:text-neutral-100 mb-6">
             Comprehensive Learning Series
           </h1>
-          
+
           <p className="text-xl text-neutral-600 dark:text-neutral-400 max-w-3xl mx-auto mb-8">
-            Dive deep into technology topics through structured, multi-part series covering 
+            Dive deep into technology topics through structured, multi-part series covering
             cloud engineering, DevOps, web development, and modern programming practices.
           </p>
 
@@ -218,25 +200,23 @@ export default function SeriesPageClient({ series }: SeriesPageClientProps) {
             <div className="text-sm text-neutral-600 dark:text-neutral-400">
               Showing {filteredAndSortedSeries.length} of {series.length} series
             </div>
-            
+
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-lg transition-colors duration-200 ${
-                  viewMode === 'grid' 
-                    ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' 
-                    : 'text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700'
-                }`}
+                className={`p-2 rounded-lg transition-colors duration-200 ${viewMode === 'grid'
+                  ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                  : 'text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700'
+                  }`}
               >
                 <FiGrid className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`p-2 rounded-lg transition-colors duration-200 ${
-                  viewMode === 'list' 
-                    ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' 
-                    : 'text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700'
-                }`}
+                className={`p-2 rounded-lg transition-colors duration-200 ${viewMode === 'list'
+                  ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                  : 'text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700'
+                  }`}
               >
                 <FiList className="w-4 h-4" />
               </button>
@@ -246,8 +226,8 @@ export default function SeriesPageClient({ series }: SeriesPageClientProps) {
 
         {/* Series Grid/List */}
         {filteredAndSortedSeries.length > 0 ? (
-          <div className={viewMode === 'grid' 
-            ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" 
+          <div className={viewMode === 'grid'
+            ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
             : "space-y-6"
           }>
             {filteredAndSortedSeries.map((s) => (

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { FiGithub, FiExternalLink, FiCalendar, FiTag, FiStar, FiActivity } from 'react-icons/fi';
+import { FiGithub, FiExternalLink, FiCalendar, FiTag } from 'react-icons/fi';
 
 interface ProjectCardProps {
   project: {
@@ -22,14 +22,14 @@ interface ProjectCardProps {
   showYear?: boolean;
 }
 
-export default function ProjectCard({ 
-  project, 
+export default function ProjectCard({
+  project,
   layout = 'grid',
   showCategory = true,
   showStatus = false,
   showYear = false
 }: ProjectCardProps) {
-  
+
   const getCategoryIcon = (category: string) => {
     switch (category) {
       case 'Cloud': return '☁️';
@@ -52,8 +52,8 @@ export default function ProjectCard({
 
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
       transition: {
         type: "spring",
@@ -73,15 +73,15 @@ export default function ProjectCard({
       >
         <div className="bg-white/80 dark:bg-neutral-800/80 rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700 
           backdrop-blur-sm overflow-hidden hover:shadow-xl transition-all duration-300 p-6">
-          
+
           <div className="flex items-start gap-6">
             {/* Icon/Image */}
             <div className="flex-shrink-0">
               <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/20 dark:to-purple-900/20 
                 rounded-xl flex items-center justify-center">
                 {project.image ? (
-                  <img 
-                    src={project.image} 
+                  <img
+                    src={project.image}
                     alt={project.title}
                     className="w-full h-full object-cover rounded-xl"
                   />
@@ -99,7 +99,7 @@ export default function ProjectCard({
                 <h3 className="text-lg font-bold text-neutral-800 dark:text-neutral-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                   {project.title}
                 </h3>
-                
+
                 {/* Status & Year */}
                 <div className="flex items-center gap-2 flex-shrink-0">
                   {showStatus && project.status && (
@@ -119,7 +119,7 @@ export default function ProjectCard({
               <p className="text-neutral-600 dark:text-neutral-400 text-sm mb-3 line-clamp-2">
                 {project.description}
               </p>
-              
+
               {/* Tags */}
               <div className="flex flex-wrap gap-1 mb-3">
                 {project.tags.slice(0, 4).map((tag) => (
@@ -151,7 +151,7 @@ export default function ProjectCard({
                   <span>GitHub</span>
                   <FiExternalLink className="w-3 h-3" />
                 </motion.a>
-                
+
                 {project.demo && (
                   <motion.a
                     href={project.demo}
@@ -183,12 +183,12 @@ export default function ProjectCard({
     >
       <div className="bg-white/80 dark:bg-neutral-800/80 rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700 
         backdrop-blur-sm overflow-hidden hover:shadow-xl transition-all duration-300 h-full flex flex-col">
-        
+
         {/* Image/Icon */}
         <div className="h-48 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/20 dark:to-purple-900/20 relative overflow-hidden">
           {project.image ? (
-            <img 
-              src={project.image} 
+            <img
+              src={project.image}
               alt={project.title}
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
             />
@@ -199,7 +199,7 @@ export default function ProjectCard({
               </div>
             </div>
           )}
-          
+
           {/* Category Badge */}
           {showCategory && (
             <div className="absolute top-3 left-3">
@@ -234,11 +234,11 @@ export default function ProjectCard({
               </span>
             )}
           </div>
-          
+
           <p className="text-neutral-600 dark:text-neutral-400 text-sm mb-4 flex-1">
             {project.description}
           </p>
-          
+
           {/* Tags */}
           <div className="flex flex-wrap gap-1 mb-4">
             {project.tags.slice(0, 3).map((tag) => (
@@ -270,7 +270,7 @@ export default function ProjectCard({
               <span>GitHub</span>
               <FiExternalLink className="w-3 h-3" />
             </motion.a>
-            
+
             {project.demo && (
               <motion.a
                 href={project.demo}

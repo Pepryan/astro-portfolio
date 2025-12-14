@@ -1,3 +1,21 @@
+/**
+ * FeaturedWork Component
+ * 
+ * Displays featured projects with support for both carousel and grid layouts.
+ * Reads configuration from componentConfig.featuredWork.
+ * 
+ * Features:
+ * - Carousel layout with slide navigation and dot indicators
+ * - Grid layout with hover effects
+ * - Loading skeleton state until mounted
+ * - Optional "View All" CTA button
+ * 
+ * @example
+ * ```tsx
+ * // In page component
+ * <FeaturedWork />
+ * ```
+ */
 import { motion } from 'framer-motion';
 import { useRef, useEffect, useState } from 'react';
 import { FiArrowRight, FiExternalLink, FiGithub } from 'react-icons/fi';

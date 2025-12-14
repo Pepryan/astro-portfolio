@@ -6,25 +6,7 @@ import BlogSearch from './BlogSearch';
 import PostsPerPageSelector from './PostsPerPageSelector';
 import ReadingProgress from './ReadingProgress';
 import { seoConfig } from '../config/components';
-
-interface BlogPost {
-  slug: string;
-  data: {
-    title: string;
-    summary?: string;
-    date: Date;
-    updated?: Date;
-    tags?: string[];
-    thumbnail?: string;
-    series?: {
-      name: string;
-      slug: string;
-      part: number;
-      total?: number;
-    };
-  };
-  readingTime: number;
-}
+import type { BlogPost } from '../types';
 
 interface BlogPageClientProps {
   posts: BlogPost[];
@@ -116,7 +98,7 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
   return (
     <>
       <Header />
-      
+
       <main className="max-w-7xl mx-auto px-4 pt-24 pb-16">
         {/* Enhanced Blog Title Section */}
         <div className={compactLayout ? "mb-6" : "mb-8"}>
@@ -124,7 +106,7 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
             {/* Decorative Background Elements */}
             <div className="absolute inset-0 -z-10 overflow-hidden">
               <div className="absolute top-1/2 left-0 w-24 h-24 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-2xl transform -translate-y-1/2 animate-pulse"></div>
-              <div className="absolute top-1/2 right-0 w-20 h-20 bg-gradient-to-bl from-green-500/10 to-blue-500/10 rounded-full blur-2xl transform -translate-y-1/2 animate-pulse" style={{animationDelay: '1s'}}></div>
+              <div className="absolute top-1/2 right-0 w-20 h-20 bg-gradient-to-bl from-green-500/10 to-blue-500/10 rounded-full blur-2xl transform -translate-y-1/2 animate-pulse" style={{ animationDelay: '1s' }}></div>
             </div>
 
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
@@ -230,96 +212,95 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
                     </div>
                   </button>
 
-                {/* Enhanced Dropdown Menu with 2025 Design */}
-                {isDropdownOpen && (
-                  <div className="absolute top-full left-0 right-0 mt-3 bg-white dark:bg-neutral-800
+                  {/* Enhanced Dropdown Menu with 2025 Design */}
+                  {isDropdownOpen && (
+                    <div className="absolute top-full left-0 right-0 mt-3 bg-white dark:bg-neutral-800
                     border border-neutral-200 dark:border-neutral-700 rounded-2xl
                     shadow-2xl shadow-neutral-900/10 dark:shadow-neutral-900/30 z-[100]
                     max-h-[32rem] overflow-hidden
                     animate-in slide-in-from-top-2 fade-in-0 duration-300 ease-out">
 
-                    {/* Header */}
-                    <div className="sticky top-0 bg-white dark:bg-neutral-800
+                      {/* Header */}
+                      <div className="sticky top-0 bg-white dark:bg-neutral-800
                       border-b border-neutral-200 dark:border-neutral-700 p-4">
-                      <div className="flex items-center gap-2">
-                        <FiTag className="w-4 h-4 text-blue-500" />
-                        <span className="font-semibold text-neutral-900 dark:text-neutral-100">
-                          Filter by Topic
-                        </span>
-                        <span className="text-xs text-neutral-500 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-700
+                        <div className="flex items-center gap-2">
+                          <FiTag className="w-4 h-4 text-blue-500" />
+                          <span className="font-semibold text-neutral-900 dark:text-neutral-100">
+                            Filter by Topic
+                          </span>
+                          <span className="text-xs text-neutral-500 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-700
                           px-2 py-1 rounded-full">
-                          {allTags.length} {statsLabels.topics}
-                        </span>
+                            {allTags.length} {statsLabels.topics}
+                          </span>
+                        </div>
                       </div>
-                    </div>
 
-                    {/* Scrollable Content */}
-                    <div className="max-h-80 overflow-y-auto">
-                      {/* All Posts Option with Enhanced Styling */}
-                      <button
-                        onClick={() => handleTagFilter('')}
-                        className={`group w-full text-left px-6 py-4 text-sm font-medium transition-all duration-300
+                      {/* Scrollable Content */}
+                      <div className="max-h-80 overflow-y-auto">
+                        {/* All Posts Option with Enhanced Styling */}
+                        <button
+                          onClick={() => handleTagFilter('')}
+                          className={`group w-full text-left px-6 py-4 text-sm font-medium transition-all duration-300
                           hover:scale-[1.01] relative overflow-hidden
                           ${selectedTag === ''
-                            ? 'bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/20 text-blue-700 dark:text-blue-300'
-                            : 'text-neutral-700 dark:text-neutral-300 hover:bg-gradient-to-r hover:from-neutral-50 hover:to-neutral-100 dark:hover:from-neutral-700/50 dark:hover:to-neutral-600/30'
-                          }`}
-                      >
-                        {selectedTag === '' && (
-                          <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-blue-600"></div>
-                        )}
-                        <div className="flex items-center justify-between">
-                          <span className="transition-transform duration-200 group-hover:translate-x-1 font-medium">
-                            All {statsLabels.posts.charAt(0).toUpperCase() + statsLabels.posts.slice(1)}
-                          </span>
-                          <span className="text-xs bg-white dark:bg-neutral-800 px-2 py-1 rounded-full border border-neutral-200 dark:border-neutral-600">
-                            {posts.length}
-                          </span>
-                        </div>
-                      </button>
+                              ? 'bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/20 text-blue-700 dark:text-blue-300'
+                              : 'text-neutral-700 dark:text-neutral-300 hover:bg-gradient-to-r hover:from-neutral-50 hover:to-neutral-100 dark:hover:from-neutral-700/50 dark:hover:to-neutral-600/30'
+                            }`}
+                        >
+                          {selectedTag === '' && (
+                            <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-blue-600"></div>
+                          )}
+                          <div className="flex items-center justify-between">
+                            <span className="transition-transform duration-200 group-hover:translate-x-1 font-medium">
+                              All {statsLabels.posts.charAt(0).toUpperCase() + statsLabels.posts.slice(1)}
+                            </span>
+                            <span className="text-xs bg-white dark:bg-neutral-800 px-2 py-1 rounded-full border border-neutral-200 dark:border-neutral-600">
+                              {posts.length}
+                            </span>
+                          </div>
+                        </button>
 
-                      {/* Enhanced Tag Grid - Better for Long Tags */}
-                      <div className="p-6">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          {allTags.map((tag, index) => {
-                            const tagCount = posts.filter(post => post.data.tags?.includes(tag)).length;
-                            return (
-                              <button
-                                key={tag}
-                                onClick={() => handleTagFilter(tag)}
-                                className={`group relative px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 text-left
+                        {/* Enhanced Tag Grid - Better for Long Tags */}
+                        <div className="p-6">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {allTags.map((tag, index) => {
+                              const tagCount = posts.filter(post => post.data.tags?.includes(tag)).length;
+                              return (
+                                <button
+                                  key={tag}
+                                  onClick={() => handleTagFilter(tag)}
+                                  className={`group relative px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 text-left
                                   hover:scale-[1.02] hover:shadow-lg transform-gpu overflow-hidden
                                   ${selectedTag === tag
-                                    ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg scale-[1.02]'
-                                    : 'bg-gradient-to-r from-neutral-50 to-neutral-100 dark:from-neutral-700 dark:to-neutral-600 text-neutral-700 dark:text-neutral-300 hover:from-neutral-100 hover:to-neutral-200 dark:hover:from-neutral-600 dark:hover:to-neutral-500'
-                                  }`}
-                                style={{
-                                  animationDelay: `${index * 30}ms`
-                                }}
-                              >
-                                {selectedTag === tag && (
-                                  <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-blue-600/20 animate-pulse"></div>
-                                )}
-                                <div className="relative flex items-center justify-between">
-                                  <span className="transition-transform duration-200 group-hover:translate-x-0.5 font-medium">
-                                    {tag}
-                                  </span>
-                                  <span className={`text-xs px-2 py-1 rounded-full transition-all duration-200 ${
-                                    selectedTag === tag
-                                      ? 'bg-white/20 text-white'
-                                      : 'bg-white dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-600'
-                                  }`}>
-                                    {tagCount}
-                                  </span>
-                                </div>
-                              </button>
-                            );
-                          })}
+                                      ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg scale-[1.02]'
+                                      : 'bg-gradient-to-r from-neutral-50 to-neutral-100 dark:from-neutral-700 dark:to-neutral-600 text-neutral-700 dark:text-neutral-300 hover:from-neutral-100 hover:to-neutral-200 dark:hover:from-neutral-600 dark:hover:to-neutral-500'
+                                    }`}
+                                  style={{
+                                    animationDelay: `${index * 30}ms`
+                                  }}
+                                >
+                                  {selectedTag === tag && (
+                                    <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-blue-600/20 animate-pulse"></div>
+                                  )}
+                                  <div className="relative flex items-center justify-between">
+                                    <span className="transition-transform duration-200 group-hover:translate-x-0.5 font-medium">
+                                      {tag}
+                                    </span>
+                                    <span className={`text-xs px-2 py-1 rounded-full transition-all duration-200 ${selectedTag === tag
+                                        ? 'bg-white/20 text-white'
+                                        : 'bg-white dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-600'
+                                      }`}>
+                                      {tagCount}
+                                    </span>
+                                  </div>
+                                </button>
+                              );
+                            })}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
                 </div>
               ) : (
                 <div className="w-full"></div>
@@ -365,99 +346,96 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
                           <FiX className="w-4 h-4" />
                         </div>
                       ) : (
-                        <FiChevronDown className={`w-4 h-4 transition-transform duration-300 ${
-                          isSeriesDropdownOpen ? 'rotate-180 text-blue-500' : 'group-hover:rotate-12'
-                        }`} />
+                        <FiChevronDown className={`w-4 h-4 transition-transform duration-300 ${isSeriesDropdownOpen ? 'rotate-180 text-blue-500' : 'group-hover:rotate-12'
+                          }`} />
                       )}
                     </div>
                   </button>
 
-                {/* Series Dropdown */}
-                {isSeriesDropdownOpen && (
-                  <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-neutral-800
+                  {/* Series Dropdown */}
+                  {isSeriesDropdownOpen && (
+                    <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-neutral-800
                     border border-neutral-200 dark:border-neutral-700 rounded-xl shadow-xl z-[100]
                     overflow-hidden">
 
-                    {/* Header */}
-                    <div className="px-4 py-3 border-b border-neutral-200 dark:border-neutral-700
+                      {/* Header */}
+                      <div className="px-4 py-3 border-b border-neutral-200 dark:border-neutral-700
                       bg-gradient-to-r from-neutral-50 to-neutral-100 dark:from-neutral-800 dark:to-neutral-700">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-                          Filter by Series
-                        </span>
-                        <span className="text-xs text-neutral-500 dark:text-neutral-400">
-                          {allSeries.length} series
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Scrollable Content */}
-                    <div className="max-h-80 overflow-y-auto">
-                      {/* All Posts Option */}
-                      <button
-                        onClick={() => handleSeriesFilter('')}
-                        className={`group w-full text-left px-6 py-4 text-sm font-medium transition-all duration-300
-                          hover:scale-[1.01] relative overflow-hidden
-                          ${selectedSeries === ''
-                            ? 'bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/20 text-blue-700 dark:text-blue-300'
-                            : 'text-neutral-700 dark:text-neutral-300 hover:bg-gradient-to-r hover:from-neutral-50 hover:to-neutral-100 dark:hover:from-neutral-700/50 dark:hover:to-neutral-600/30'
-                          }`}
-                      >
-                        {selectedSeries === '' && (
-                          <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-blue-600"></div>
-                        )}
                         <div className="flex items-center justify-between">
-                          <span className="transition-transform duration-200 group-hover:translate-x-0.5 font-medium">
-                            All Posts
+                          <span className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                            Filter by Series
                           </span>
-                          <span className={`text-xs px-2 py-1 rounded-full transition-all duration-200 ${
-                            selectedSeries === ''
-                              ? 'bg-white/20 text-white'
-                              : 'bg-white dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-600'
-                          }`}>
-                            {posts.length}
+                          <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                            {allSeries.length} series
                           </span>
                         </div>
-                      </button>
+                      </div>
 
-                      {/* Series Options */}
-                      <div className="border-t border-neutral-200/50 dark:border-neutral-700/50">
-                        {allSeries.map((series) => {
-                          const seriesCount = posts.filter(post => post.data.series?.name === series).length;
+                      {/* Scrollable Content */}
+                      <div className="max-h-80 overflow-y-auto">
+                        {/* All Posts Option */}
+                        <button
+                          onClick={() => handleSeriesFilter('')}
+                          className={`group w-full text-left px-6 py-4 text-sm font-medium transition-all duration-300
+                          hover:scale-[1.01] relative overflow-hidden
+                          ${selectedSeries === ''
+                              ? 'bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/20 text-blue-700 dark:text-blue-300'
+                              : 'text-neutral-700 dark:text-neutral-300 hover:bg-gradient-to-r hover:from-neutral-50 hover:to-neutral-100 dark:hover:from-neutral-700/50 dark:hover:to-neutral-600/30'
+                            }`}
+                        >
+                          {selectedSeries === '' && (
+                            <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-blue-600"></div>
+                          )}
+                          <div className="flex items-center justify-between">
+                            <span className="transition-transform duration-200 group-hover:translate-x-0.5 font-medium">
+                              All Posts
+                            </span>
+                            <span className={`text-xs px-2 py-1 rounded-full transition-all duration-200 ${selectedSeries === ''
+                                ? 'bg-white/20 text-white'
+                                : 'bg-white dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-600'
+                              }`}>
+                              {posts.length}
+                            </span>
+                          </div>
+                        </button>
 
-                          return (
-                            <button
-                              key={series}
-                              onClick={() => handleSeriesFilter(series)}
-                              className={`group w-full text-left px-6 py-4 text-sm transition-all duration-300
+                        {/* Series Options */}
+                        <div className="border-t border-neutral-200/50 dark:border-neutral-700/50">
+                          {allSeries.map((series) => {
+                            const seriesCount = posts.filter(post => post.data.series?.name === series).length;
+
+                            return (
+                              <button
+                                key={series}
+                                onClick={() => handleSeriesFilter(series)}
+                                className={`group w-full text-left px-6 py-4 text-sm transition-all duration-300
                                 hover:scale-[1.01] relative overflow-hidden
                                 ${selectedSeries === series
-                                  ? 'bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/20 text-blue-700 dark:text-blue-300'
-                                  : 'text-neutral-700 dark:text-neutral-300 hover:bg-gradient-to-r hover:from-neutral-50 hover:to-neutral-100 dark:hover:from-neutral-700/50 dark:hover:to-neutral-600/30'
-                                }`}
-                            >
-                              {selectedSeries === series && (
-                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-blue-600"></div>
-                              )}
-                              <div className="relative flex items-center justify-between">
-                                <span className="transition-transform duration-200 group-hover:translate-x-0.5 font-medium">
-                                  {series}
-                                </span>
-                                <span className={`text-xs px-2 py-1 rounded-full transition-all duration-200 ${
-                                  selectedSeries === series
-                                    ? 'bg-white/20 text-white'
-                                    : 'bg-white dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-600'
-                                }`}>
-                                  {seriesCount}
-                                </span>
-                              </div>
-                            </button>
-                          );
-                        })}
+                                    ? 'bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/20 text-blue-700 dark:text-blue-300'
+                                    : 'text-neutral-700 dark:text-neutral-300 hover:bg-gradient-to-r hover:from-neutral-50 hover:to-neutral-100 dark:hover:from-neutral-700/50 dark:hover:to-neutral-600/30'
+                                  }`}
+                              >
+                                {selectedSeries === series && (
+                                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-blue-600"></div>
+                                )}
+                                <div className="relative flex items-center justify-between">
+                                  <span className="transition-transform duration-200 group-hover:translate-x-0.5 font-medium">
+                                    {series}
+                                  </span>
+                                  <span className={`text-xs px-2 py-1 rounded-full transition-all duration-200 ${selectedSeries === series
+                                      ? 'bg-white/20 text-white'
+                                      : 'bg-white dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-600'
+                                    }`}>
+                                    {seriesCount}
+                                  </span>
+                                </div>
+                              </button>
+                            );
+                          })}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
                 </div>
               ) : (
                 <div className="w-full"></div>

@@ -1,25 +1,7 @@
 import { useMemo, useEffect, useState } from 'react';
 import BlogCard from './BlogCard';
 import Pagination from './Pagination';
-
-interface BlogPost {
-  slug: string;
-  data: {
-    title: string;
-    summary?: string;
-    date: Date;
-    updated?: Date;
-    tags?: string[];
-    thumbnail?: string;
-    series?: {
-      name: string;
-      slug: string;
-      part: number;
-      total?: number;
-    };
-  };
-  readingTime: number;
-}
+import type { BlogPost } from '../types';
 
 interface BlogListProps {
   posts: BlogPost[];
