@@ -47,26 +47,27 @@ export default function BlogSearch({ onSearch, placeholder = "Search posts..." }
 
   return (
     <div className="relative w-full z-10">
-      <div className={`relative transition-all duration-300 ease-out ${
-        isFocused
+      <div className={`relative transition-all duration-300 ease-out ${isFocused
           ? 'ring-2 ring-blue-500/50 shadow-lg shadow-blue-500/10'
           : 'shadow-sm hover:shadow-md'
-      } rounded-xl overflow-hidden z-10`}>
+        } rounded-xl overflow-hidden z-10`}>
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
-          <FiSearch className={`w-4 h-4 transition-all duration-300 ${
-            isFocused ? 'text-blue-500 scale-110' : 'text-neutral-400'
-          }`} />
+          <FiSearch className={`w-4 h-4 transition-all duration-300 ${isFocused ? 'text-blue-500 scale-110' : 'text-neutral-400'
+            }`} />
         </div>
 
         <input
           ref={inputRef}
           type="text"
+          id="blog-search"
+          name="blog-search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
+          autoComplete="off"
           className="w-full pl-10 pr-12 py-3 bg-white dark:bg-neutral-800
             border border-neutral-200 dark:border-neutral-700
             text-neutral-900 dark:text-neutral-100 placeholder-neutral-500 dark:placeholder-neutral-400
@@ -110,9 +111,8 @@ export default function BlogSearch({ onSearch, placeholder = "Search posts..." }
         )}
 
         {/* Modern gradient border effect */}
-        <div className={`absolute inset-0 rounded-xl transition-opacity duration-300 pointer-events-none ${
-          isFocused ? 'opacity-100' : 'opacity-0'
-        }`}>
+        <div className={`absolute inset-0 rounded-xl transition-opacity duration-300 pointer-events-none ${isFocused ? 'opacity-100' : 'opacity-0'
+          }`}>
           <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-blue-500/20 blur-sm"></div>
         </div>
       </div>
