@@ -863,6 +863,55 @@ html {
     0px 4px 15px -4px hsla(217, 91%, 55%, 0.3);
 }
 
+/* ===== MOBILE ALWAYS-HOVER STATE FOR BUTTONS ===== */
+/* Make buttons look hovered by default on mobile for better visibility */
+@media (max-width: 768px) {
+
+  /* Light mode - btn-stylized always hovered */
+  .btn-stylized {
+    border-top: 2px solid #3b82f6;
+    border-left: 2px solid #3b82f6;
+    border-bottom: 2px solid #60a5fa;
+    border-right: 2px solid #60a5fa;
+    box-shadow:
+      rgba(59, 130, 246, 0.4) 4px 4px,
+      rgba(59, 130, 246, 0.3) 8px 8px,
+      rgba(59, 130, 246, 0.2) 12px 12px;
+    transform: translate(-2px, -2px);
+  }
+
+  /* Dark mode - btn-stylized always hovered */
+  .dark .btn-stylized {
+    transform: translate(0, -2px);
+    box-shadow:
+      inset 0 0.5px rgba(255, 255, 255, 0.2),
+      0 0 0 2px hsla(217, 91%, 60%, 0.5),
+      0px 8px 20px -4px hsla(217, 91%, 55%, 0.4),
+      0px 4px 15px -2px hsla(210, 90%, 70%, 0.3);
+  }
+
+  .dark .btn-stylized::before {
+    opacity: 1;
+  }
+
+  /* Light mode - btn-stylized-outline always hovered */
+  .btn-stylized-outline {
+    color: #2563eb;
+    border-color: #3b82f6;
+    background: rgba(59, 130, 246, 0.05);
+  }
+
+  /* Dark mode - btn-stylized-outline always hovered */
+  .dark .btn-stylized-outline {
+    color: #e9e9e9;
+    border-color: hsla(217, 91%, 60%, 0.6);
+    background: rgba(59, 130, 246, 0.1);
+    box-shadow:
+      0 0 0 1px hsla(217, 91%, 60%, 0.3),
+      0px 4px 15px -4px hsla(217, 91%, 55%, 0.3);
+  }
+}
+
 /* ===== TYPING ANIMATION ===== */
 @keyframes typing {
   from {

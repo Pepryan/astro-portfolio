@@ -174,17 +174,20 @@ export default function StoryJourney() {
             </div>
           </div>
 
-          {/* Mobile Layout */}
-          <div className="md:hidden space-y-8 px-2 mx-auto w-full">
+          {/* Mobile Layout - Optimized for faster appearance */}
+          <div className="md:hidden space-y-6 px-2 mx-auto w-full">
             {storyJourney.milestones.map((milestone, index) => (
               <motion.div
                 key={milestone.year}
                 className="relative"
-                variants={milestoneVariants}
-                initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1 }}
-                viewport={{ once: true }}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.25,
+                  delay: index * 0.05,
+                  ease: "easeOut"
+                }}
+                viewport={{ once: true, amount: 0.2 }}
               >
                 <motion.div
                   className={`p-6 bg-white/80 dark:bg-neutral-800/80 rounded-2xl shadow-lg
@@ -209,14 +212,14 @@ export default function StoryJourney() {
                   </div>
                 </motion.div>
 
-                {/* Mobile Connector */}
+                {/* Mobile Connector - Faster animation */}
                 {storyJourney.showConnectors && index < storyJourney.milestones.length - 1 && (
                   <motion.div
-                    className="absolute left-1/2 transform -translate-x-1/2 w-0.5 h-8 bg-gradient-to-b from-neutral-300 to-neutral-200
-                      dark:from-neutral-600 dark:to-neutral-700 mt-4"
+                    className="absolute left-1/2 transform -translate-x-1/2 w-0.5 h-6 bg-gradient-to-b from-neutral-300 to-neutral-200
+                      dark:from-neutral-600 dark:to-neutral-700 mt-3"
                     initial={{ scaleY: 0 }}
                     whileInView={{ scaleY: 1 }}
-                    transition={{ delay: index * 0.1 + 0.3, duration: 0.4 }}
+                    transition={{ delay: 0.1, duration: 0.2 }}
                     viewport={{ once: true }}
                   />
                 )}

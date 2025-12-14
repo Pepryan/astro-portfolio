@@ -207,7 +207,7 @@ export default function BlogPostLayout({
 
         <div className="lg:grid lg:grid-cols-[1fr_280px] lg:gap-8">
           {/* Main content */}
-          <article className="prose dark:prose-invert max-w-none bg-white dark:bg-neutral-800/50 border border-neutral-200/80 dark:border-neutral-700/60 rounded-2xl p-6 md:p-8 lg:p-10 shadow-sm">
+          <article className="prose dark:prose-invert max-w-none md:bg-white md:dark:bg-neutral-800/50 md:border md:border-neutral-200/80 md:dark:border-neutral-700/60 md:rounded-2xl md:p-8 lg:p-10 md:shadow-sm">
             {/* Article Header */}
             <header className="mb-8">
               {/* Featured image */}
