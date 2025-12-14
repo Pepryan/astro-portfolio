@@ -72,10 +72,10 @@ export default function RelatedPosts({ currentPost, allPosts, maxPosts = 3 }: Re
               hover:border-neutral-300 dark:hover:border-neutral-600 hover:shadow-lg dark:hover:shadow-neutral-900/20
               transition-all duration-300 overflow-hidden transform hover:-translate-y-1"
           >
-            <a href={`/blog/${post.slug}`} className="block h-full">
+            <a href={`/blog/${post.slug}`} className="flex flex-col h-full">
               {/* Thumbnail */}
               {post.data.thumbnail && (
-                <div className="relative w-full h-40 overflow-hidden">
+                <div className="relative w-full h-40 flex-shrink-0 overflow-hidden">
                   <img
                     src={post.data.thumbnail}
                     alt={post.data.title}
@@ -86,7 +86,7 @@ export default function RelatedPosts({ currentPost, allPosts, maxPosts = 3 }: Re
                 </div>
               )}
 
-              <div className="p-5 flex flex-col h-full">
+              <div className="p-5 flex flex-col flex-1">
                 {/* Title */}
                 <h4 className="font-semibold text-neutral-900 dark:text-neutral-100 mb-3
                   group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300 line-clamp-2 text-lg">
@@ -102,7 +102,16 @@ export default function RelatedPosts({ currentPost, allPosts, maxPosts = 3 }: Re
 
                 {/* Metadata */}
                 <div className="flex items-center justify-between text-xs text-neutral-500 dark:text-neutral-400 mb-4">
-                  <time className="font-medium">{new Date(post.data.date).toLocaleDateString()}</time>
+                  <time className="font-medium">
+                    {(() => {
+                      const d = new Date(post.data.date);
+                      const day = d.getDate();
+                      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                      const month = months[d.getMonth()];
+                      const year = d.getFullYear();
+                      return `${day}-${month}-${year}`;
+                    })()}
+                  </time>
                   <div className="flex items-center gap-1">
                     <FiClock className="w-3 h-3" />
                     <span>{post.readingTime} min read</span>

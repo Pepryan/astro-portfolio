@@ -66,9 +66,9 @@ export default function TechStack() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                 >
-                    <h3 className="text-xl md:text-2xl font-semibold text-neutral-700 dark:text-neutral-300 mb-2">
+                    <h2 className="text-xl md:text-2xl font-semibold text-neutral-700 dark:text-neutral-300 mb-2">
                         Technologies I Work With
-                    </h3>
+                    </h2>
                     <p className="text-sm text-neutral-500 dark:text-neutral-500">
                         Tools and technologies in my daily toolkit
                     </p>
