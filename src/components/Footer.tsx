@@ -1,5 +1,13 @@
+import { useState, useEffect } from 'react';
+
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
+  // Use a static year initially to avoid hydration mismatch,
+  // then update to current year on client-side
+  const [currentYear, setCurrentYear] = useState(2025);
+
+  useEffect(() => {
+    setCurrentYear(new Date().getFullYear());
+  }, []);
 
   return (
     <footer className="border-t border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900">
