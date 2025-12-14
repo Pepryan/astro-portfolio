@@ -1,21 +1,9 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiCalendar, FiClock, FiTag, FiSearch, FiFilter, FiArchive, FiTrendingUp } from 'react-icons/fi';
+import { FiCalendar, FiClock, FiTag, FiSearch, FiArchive, FiTrendingUp } from 'react-icons/fi';
 import BlogSearch from './BlogSearch';
 import ReadingProgress from './ReadingProgress';
-
-interface BlogPost {
-  slug: string;
-  data: {
-    title: string;
-    summary?: string;
-    date: Date;
-    updated?: Date;
-    tags?: string[];
-    thumbnail?: string;
-  };
-  readingTime: number;
-}
+import type { BlogPost } from '../types';
 
 interface ArchiveClientProps {
   posts: BlogPost[];
@@ -30,14 +18,14 @@ export default function ArchiveClient({ posts }: ArchiveClientProps) {
   // Group posts by year and process data
   const { postsByYear, allTags, years, stats } = useMemo(() => {
     const filteredPosts = posts.filter(post => {
-      const matchesSearch = !searchQuery || 
+      const matchesSearch = !searchQuery ||
         post.data.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         post.data.summary?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         post.data.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-      
+
       const matchesTag = !selectedTag || post.data.tags?.includes(selectedTag);
       const matchesYear = !selectedYear || new Date(post.data.date).getFullYear().toString() === selectedYear;
-      
+
       return matchesSearch && matchesTag && matchesYear;
     });
 
@@ -137,7 +125,7 @@ export default function ArchiveClient({ posts }: ArchiveClientProps) {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20 
             rounded-xl p-6 border border-emerald-200/50 dark:border-emerald-700/50">
             <div className="flex items-center gap-3">
@@ -148,7 +136,7 @@ export default function ArchiveClient({ posts }: ArchiveClientProps) {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 
             rounded-xl p-6 border border-purple-200/50 dark:border-purple-700/50">
             <div className="flex items-center gap-3">

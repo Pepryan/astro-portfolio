@@ -1,0 +1,348 @@
+/**
+ * Animation Styles
+ * 
+ * CSS keyframes and animation utilities including floating effects,
+ * gradients, shimmer, typing, and interactive 3D cube.
+ */
+
+/* ===== CSS-ONLY FLOATING ANIMATION ===== */
+/* Lightweight alternative to framer-motion infinite loops */
+
+@keyframes float-gentle {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-12px) rotate(3deg);
+    }
+}
+
+@keyframes float-slow {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-8px) rotate(-2deg);
+    }
+}
+
+@keyframes pulse-glow {
+
+    0%,
+    100% {
+        opacity: 0.6;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+}
+
+.animate-float {
+    animation: float-gentle 4s ease-in-out infinite;
+    will-change: transform;
+}
+
+.animate-float-slow {
+    animation: float-slow 5s ease-in-out infinite;
+    will-change: transform;
+}
+
+.animate-float-delayed {
+    animation: float-gentle 4s ease-in-out infinite;
+    animation-delay: 1s;
+    will-change: transform;
+}
+
+.animate-float-delayed-2 {
+    animation: float-slow 6s ease-in-out infinite;
+    animation-delay: 2s;
+    will-change: transform;
+}
+
+.animate-pulse-glow {
+    animation: pulse-glow 3s ease-in-out infinite;
+    will-change: opacity, transform;
+}
+
+/* ===== GRADIENT SHIMMER EFFECT ===== */
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% center;
+    }
+
+    100% {
+        background-position: 200% center;
+    }
+}
+
+.gradient-shimmer {
+    background-size: 200% auto;
+    animation: shimmer 3s linear infinite;
+}
+
+/* ===== TYPING ANIMATION ===== */
+
+@keyframes typing {
+    from {
+        width: 0;
+    }
+
+    to {
+        width: 100%;
+    }
+}
+
+@keyframes blink-caret {
+
+    from,
+    to {
+        border-color: transparent;
+    }
+
+    50% {
+        border-color: currentColor;
+    }
+}
+
+.typing-animation {
+    overflow: hidden;
+    white-space: nowrap;
+    border-right: 2px solid currentColor;
+    animation:
+        typing 2.5s steps(30, end) forwards,
+        blink-caret 0.75s step-end infinite;
+}
+
+.typing-animation-slow {
+    overflow: hidden;
+    white-space: nowrap;
+    border-right: 2px solid currentColor;
+    animation:
+        typing 3.5s steps(40, end) forwards,
+        blink-caret 0.75s step-end infinite;
+}
+
+/* ===== HERO TITLE GRADIENT ANIMATION ===== */
+/* Performant animated gradient for hero title */
+
+@keyframes gradient-shift {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.hero-title-gradient {
+    background: linear-gradient(135deg,
+            #3b82f6 0%,
+            #8b5cf6 25%,
+            #6366f1 50%,
+            #3b82f6 75%,
+            #8b5cf6 100%);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-shift 6s ease-in-out infinite;
+    will-change: background-position;
+    /* Extra padding for descender letters like y, g, p */
+    line-height: 1.2;
+}
+
+/* ===== INTERACTIVE 3D CUBE ANIMATION ===== */
+/* Performant CSS-only isometric cube with hover effects */
+/* Fixed position floating element on the right side */
+
+@keyframes cube-hue-rotate {
+    0% {
+        filter: hue-rotate(0deg);
+    }
+
+    100% {
+        filter: hue-rotate(360deg);
+    }
+}
+
+/* Wrapper for fixed positioning */
+.cube-wrapper {
+    position: fixed;
+    right: 20px;
+    bottom: 180px;
+    z-index: 40;
+    pointer-events: auto;
+    transform: scale(0.65);
+    transform-origin: right bottom;
+    opacity: 0.85;
+    transition: opacity 0.3s ease;
+}
+
+.cube-wrapper:hover {
+    opacity: 1;
+}
+
+.cube-container {
+    position: relative;
+    transform: skewY(-20deg);
+    animation: cube-hue-rotate 5s linear infinite;
+    will-change: filter;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.cube-container .cube {
+    position: relative;
+    z-index: 2;
+}
+
+.cube-container .cube:nth-child(2) {
+    z-index: 1;
+    translate: -60px -60px;
+}
+
+.cube-container .cube:nth-child(3) {
+    z-index: 3;
+    translate: 60px 60px;
+}
+
+.cube-container .cube div {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    translate: calc(-70px * var(--x)) calc(-60px * var(--y));
+}
+
+.cube-container .cube div span {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    background: #e5e7eb;
+    /* gray-200 */
+    z-index: calc(1 * var(--i));
+    transition: 1.5s ease;
+    cursor: pointer;
+    will-change: background, filter;
+}
+
+.dark .cube-container .cube div span {
+    background: #374151;
+    /* gray-700 */
+}
+
+.cube-container .cube div span:hover {
+    transition: 0s;
+    background: #3b82f6;
+    /* blue-500 */
+    filter: drop-shadow(0 0 30px #3b82f6);
+}
+
+.cube-container .cube div span:hover::before,
+.cube-container .cube div span:hover::after {
+    transition: 0s;
+    background: #3b82f6;
+}
+
+.cube-container .cube div span::before {
+    content: "";
+    position: absolute;
+    left: -40px;
+    width: 40px;
+    height: 100%;
+    background: #f9fafb;
+    /* gray-50 */
+    transform-origin: right;
+    transform: skewY(45deg);
+    transition: 1.5s ease;
+}
+
+.dark .cube-container .cube div span::before {
+    background: #4b5563;
+    /* gray-600 */
+}
+
+.cube-container .cube div span::after {
+    content: "";
+    position: absolute;
+    top: -40px;
+    left: 0px;
+    width: 100%;
+    height: 40px;
+    background: #f3f4f6;
+    /* gray-100 */
+    transform-origin: bottom;
+    transform: skewX(45deg);
+    transition: 1.5s ease;
+}
+
+.dark .cube-container .cube div span::after {
+    background: #6b7280;
+    /* gray-500 */
+}
+
+/* ===== REDUCED MOTION SUPPORT ===== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .animate-float,
+    .animate-float-slow,
+    .animate-float-delayed,
+    .animate-float-delayed-2,
+    .animate-pulse-glow,
+    .gradient-shimmer,
+    .typing-animation,
+    .typing-animation-slow {
+        animation: none !important;
+    }
+
+    .typing-animation,
+    .typing-animation-slow {
+        width: 100%;
+        border-right: none;
+    }
+
+    .will-change-transform,
+    .will-change-opacity {
+        will-change: auto;
+    }
+
+    .hero-title-gradient {
+        animation: none !important;
+        background-position: 0% 50% !important;
+    }
+
+    .cube-container {
+        animation: none !important;
+    }
+
+    .cube-container .cube div span,
+    .cube-container .cube div span::before,
+    .cube-container .cube div span::after {
+        transition: none !important;
+    }
+}
+
+/* Hide cube on mobile - screen too small */
+@media (max-width: 1024px) {
+    .cube-wrapper {
+        display: none;
+    }
+}

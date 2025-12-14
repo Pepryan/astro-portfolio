@@ -1,17 +1,6 @@
 import { FiClock, FiTag, FiArrowRight } from 'react-icons/fi';
 import { motion } from 'framer-motion';
-
-interface BlogPost {
-  slug: string;
-  data: {
-    title: string;
-    summary?: string;
-    date: Date;
-    tags?: string[];
-    thumbnail?: string;
-  };
-  readingTime: number;
-}
+import type { BlogPost } from '../types';
 
 interface RelatedPostsProps {
   currentPost: BlogPost;
@@ -29,7 +18,7 @@ export default function RelatedPosts({ currentPost, allPosts, maxPosts = 3 }: Re
       const postTags = post.data.tags || [];
       const sharedTags = currentTags.filter(tag => postTags.includes(tag));
       const similarityScore = sharedTags.length;
-      
+
       return {
         ...post,
         similarityScore,
@@ -47,11 +36,11 @@ export default function RelatedPosts({ currentPost, allPosts, maxPosts = 3 }: Re
     .slice(0, maxPosts);
 
   // If no related posts found, show recent posts
-  const fallbackPosts = relatedPosts.length === 0 
+  const fallbackPosts = relatedPosts.length === 0
     ? allPosts
-        .filter(post => post.slug !== currentPost.slug)
-        .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
-        .slice(0, maxPosts)
+      .filter(post => post.slug !== currentPost.slug)
+      .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
+      .slice(0, maxPosts)
     : [];
 
   const postsToShow = relatedPosts.length > 0 ? relatedPosts : fallbackPosts;
@@ -119,7 +108,7 @@ export default function RelatedPosts({ currentPost, allPosts, maxPosts = 3 }: Re
                     <span>{post.readingTime} min read</span>
                   </div>
                 </div>
-                
+
                 {/* Tags and Read More */}
                 <div className="mt-auto">
                   {post.data.tags && post.data.tags.length > 0 && (
@@ -129,7 +118,7 @@ export default function RelatedPosts({ currentPost, allPosts, maxPosts = 3 }: Re
                           key={tag}
                           className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-full
                             transition-all duration-200 group-hover:scale-105
-                            ${('sharedTags' in post && post.sharedTags.includes(tag))
+                            ${('sharedTags' in post && (post as { sharedTags?: string[] }).sharedTags?.includes(tag))
                               ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800'
                               : 'bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300'
                             }`}

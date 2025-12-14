@@ -1,0 +1,131 @@
+/**
+ * Base Styles
+ * 
+ * Core foundation styles including Tailwind directives, 
+ * floating header, and global HTML settings.
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== FLOATING HEADER STYLES ===== */
+/* Optimized for performance with minimal blur on mobile */
+
+.floating-header {
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(230, 230, 230, 0);
+    backdrop-filter: blur(1px);
+    -webkit-backdrop-filter: blur(1px);
+}
+
+.dark .floating-header {
+    background: rgba(23, 23, 23, 0.3);
+    border: 1px solid rgba(50, 50, 50, 0);
+    backdrop-filter: blur(1px);
+    -webkit-backdrop-filter: blur(1px);
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+    .floating-header {
+        margin: 0 8px;
+        border-radius: 16px;
+    }
+}
+
+/* ===== HTML GLOBAL SETTINGS ===== */
+
+/* Smooth scrolling for anchor links */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Focus styles for accessibility */
+.focus-visible {
+    @apply outline-none ring-2 ring-blue-500 ring-offset-2 ring-offset-white dark:ring-offset-neutral-900;
+}
+
+/* ===== LINE CLAMP UTILITIES ===== */
+
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* ===== PERFORMANCE OPTIMIZATIONS ===== */
+
+/* Will-change hints for animated elements */
+.will-change-transform {
+    will-change: transform;
+}
+
+.will-change-opacity {
+    will-change: opacity;
+}
+
+/* GPU-accelerated animation base */
+.gpu-accelerated {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+/* ===== GLASSMORPHISM UTILITIES ===== */
+
+.glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.dark .glass {
+    background: rgba(23, 23, 23, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-subtle {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.dark .glass-subtle {
+    background: rgba(23, 23, 23, 0.5);
+}
+
+/* ===== MODERN GLOW EFFECTS ===== */
+
+.glow-blue {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3),
+        0 0 40px rgba(59, 130, 246, 0.1);
+}
+
+.glow-purple {
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3),
+        0 0 40px rgba(139, 92, 246, 0.1);
+}
+
+.glow-gradient {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.2),
+        0 0 60px rgba(139, 92, 246, 0.15);
+}
+
+/* Hover glow transition */
+.hover-glow {
+    transition: box-shadow 0.3s ease;
+}
+
+.hover-glow:hover {
+    box-shadow: 0 0 25px rgba(59, 130, 246, 0.25),
+        0 0 50px rgba(139, 92, 246, 0.15);
+}

@@ -1,0 +1,532 @@
+/**
+ * Component Styles
+ * 
+ * Reusable styling for UI components including buttons, cards,
+ * tabs, tags, and journey cards.
+ */
+
+/* ===== STYLIZED 3D BUTTONS ===== */
+
+.btn-stylized {
+    padding: 0.875rem 1.75rem;
+    font-weight: 600;
+    font-size: 1rem;
+    background: white;
+    color: #2563eb;
+    /* blue-600 */
+    cursor: pointer;
+    border-radius: 0.75rem;
+    border-bottom: 2px solid #3b82f6;
+    border-right: 2px solid #3b82f6;
+    border-top: 2px solid white;
+    border-left: 2px solid white;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn-stylized:hover {
+    border-top: 2px solid #3b82f6;
+    border-left: 2px solid #3b82f6;
+    border-bottom: 2px solid #60a5fa;
+    /* blue-400 */
+    border-right: 2px solid #60a5fa;
+    box-shadow:
+        rgba(59, 130, 246, 0.4) 4px 4px,
+        rgba(59, 130, 246, 0.3) 8px 8px,
+        rgba(59, 130, 246, 0.2) 12px 12px;
+    transform: translate(-2px, -2px);
+}
+
+.btn-stylized:active {
+    transform: translate(0, 0);
+    box-shadow: rgba(59, 130, 246, 0.3) 2px 2px;
+}
+
+/* Dark mode variant - Glowing gradient style */
+.dark .btn-stylized {
+    --glow-color: hsla(217, 91%, 60%, 0.75);
+    background: #1f1f1f;
+    color: #e9e9e9;
+    border: none;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 0.5px rgba(255, 255, 255, 0.1), inset 0 -1px 2px rgba(0, 0, 0, 0.3),
+        0px 4px 10px -4px rgba(0, 0, 0, 0.5);
+}
+
+.dark .btn-stylized::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg,
+            hsla(217, 91%, 60%, 0) 0%,
+            hsla(217, 91%, 60%, 0.1) 50%,
+            hsla(210, 90%, 70%, 0.2) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 0;
+    border-radius: inherit;
+}
+
+.dark .btn-stylized:hover {
+    transform: translate(0, -2px);
+    box-shadow:
+        inset 0 0.5px rgba(255, 255, 255, 0.2),
+        0 0 0 2px hsla(217, 91%, 60%, 0.5),
+        0px 8px 20px -4px hsla(217, 91%, 55%, 0.4),
+        0px 4px 15px -2px hsla(210, 90%, 70%, 0.3);
+    border: none;
+}
+
+.dark .btn-stylized:hover::before {
+    opacity: 1;
+}
+
+.dark .btn-stylized:active {
+    transform: translate(0, 0);
+    box-shadow:
+        inset 0 0.5px rgba(255, 255, 255, 0.2),
+        0 0 0 3px hsla(217, 91%, 60%, 0.7),
+        0px 4px 10px -2px hsla(217, 91%, 55%, 0.5);
+}
+
+.dark .btn-stylized>* {
+    position: relative;
+    z-index: 1;
+}
+
+/* ===== SECONDARY BUTTON STYLE - OUTLINE ===== */
+
+.btn-stylized-outline {
+    padding: 0.875rem 1.75rem;
+    font-weight: 600;
+    font-size: 1rem;
+    background: transparent;
+    color: #6b7280;
+    /* gray-500 */
+    cursor: pointer;
+    border-radius: 0.75rem;
+    border: 2px solid #d1d5db;
+    /* gray-300 */
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn-stylized-outline:hover {
+    color: #2563eb;
+    border-color: #3b82f6;
+    background: rgba(59, 130, 246, 0.05);
+}
+
+/* Dark mode outline - Glowing style */
+.dark .btn-stylized-outline {
+    color: #d1d5db;
+    border: 2px solid #4b5563;
+    background: transparent;
+    position: relative;
+}
+
+.dark .btn-stylized-outline:hover {
+    color: #e9e9e9;
+    border-color: hsla(217, 91%, 60%, 0.6);
+    background: rgba(59, 130, 246, 0.1);
+    box-shadow:
+        0 0 0 1px hsla(217, 91%, 60%, 0.3),
+        0px 4px 15px -4px hsla(217, 91%, 55%, 0.3);
+}
+
+/* ===== MOBILE ALWAYS-HOVER STATE FOR BUTTONS ===== */
+/* Make buttons look hovered by default on mobile for better visibility */
+
+@media (max-width: 768px) {
+
+    /* Light mode - btn-stylized always hovered */
+    .btn-stylized {
+        border-top: 2px solid #3b82f6;
+        border-left: 2px solid #3b82f6;
+        border-bottom: 2px solid #60a5fa;
+        border-right: 2px solid #60a5fa;
+        box-shadow:
+            rgba(59, 130, 246, 0.4) 4px 4px,
+            rgba(59, 130, 246, 0.3) 8px 8px,
+            rgba(59, 130, 246, 0.2) 12px 12px;
+        transform: translate(-2px, -2px);
+    }
+
+    /* Dark mode - btn-stylized always hovered */
+    .dark .btn-stylized {
+        transform: translate(0, -2px);
+        box-shadow:
+            inset 0 0.5px rgba(255, 255, 255, 0.2),
+            0 0 0 2px hsla(217, 91%, 60%, 0.5),
+            0px 8px 20px -4px hsla(217, 91%, 55%, 0.4),
+            0px 4px 15px -2px hsla(210, 90%, 70%, 0.3);
+    }
+
+    .dark .btn-stylized::before {
+        opacity: 1;
+    }
+
+    /* Light mode - btn-stylized-outline always hovered */
+    .btn-stylized-outline {
+        color: #2563eb;
+        border-color: #3b82f6;
+        background: rgba(59, 130, 246, 0.05);
+    }
+
+    /* Dark mode - btn-stylized-outline always hovered */
+    .dark .btn-stylized-outline {
+        color: #e9e9e9;
+        border-color: hsla(217, 91%, 60%, 0.6);
+        background: rgba(59, 130, 246, 0.1);
+        box-shadow:
+            0 0 0 1px hsla(217, 91%, 60%, 0.3),
+            0px 4px 15px -4px hsla(217, 91%, 55%, 0.3);
+    }
+}
+
+/* ===== TECH STACK ICONS ===== */
+
+.tech-icon {
+    @apply p-3 rounded-xl transition-all duration-300;
+    @apply bg-neutral-100 dark:bg-neutral-800;
+    @apply hover:bg-gradient-to-br hover:from-blue-50 hover:to-purple-50;
+    @apply dark:hover:from-blue-900/30 dark:hover:to-purple-900/30;
+    @apply hover:shadow-lg hover:scale-110;
+    @apply border border-transparent hover:border-blue-200 dark:hover:border-blue-700;
+}
+
+.tech-icon img,
+.tech-icon svg {
+    @apply w-8 h-8 md:w-10 md:h-10 transition-transform duration-300;
+}
+
+.tech-icon:hover img,
+.tech-icon:hover svg {
+    @apply scale-110;
+}
+
+/* Tech icon tooltip */
+.tech-icon-wrapper {
+    position: relative;
+}
+
+.tech-icon-tooltip {
+    @apply absolute -bottom-8 left-1/2 -translate-x-1/2;
+    @apply px-2 py-1 text-xs font-medium rounded;
+    @apply bg-neutral-900 dark:bg-neutral-100;
+    @apply text-white dark:text-neutral-900;
+    @apply transition-opacity duration-200;
+    @apply pointer-events-none whitespace-nowrap;
+    @apply z-10;
+    opacity: 0;
+}
+
+.tech-icon-wrapper:hover .tech-icon-tooltip {
+    opacity: 1;
+}
+
+/* ===== BLOG CARD MINIMAL ===== */
+
+.blog-card-minimal {
+    @apply block p-4 rounded-xl transition-all duration-300;
+    @apply bg-white/50 dark:bg-neutral-800/50;
+    @apply border border-neutral-200/50 dark:border-neutral-700/50;
+    @apply hover:bg-white dark:hover:bg-neutral-800;
+    @apply hover:shadow-lg hover:border-blue-200 dark:hover:border-blue-700;
+    @apply backdrop-blur-sm;
+}
+
+.blog-card-minimal:hover {
+    @apply -translate-y-1;
+}
+
+/* ===== MODERN CARD STYLING ===== */
+/* For Journey, Projects, Bento cards - lightweight 3D effect */
+
+.card-modern {
+    background: white;
+    border-radius: 1rem;
+    border: 2px solid #e5e7eb;
+    /* gray-200 */
+    border-bottom-color: #d1d5db;
+    /* gray-300 */
+    border-right-color: #d1d5db;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.card-modern:hover {
+    border-color: #3b82f6;
+    /* blue-500 */
+    border-bottom-color: #60a5fa;
+    /* blue-400 */
+    border-right-color: #60a5fa;
+    box-shadow:
+        rgba(59, 130, 246, 0.15) 3px 3px,
+        rgba(59, 130, 246, 0.1) 6px 6px;
+    transform: translate(-2px, -2px);
+}
+
+.dark .card-modern {
+    background: #262626;
+    /* neutral-800 */
+    border-color: #404040;
+    /* neutral-700 */
+    border-bottom-color: #525252;
+    /* neutral-600 */
+    border-right-color: #525252;
+}
+
+.dark .card-modern:hover {
+    border-color: #3b82f6;
+    border-bottom-color: #60a5fa;
+    border-right-color: #60a5fa;
+    box-shadow:
+        rgba(59, 130, 246, 0.2) 3px 3px,
+        rgba(59, 130, 246, 0.15) 6px 6px;
+}
+
+/* ===== JOURNEY CARD WITH HOVER REVEAL ===== */
+
+.journey-card {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1rem;
+    cursor: pointer;
+    overflow: hidden;
+    border: 2px solid #e5e7eb;
+    border-bottom-color: #d1d5db;
+    border-right-color: #d1d5db;
+    transition: all 0.3s ease;
+}
+
+.dark .journey-card {
+    background: #262626;
+    border-color: #404040;
+    border-bottom-color: #525252;
+    border-right-color: #525252;
+}
+
+/* Default content - centered icon and year */
+.journey-card-default {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: all 0.4s ease;
+}
+
+.journey-card:hover .journey-card-default {
+    opacity: 0;
+    transform: scale(0.8);
+}
+
+/* Corner decorations */
+.journey-card-corner {
+    position: absolute;
+    content: "";
+    width: 25%;
+    height: 25%;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(99, 102, 241, 0.2));
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 5;
+}
+
+.dark .journey-card-corner {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(99, 102, 241, 0.3));
+}
+
+.journey-card-corner-top {
+    top: 0;
+    right: 0;
+    border-radius: 0 1rem 0 100%;
+}
+
+.journey-card-corner-bottom {
+    bottom: 0;
+    left: 0;
+    border-radius: 0 100% 0 1rem;
+}
+
+.journey-card:hover .journey-card-corner {
+    width: 100%;
+    height: 100%;
+    border-radius: 1rem;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(99, 102, 241, 0.15));
+}
+
+.dark .journey-card:hover .journey-card-corner {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(99, 102, 241, 0.25));
+}
+
+/* Hover content - title and description */
+.journey-card-hover {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    text-align: center;
+    opacity: 0;
+    z-index: 15;
+    transition: all 0.4s ease 0.1s;
+}
+
+.journey-card:hover .journey-card-hover {
+    opacity: 1;
+}
+
+/* Journey card border glow on hover */
+.journey-card:hover {
+    border-color: #3b82f6;
+    border-bottom-color: #60a5fa;
+    border-right-color: #60a5fa;
+    box-shadow:
+        rgba(59, 130, 246, 0.15) 3px 3px,
+        rgba(59, 130, 246, 0.1) 6px 6px;
+    transform: translate(-2px, -2px);
+}
+
+.dark .journey-card:hover {
+    border-color: #3b82f6;
+    border-bottom-color: #60a5fa;
+    border-right-color: #60a5fa;
+    box-shadow:
+        rgba(59, 130, 246, 0.2) 3px 3px,
+        rgba(59, 130, 246, 0.15) 6px 6px;
+}
+
+/* ===== PROJECT TAB BUTTONS ===== */
+
+.project-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    font-weight: 500;
+    font-size: 0.9375rem;
+    background: white;
+    color: #374151;
+    cursor: pointer;
+    border-radius: 0.75rem;
+    border: 2px solid #e5e7eb;
+    border-bottom-color: #d1d5db;
+    border-right-color: #d1d5db;
+    transition: all 0.3s ease;
+}
+
+.project-tab:hover {
+    border-color: #3b82f6;
+    border-bottom-color: #60a5fa;
+    border-right-color: #60a5fa;
+    box-shadow:
+        rgba(59, 130, 246, 0.1) 2px 2px,
+        rgba(59, 130, 246, 0.05) 4px 4px;
+    transform: translate(-1px, -1px);
+}
+
+.project-tab-active {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    color: white;
+    border-color: #3b82f6;
+    border-bottom-color: #2563eb;
+    border-right-color: #2563eb;
+    box-shadow:
+        rgba(59, 130, 246, 0.25) 2px 2px,
+        rgba(139, 92, 246, 0.15) 4px 4px;
+    transform: translate(-1px, -1px);
+}
+
+.project-tab-active:hover {
+    box-shadow:
+        rgba(59, 130, 246, 0.3) 3px 3px,
+        rgba(139, 92, 246, 0.2) 6px 6px;
+    transform: translate(-2px, -2px);
+}
+
+/* Dark mode tabs */
+.dark .project-tab {
+    background: #262626;
+    color: #d1d5db;
+    border-color: #404040;
+    border-bottom-color: #525252;
+    border-right-color: #525252;
+}
+
+.dark .project-tab:hover {
+    border-color: #3b82f6;
+    border-bottom-color: #60a5fa;
+    border-right-color: #60a5fa;
+}
+
+.dark .project-tab-active {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    color: white;
+}
+
+/* Tab count badge */
+.project-tab-count {
+    font-size: 0.75rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 9999px;
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.dark .project-tab-count {
+    background: #404040;
+    color: #9ca3af;
+}
+
+.project-tab-count-active {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.dark .project-tab-count-active {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+/* ===== TAG STYLING ===== */
+
+.tag-modern {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(99, 102, 241, 0.1));
+    color: #2563eb;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    transition: all 0.2s ease;
+}
+
+.tag-modern:hover {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(99, 102, 241, 0.2));
+    border-color: rgba(59, 130, 246, 0.4);
+}
+
+.dark .tag-modern {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(99, 102, 241, 0.2));
+    color: #60a5fa;
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.dark .tag-modern:hover {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(99, 102, 241, 0.3));
+}

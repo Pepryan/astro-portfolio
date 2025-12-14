@@ -1,15 +1,40 @@
+/**
+ * TableOfContents Component
+ * 
+ * A dynamic table of contents that extracts headings from the DOM and provides
+ * navigation with active state tracking. Supports both desktop (sticky sidebar)
+ * and mobile (floating button) layouts.
+ * 
+ * Key Features:
+ * - Extracts headings from DOM after render (compatible with rehype-slug)
+ * - Uses IntersectionObserver for efficient active heading detection
+ * - Auto-scrolls TOC to keep active item visible
+ * - Responsive: desktop sidebar vs mobile floating panel
+ * 
+ * @example
+ * ```tsx
+ * <TableOfContents content={postBody} isMobile={false} />
+ * ```
+ */
 import { useState, useEffect, useRef } from 'react';
 import { FiList, FiChevronRight, FiChevronDown, FiMenu } from 'react-icons/fi';
 
+/** Represents a heading extracted from the page */
 interface Heading {
+  /** The HTML id attribute of the heading element */
   id: string;
+  /** The text content of the heading (emoji-stripped) */
   text: string;
+  /** Heading level (1-6) */
   level: number;
 }
 
 interface TableOfContentsProps {
+  /** Raw content used to trigger heading extraction */
   content: string;
+  /** Whether TOC should be expanded by default */
   defaultExpanded?: boolean;
+  /** Render mobile floating button instead of sidebar */
   isMobile?: boolean;
 }
 
@@ -248,9 +273,8 @@ export default function TableOfContents({ content, defaultExpanded = true, isMob
               {/* Content */}
               <div
                 ref={mobileTocContainerRef}
-                className={`p-4 max-h-80 overflow-y-auto transition-all duration-300 ${
-                  isAutoScrolling ? 'ring-1 ring-blue-500/20' : ''
-                }`}
+                className={`p-4 max-h-80 overflow-y-auto transition-all duration-300 ${isAutoScrolling ? 'ring-1 ring-blue-500/20' : ''
+                  }`}
               >
                 <nav>
                   <div className="space-y-1">
@@ -316,9 +340,8 @@ export default function TableOfContents({ content, defaultExpanded = true, isMob
       {isExpanded && (
         <div
           ref={tocContainerRef}
-          className={`px-4 pb-4 max-h-[calc(100vh-12rem)] overflow-y-auto transition-all duration-300 ${
-            isAutoScrolling ? 'ring-1 ring-blue-500/20' : ''
-          }`}
+          className={`px-4 pb-4 max-h-[calc(100vh-12rem)] overflow-y-auto transition-all duration-300 ${isAutoScrolling ? 'ring-1 ring-blue-500/20' : ''
+            }`}
         >
           <nav>
             <ul className="space-y-1">

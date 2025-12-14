@@ -1,29 +1,20 @@
 import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
-
-interface BlogPost {
-  slug: string;
-  data: {
-    title: string;
-    summary?: string;
-    date: Date;
-    tags?: string[];
-  };
-}
+import type { BlogPostMinimal } from '../types';
 
 interface PostNavigationProps {
-  currentPost: BlogPost;
-  allPosts: BlogPost[];
+  currentPost: BlogPostMinimal;
+  allPosts: BlogPostMinimal[];
 }
 
 export default function PostNavigation({ currentPost, allPosts }: PostNavigationProps) {
   // Sort posts by date (newest first)
-  const sortedPosts = allPosts.sort((a, b) => 
+  const sortedPosts = allPosts.sort((a, b) =>
     new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
   );
 
   // Find current post index
   const currentIndex = sortedPosts.findIndex(post => post.slug === currentPost.slug);
-  
+
   if (currentIndex === -1) return null;
 
   const previousPost = currentIndex < sortedPosts.length - 1 ? sortedPosts[currentIndex + 1] : null;
