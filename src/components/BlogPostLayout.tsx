@@ -196,8 +196,8 @@ export default function BlogPostLayout({
       <main className="max-w-7xl mx-auto px-4 py-8 mt-16">
         {/* Back to blog link */}
         <div className="mb-8">
-          <a 
-            href="/blog" 
+          <a
+            href="/blog"
             className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
           >
             <FiArrowLeft className="w-4 h-4 mr-2" />
@@ -207,7 +207,7 @@ export default function BlogPostLayout({
 
         <div className="lg:grid lg:grid-cols-[1fr_280px] lg:gap-8">
           {/* Main content */}
-          <article className="prose dark:prose-invert max-w-none">
+          <article className="prose dark:prose-invert max-w-none bg-white dark:bg-neutral-800/50 border border-neutral-200/80 dark:border-neutral-700/60 rounded-2xl p-6 md:p-8 lg:p-10 shadow-sm">
             {/* Article Header */}
             <header className="mb-8">
               {/* Featured image */}
@@ -246,7 +246,7 @@ export default function BlogPostLayout({
                     })}
                   </time>
                 </div>
-                
+
                 {post.data.updated && (
                   <div className="flex items-center gap-2">
                     <span>Updated:</span>
@@ -259,14 +259,14 @@ export default function BlogPostLayout({
                     </time>
                   </div>
                 )}
-                
+
                 <div className="flex items-center gap-2">
                   <FiClock className="w-4 h-4" />
                   <span>{readingTime} min read</span>
                 </div>
-                
+
                 <span>{wordCount} words</span>
-                
+
                 {post.data.category && (
                   <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-md">
                     {post.data.category}
@@ -278,7 +278,7 @@ export default function BlogPostLayout({
               {post.data.tags && post.data.tags.length > 0 && (
                 <div className="flex flex-wrap gap-2 mb-8">
                   {post.data.tags.map((tag: string) => (
-                    <span 
+                    <span
                       key={tag}
                       className="inline-flex items-center gap-1 px-3 py-1 bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 rounded-full text-sm"
                     >

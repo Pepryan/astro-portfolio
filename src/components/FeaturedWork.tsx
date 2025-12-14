@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useRef, useEffect, useState } from 'react';
 import { FiArrowRight, FiExternalLink, FiGithub } from 'react-icons/fi';
 import { componentConfig } from '../config/components';
@@ -10,17 +10,9 @@ export default function FeaturedWork() {
   const [mounted, setMounted] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Initialize scroll progress with safe defaults
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
-  });
-
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  const y = useTransform(scrollYProgress, [0, 1], [30, -30]);
 
   // Early return if not enabled
   if (!featuredWork.enabled) return null;
@@ -45,26 +37,26 @@ export default function FeaturedWork() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.1
+        staggerChildren: 0.15,
+        delayChildren: 0.05
       }
     }
   };
 
   const itemVariants = {
-    hidden: { 
-      opacity: 0, 
-      y: 40,
-      scale: 0.95
+    hidden: {
+      opacity: 0,
+      y: 25,
+      scale: 0.98
     },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
       scale: 1,
       transition: {
         type: "spring",
-        damping: 20,
-        stiffness: 100
+        damping: 25,
+        stiffness: 120
       }
     }
   };
@@ -98,11 +90,10 @@ export default function FeaturedWork() {
   };
 
   return (
-    <motion.section
+    <section
       ref={containerRef}
       className="py-16 sm:py-24 relative overflow-hidden"
     >
-
       <div className="max-w-6xl mx-auto px-4 relative">
         {/* Section Header */}
         <motion.div
@@ -152,34 +143,26 @@ export default function FeaturedWork() {
                     opacity: { duration: 0.2 }
                   }}
                 >
-                  <motion.div
-                    className="w-full h-full bg-white/80 dark:bg-neutral-800/80 rounded-2xl shadow-xl
-                      border border-neutral-200 dark:border-neutral-700 backdrop-blur-sm overflow-hidden group"
-                    whileHover={{ scale: 1.02 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
+                  <div className="w-full h-full bg-white/80 dark:bg-neutral-800/80 rounded-2xl shadow-xl
+                    border border-neutral-200 dark:border-neutral-700 backdrop-blur-sm overflow-hidden group">
                     {/* Project Image */}
                     <div className="h-1/2 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/20 dark:to-purple-900/20 relative overflow-hidden">
                       {item.image ? (
                         <img
                           src={item.image}
                           alt={item.title}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          {/* Dynamic icon based on category */}
                           <div className="text-6xl opacity-50">
                             {item.category === 'Cloud' ? '☁️' :
-                             item.category === 'DevOps' ? '⚙️' :
-                             item.category === 'Web' ? '🌐' :
-                             item.category === 'Automation' ? '🤖' : '🚀'}
+                              item.category === 'DevOps' ? '⚙️' :
+                                item.category === 'Web' ? '🌐' :
+                                  item.category === 'Automation' ? '🤖' : '🚀'}
                           </div>
                         </div>
                       )}
-
-                      {/* Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
 
                     {/* Project Content */}
@@ -191,7 +174,7 @@ export default function FeaturedWork() {
                         <p className="text-neutral-600 dark:text-neutral-400 mb-4 leading-relaxed">
                           {item.description}
                         </p>
-                        
+
                         {/* Tags */}
                         <div className="flex flex-wrap gap-2 mb-4">
                           {item.tags.map((tag) => (
@@ -208,37 +191,33 @@ export default function FeaturedWork() {
 
                       {/* Action Buttons */}
                       <div className="flex items-center gap-4">
-                        <motion.a
+                        <a
                           href={item.link}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400
-                            hover:text-blue-700 dark:hover:text-blue-300 font-medium group/link"
-                          whileHover={{ x: 5 }}
-                          whileTap={{ scale: 0.95 }}
+                            hover:text-blue-700 dark:hover:text-blue-300 font-medium group/link transition-colors"
                         >
                           <FiGithub className="w-4 h-4" />
                           <span>GitHub</span>
                           <FiExternalLink className="w-3 h-3 group-hover/link:translate-x-1 transition-transform" />
-                        </motion.a>
+                        </a>
 
                         {item.demo && (
-                          <motion.a
+                          <a
                             href={item.demo}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-2 text-green-600 dark:text-green-400
-                              hover:text-green-700 dark:hover:text-green-300 font-medium group/link"
-                            whileHover={{ x: 5 }}
-                            whileTap={{ scale: 0.95 }}
+                              hover:text-green-700 dark:hover:text-green-300 font-medium group/link transition-colors"
                           >
                             <span>Demo</span>
                             <FiExternalLink className="w-3 h-3 group-hover/link:translate-x-1 transition-transform" />
-                          </motion.a>
+                          </a>
                         )}
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 </motion.div>
               ))}
             </div>
@@ -248,7 +227,7 @@ export default function FeaturedWork() {
               <motion.button
                 onClick={prevSlide}
                 className="p-3 rounded-full bg-white/80 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700
-                  hover:bg-white dark:hover:bg-neutral-800 transition-colors"
+                  hover:bg-white dark:hover:bg-neutral-800 transition-colors hover-glow"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
@@ -258,16 +237,13 @@ export default function FeaturedWork() {
               {/* Dots */}
               <div className="flex gap-2">
                 {featuredWork.items.map((_, index) => (
-                  <motion.button
+                  <button
                     key={index}
                     onClick={() => setCurrentIndex(index)}
-                    className={`w-3 h-3 rounded-full transition-colors ${
-                      index === currentIndex 
-                        ? 'bg-blue-500' 
-                        : 'bg-neutral-300 dark:bg-neutral-600'
-                    }`}
-                    whileHover={{ scale: 1.2 }}
-                    whileTap={{ scale: 0.9 }}
+                    className={`w-3 h-3 rounded-full transition-colors ${index === currentIndex
+                      ? 'bg-blue-500'
+                      : 'bg-neutral-300 dark:bg-neutral-600 hover:bg-neutral-400 dark:hover:bg-neutral-500'
+                      }`}
                   />
                 ))}
               </div>
@@ -275,7 +251,7 @@ export default function FeaturedWork() {
               <motion.button
                 onClick={nextSlide}
                 className="p-3 rounded-full bg-white/80 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700
-                  hover:bg-white dark:hover:bg-neutral-800 transition-colors"
+                  hover:bg-white dark:hover:bg-neutral-800 transition-colors hover-glow"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
@@ -298,27 +274,26 @@ export default function FeaturedWork() {
                 href={item.link}
                 className="group block"
                 variants={itemVariants}
-                whileHover={{ y: -8 }}
+                whileHover={{ y: -6 }}
                 whileTap={{ scale: 0.98 }}
               >
                 <div className="bg-white/80 dark:bg-neutral-800/80 rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700 
-                  backdrop-blur-sm overflow-hidden hover:shadow-xl transition-all duration-300">
+                  backdrop-blur-sm overflow-hidden hover:shadow-xl transition-shadow duration-300 hover-glow">
                   {/* Image */}
                   <div className="h-48 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/20 dark:to-purple-900/20 relative overflow-hidden">
                     {item.image ? (
                       <img
                         src={item.image}
                         alt={item.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        {/* Dynamic icon based on category */}
                         <div className="text-4xl opacity-50">
                           {item.category === 'Cloud' ? '☁️' :
-                           item.category === 'DevOps' ? '⚙️' :
-                           item.category === 'Web' ? '🌐' :
-                           item.category === 'Automation' ? '🤖' : '🚀'}
+                            item.category === 'DevOps' ? '⚙️' :
+                              item.category === 'Web' ? '🌐' :
+                                item.category === 'Automation' ? '🤖' : '🚀'}
                         </div>
                       </div>
                     )}
@@ -332,7 +307,7 @@ export default function FeaturedWork() {
                     <p className="text-neutral-600 dark:text-neutral-400 text-sm mb-3">
                       {item.description}
                     </p>
-                    
+
                     {/* Tags */}
                     <div className="flex flex-wrap gap-1 mb-3">
                       {item.tags.slice(0, 3).map((tag) => (
@@ -373,22 +348,18 @@ export default function FeaturedWork() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.5 }}
+            transition={{ delay: 0.3 }}
           >
-            <motion.a
+            <a
               href={featuredWork.viewAllLink}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500
-                text-white font-medium rounded-xl hover:from-blue-600 hover:to-purple-600 
-                transition-all duration-300 shadow-lg hover:shadow-xl"
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.95 }}
+              className="btn-stylized"
             >
               <span>View All Projects</span>
               <FiArrowRight className="w-4 h-4" />
-            </motion.a>
+            </a>
           </motion.div>
         )}
       </div>
-    </motion.section>
+    </section>
   );
 }
