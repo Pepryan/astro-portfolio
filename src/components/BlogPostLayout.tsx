@@ -134,7 +134,8 @@ export default function BlogPostLayout({
 
         <div className="lg:grid lg:grid-cols-[1fr_280px] lg:gap-8">
           {/* Main content */}
-          <article data-pagefind-body className="prose dark:prose-invert max-w-none md:bg-white md:dark:bg-neutral-800/50 md:border md:border-neutral-200/80 md:dark:border-neutral-700/60 md:rounded-2xl md:p-8 lg:p-10 md:shadow-sm">
+          {/* Hidden posts are reachable by URL only, so keep them out of the search index */}
+          <article data-pagefind-body={post.data.hidden ? undefined : true} className="prose dark:prose-invert max-w-none md:bg-white md:dark:bg-neutral-800/50 md:border md:border-neutral-200/80 md:dark:border-neutral-700/60 md:rounded-2xl md:p-8 lg:p-10 md:shadow-sm">
             {/* Article Header */}
             <header className="mb-8">
               {/* Featured image */}

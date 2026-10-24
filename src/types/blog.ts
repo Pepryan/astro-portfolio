@@ -32,6 +32,7 @@ export interface BlogPostData {
     thumbnail?: string;
     author?: string;
     readingTime?: number;  // Optional, used by BlogCard
+    hidden?: boolean;      // Built but unlisted (no index pages, no search)
     series?: SeriesReference;
 }
 
