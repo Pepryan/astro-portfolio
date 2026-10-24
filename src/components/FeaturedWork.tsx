@@ -7,7 +7,6 @@
  * Features:
  * - Carousel layout with slide navigation and dot indicators
  * - Grid layout with hover effects
- * - Loading skeleton state until mounted
  * - Optional "View All" CTA button
  * 
  * @example
@@ -17,7 +16,7 @@
  * ```
  */
 import { motion } from 'framer-motion';
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useState } from 'react';
 import { FiArrowRight, FiExternalLink, FiGithub } from 'react-icons/fi';
 import { componentConfig } from '../config/components';
 
@@ -25,30 +24,12 @@ const { featuredWork } = componentConfig;
 
 export default function FeaturedWork() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [mounted, setMounted] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // Early return if not enabled
   if (!featuredWork.enabled) return null;
 
-  // Show loading state until mounted
-  if (!mounted) {
-    return (
-      <section className="py-16 sm:py-24 relative overflow-hidden">
-        <div className="max-w-6xl mx-auto px-4 relative">
-          <div className="text-center mb-16">
-            <div className="h-12 bg-neutral-200 dark:bg-neutral-700 rounded animate-pulse mb-4"></div>
-            <div className="h-6 bg-neutral-200 dark:bg-neutral-700 rounded max-w-2xl mx-auto"></div>
-          </div>
-          <div className="h-96 bg-neutral-200 dark:bg-neutral-700 rounded-2xl animate-pulse"></div>
-        </div>
-      </section>
-    );
-  }
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -286,7 +267,7 @@ export default function FeaturedWork() {
             viewport={{ once: true, amount: 0.1 }}
             variants={containerVariants}
           >
-            {featuredWork.items.map((item, index) => (
+            {featuredWork.items.map((item) => (
               <motion.a
                 key={item.id}
                 href={item.link}

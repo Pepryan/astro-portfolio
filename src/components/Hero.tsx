@@ -1,3 +1,4 @@
+import type { IconType } from 'react-icons';
 import { motion } from 'framer-motion';
 import { FiGithub, FiLinkedin, FiMail, FiGitlab, FiArrowDown, FiEdit3, FiArrowRight } from 'react-icons/fi';
 import { FaXTwitter } from 'react-icons/fa6';
@@ -7,12 +8,9 @@ import { useEffect, useState } from 'react';
 const { hero } = componentConfig;
 
 export default function Hero() {
-  const [mounted, setMounted] = useState(false);
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
 
   useEffect(() => {
-    setMounted(true);
-
     // Story progression animation - only if enabled and user doesn't prefer reduced motion
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -62,13 +60,18 @@ export default function Hero() {
     }
   };
 
-  const socialLinks = [
-    { icon: FiGithub, href: 'https://github.com/Pepryan', label: 'GitHub' },
-    { icon: FiGitlab, href: 'https://gitlab.com/Pepryan', label: 'GitLab' },
-    { icon: FiLinkedin, href: 'https://linkedin.com/in/febryanramadhan', label: 'LinkedIn' },
-    { icon: FaXTwitter, href: 'https://x.com/pepryan', label: 'X (Twitter)' },
-    { icon: FiMail, href: 'mailto:febryanramadhan@gmail.com', label: 'Email' }
-  ];
+  const socialIcons: Record<string, IconType> = {
+    github: FiGithub,
+    gitlab: FiGitlab,
+    linkedin: FiLinkedin,
+    twitter: FaXTwitter,
+    email: FiMail,
+  };
+  const socialLabels: Record<string, string> = { twitter: 'X (Twitter)', github: 'GitHub', gitlab: 'GitLab', linkedin: 'LinkedIn', email: 'Email' };
+
+  const socialLinks = hero.socialLinks
+    .filter((link) => link.enabled && socialIcons[link.platform])
+    .map((link) => ({ icon: socialIcons[link.platform], href: link.url, label: socialLabels[link.platform] ?? link.platform }));
 
   const scrollToTech = () => {
     const techSection = document.getElementById('tech');
@@ -82,17 +85,6 @@ export default function Hero() {
     hero.story?.journey || "Crafting digital experiences with passion and precision"
   ];
 
-  if (!mounted) {
-    return (
-      <div className="text-center py-8 space-y-8 min-h-[80vh] flex flex-col justify-center">
-        <div className="flex justify-center mb-8">
-          <div className="w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 rounded-full bg-neutral-200 dark:bg-neutral-700 animate-pulse" />
-        </div>
-        <div className="h-16 bg-neutral-200 dark:bg-neutral-700 rounded-lg max-w-md mx-auto animate-pulse" />
-        <div className="h-8 bg-neutral-200 dark:bg-neutral-700 rounded max-w-lg mx-auto animate-pulse" />
-      </div>
-    );
-  }
 
   return (
     <div className="relative">
@@ -232,7 +224,7 @@ export default function Hero() {
               hover:text-neutral-700 dark:hover:text-neutral-200 transition-colors group"
             whileHover={{ y: -4 }}
             whileTap={{ y: -2 }}
-            aria-label="Scroll to about section"
+            aria-label="Scroll to tech stack section"
           >
             <div className="relative animate-float-slow">
               <FiArrowDown className="w-6 h-6 group-hover:text-blue-500 transition-colors" />

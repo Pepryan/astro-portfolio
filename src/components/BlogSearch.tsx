@@ -31,18 +31,6 @@ export default function BlogSearch({
     return () => clearTimeout(handler);
   }, [query, onSearch]);
 
-  // Ctrl/Cmd + K focuses search ("/" and "k" are handled globally by KeyboardShortcuts)
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        inputRef.current?.focus();
-      }
-    };
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
   const clear = () => {
     setQuery('');
     onSearch('');

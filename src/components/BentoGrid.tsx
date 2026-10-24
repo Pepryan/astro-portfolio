@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useRef, useEffect, useState } from 'react';
+import { useRef } from 'react';
 import { FiArrowUpRight, FiTrendingUp } from 'react-icons/fi';
 import { componentConfig } from '../config/components';
 
@@ -7,33 +7,11 @@ const { bentoGrid } = componentConfig;
 
 export default function BentoGrid() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // Early return if not enabled
   if (!bentoGrid.enabled) return null;
 
-  // Show loading state until mounted
-  if (!mounted) {
-    return (
-      <section className="py-16 sm:py-24 relative overflow-hidden">
-        <div className="max-w-6xl mx-auto px-4 relative">
-          <div className="text-center mb-16">
-            <div className="h-12 bg-neutral-200 dark:bg-neutral-700 rounded animate-pulse mb-4"></div>
-            <div className="h-6 bg-neutral-200 dark:bg-neutral-700 rounded max-w-2xl mx-auto"></div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-48 bg-neutral-200 dark:bg-neutral-700 rounded-2xl animate-pulse"></div>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -160,7 +138,7 @@ export default function BentoGrid() {
           viewport={{ once: true, amount: 0.1 }}
           variants={containerVariants}
         >
-          {bentoGrid.cards.map((card, index) => {
+          {bentoGrid.cards.map((card) => {
             const colors = getColorClasses(card.color);
             const CardComponent = card.interactive ? motion.a : motion.div;
             const cardHref = card.interactive ? (card.link || `#${card.id}`) : undefined;
