@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { FiCommand, FiX } from 'react-icons/fi';
 import { toggleDarkMode } from '../lib/theme';
+import { openSearch as openSearchDialog } from '../lib/search';
 
 const SHORTCUTS = [
   { key: 'h', description: 'Go to Home' },
   { key: 'b', description: 'Go to Blog' },
   { key: 't', description: 'Toggle theme' },
-  { key: '/', description: 'Search posts' },
+  { key: 'Ctrl/⌘ K', description: 'Search all articles' },
+  { key: '/', description: 'Search / filter posts' },
   { key: '←', description: 'Previous post' },
   { key: '→', description: 'Next post' },
   { key: '?', description: 'Show/hide shortcuts' },
@@ -27,7 +29,7 @@ function openSearch() {
     trigger.focus();
     trigger.click();
   } else {
-    window.location.href = '/blog?focus=search';
+    openSearchDialog();
   }
 }
 

@@ -39,34 +39,34 @@ const seo = generateSEO({
         </section>
 
         <section id="tech" class="relative">
-          <TechStack client:only="react" />
+          <TechStack client:visible />
         </section>
 
         {sections.story.enabled && (
           <section id="story" class="relative">
-            <StoryJourney client:only="react" />
+            <StoryJourney client:visible />
           </section>
         )}
 
         {sections.bentoGrid.enabled && shouldShowAboutSection() && (
           <section id="about" class="relative">
-            <BentoGrid client:only="react" />
+            <BentoGrid client:visible />
           </section>
         )}
 
         {sections.featuredWork.enabled && (
           <section id="work" class="relative">
-            <FeaturedWork client:only="react" />
+            <FeaturedWork client:visible />
           </section>
         )}
 
         <section id="latest-posts" class="relative">
-          <LatestPosts client:only="react" posts={latestPosts} />
+          <LatestPosts client:visible posts={latestPosts} />
         </section>
 
         {sections.cta.enabled && (
           <section id="contact" class="relative">
-            <CTASection client:only="react" />
+            <CTASection client:visible />
           </section>
         )}
       </main>

@@ -9,6 +9,7 @@ import CopyCodeScript from '../components/CopyCodeScript.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import KeyboardShortcuts from '../components/KeyboardShortcuts';
+import SearchDialog from '../components/SearchDialog';
 import { seoConfig } from '../config/components';
 import { generateSEO } from '../utils/seo';
 
@@ -135,6 +136,7 @@ const seoData = generateSEO({
     <Footer />
 
     <KeyboardShortcuts client:idle />
+    <SearchDialog client:idle />
     <CopyCodeScript />
 
     <script>

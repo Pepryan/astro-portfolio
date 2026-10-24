@@ -59,4 +59,9 @@ export default defineConfig({
     react(),
     tailwind({ applyBaseStyles: false }),
   ],
+  vite: {
+    // Native module used for OG image rendering — keep it out of Vite's bundling
+    ssr: { external: ['@resvg/resvg-js'] },
+    optimizeDeps: { exclude: ['@resvg/resvg-js'] },
+  },
 });

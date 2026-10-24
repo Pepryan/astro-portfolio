@@ -134,7 +134,7 @@ export default function BlogPostLayout({
 
         <div className="lg:grid lg:grid-cols-[1fr_280px] lg:gap-8">
           {/* Main content */}
-          <article className="prose dark:prose-invert max-w-none md:bg-white md:dark:bg-neutral-800/50 md:border md:border-neutral-200/80 md:dark:border-neutral-700/60 md:rounded-2xl md:p-8 lg:p-10 md:shadow-sm">
+          <article data-pagefind-body className="prose dark:prose-invert max-w-none md:bg-white md:dark:bg-neutral-800/50 md:border md:border-neutral-200/80 md:dark:border-neutral-700/60 md:rounded-2xl md:p-8 lg:p-10 md:shadow-sm">
             {/* Article Header */}
             <header className="mb-8">
               {/* Featured image */}
@@ -150,7 +150,7 @@ export default function BlogPostLayout({
               )}
 
               {/* Title */}
-              <h1 className="text-4xl md:text-5xl font-bold mb-4 text-neutral-900 dark:text-neutral-100">
+              <h1 data-pagefind-meta="title" className="text-4xl md:text-5xl font-bold mb-4 text-neutral-900 dark:text-neutral-100">
                 {post.data.title}
               </h1>
 
@@ -218,7 +218,7 @@ export default function BlogPostLayout({
               )}
 
               {/* Mobile Table of Contents - Floating Button */}
-              <div className="lg:hidden">
+              <div className="lg:hidden" data-pagefind-ignore>
                 <TableOfContents defaultExpanded={false} isMobile={true} />
               </div>
             </header>

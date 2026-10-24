@@ -97,7 +97,7 @@ export default function LatestPosts({ posts }: LatestPostsProps) {
                     viewport={{ once: true, amount: 0.1 }}
                     variants={containerVariants}
                 >
-                    {posts.slice(0, 3).map((post, index) => (
+                    {posts.slice(0, 3).map((post) => (
                         <motion.a
                             key={post.slug}
                             href={`/blog/${post.slug}`}

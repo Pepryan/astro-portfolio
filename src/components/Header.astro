@@ -1,5 +1,5 @@
 ---
-import { FiArchive, FiBookOpen, FiEdit3, FiFolder, FiHome, FiMail, FiUser } from 'react-icons/fi';
+import { FiArchive, FiBookOpen, FiEdit3, FiFolder, FiHome, FiMail, FiSearch, FiUser } from 'react-icons/fi';
 import type { IconType } from 'react-icons';
 import ThemeToggle from './ThemeToggle.astro';
 import { componentConfig } from '../config/components';
@@ -61,7 +61,23 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(`${h
         );
       })}
       <span class="mx-1 h-5 w-px bg-neutral-200 dark:bg-neutral-700" aria-hidden="true"></span>
+      <button
+        type="button"
+        data-open-search
+        class="inline-flex h-9 w-9 items-center justify-center rounded-full text-neutral-600 transition-colors
+          hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
+        aria-label="Search articles"
+        title="Search (Ctrl/⌘ K)"
+      >
+        <FiSearch className="h-[18px] w-[18px]" aria-hidden="true" />
+      </button>
       <ThemeToggle />
     </nav>
   </div>
 </header>
+
+<script>
+  import { openSearch } from '../lib/search';
+
+  document.querySelectorAll('[data-open-search]').forEach((button) => button.addEventListener('click', openSearch));
+</script>

@@ -35,6 +35,9 @@ export interface BlogPostSEO {
     total?: number;
     description?: string;
   };
+  openGraph?: {
+    image?: string;
+  };
 }
 
 export interface SeriesSEO {
@@ -118,7 +121,8 @@ export function generateSEO(data: Partial<SEOData> = {}): SEOData {
  */
 export function generateBlogPostSEO(post: BlogPostSEO): SEOData {
   const postUrl = `/blog/${post.slug}`;
-  const postImage = post.thumbnail || seoConfig.images.default;
+  // Generated 1200×630 card (src/pages/og/[slug].png.ts) unless frontmatter overrides it
+  const postImage = post.openGraph?.image || `/og/${post.slug}.png`;
 
   // Enhanced description for series posts
   let postDescription = post.summary || post.description || `Read ${post.title} on ${seoConfig.blog.title}`;

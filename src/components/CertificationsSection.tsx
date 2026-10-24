@@ -119,7 +119,7 @@ export default function CertificationsSection() {
         viewport={{ once: true, amount: 0.1 }}
         variants={containerVariants}
       >
-        {certifications.map((cert, index) => (
+        {certifications.map((cert) => (
           <motion.div
             key={cert.title}
             className="bg-white/80 dark:bg-neutral-800/80 rounded-2xl p-6 shadow-sm border border-neutral-200 dark:border-neutral-700 group"
