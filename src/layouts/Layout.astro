@@ -136,5 +136,14 @@ const seoData = generateSEO({
 
     <KeyboardShortcuts client:idle />
     <CopyCodeScript />
+
+    <script>
+      // Pause decorative CSS loops while their section is off-screen.
+      // Mark a container with `data-pause-offscreen`; styles live in animations.css.
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => entry.target.toggleAttribute('data-offscreen', !entry.isIntersecting));
+      });
+      document.querySelectorAll('[data-pause-offscreen]').forEach((el) => observer.observe(el));
+    </script>
   </body>
 </html>

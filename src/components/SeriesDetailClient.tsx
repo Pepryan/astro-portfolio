@@ -119,7 +119,7 @@ export default function SeriesDetailClient({ series }: SeriesDetailProps) {
           <div className="lg:col-span-1">
             <div className="sticky top-24 space-y-6">
               {/* Series Info */}
-              <div className="bg-white dark:bg-neutral-800/80 backdrop-blur-sm rounded-2xl border border-neutral-200/60 dark:border-neutral-700/60 p-6">
+              <div className="bg-white dark:bg-neutral-800/80 rounded-2xl border border-neutral-200/60 dark:border-neutral-700/60 p-6">
                 <h3 className="font-semibold text-neutral-900 dark:text-neutral-100 mb-4">
                   Series Information
                 </h3>
@@ -181,7 +181,7 @@ export default function SeriesDetailClient({ series }: SeriesDetailProps) {
 
               {/* Tags */}
               {series.tags && series.tags.length > 0 && (
-                <div className="bg-white dark:bg-neutral-800/80 backdrop-blur-sm rounded-2xl border border-neutral-200/60 dark:border-neutral-700/60 p-6">
+                <div className="bg-white dark:bg-neutral-800/80 rounded-2xl border border-neutral-200/60 dark:border-neutral-700/60 p-6">
                   <h3 className="font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
                     <FiTag className="w-4 h-4" />
                     Tags
@@ -202,7 +202,7 @@ export default function SeriesDetailClient({ series }: SeriesDetailProps) {
               )}
 
               {/* Quick Actions */}
-              <div className="bg-white dark:bg-neutral-800/80 backdrop-blur-sm rounded-2xl border border-neutral-200/60 dark:border-neutral-700/60 p-6">
+              <div className="bg-white dark:bg-neutral-800/80 rounded-2xl border border-neutral-200/60 dark:border-neutral-700/60 p-6">
                 <h3 className="font-semibold text-neutral-900 dark:text-neutral-100 mb-4">
                   Quick Actions
                 </h3>

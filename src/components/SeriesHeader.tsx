@@ -117,7 +117,7 @@ export default function SeriesHeader({ series, currentPart, showProgress = true 
           {/* Progress Section */}
           {showProgress && (
             <div className="lg:w-80">
-              <div className="bg-white/80 dark:bg-neutral-800/80 backdrop-blur-sm rounded-xl p-4 border border-neutral-200/60 dark:border-neutral-700/60">
+              <div className="bg-white/80 dark:bg-neutral-800/80 rounded-xl p-4 border border-neutral-200/60 dark:border-neutral-700/60">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
                     Series Progress

@@ -191,7 +191,7 @@ export default function StoryJourney() {
               >
                 <motion.div
                   className={`p-6 bg-white/80 dark:bg-neutral-800/80 rounded-2xl shadow-lg
-                    border-2 ${getColorClasses(milestone.color)} backdrop-blur-sm`}
+                    border-2 ${getColorClasses(milestone.color)}`}
                   whileTap={{ scale: 0.98 }}
                 >
                   <div className="flex items-center gap-4">

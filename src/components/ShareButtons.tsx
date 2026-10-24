@@ -144,7 +144,7 @@ export default function ShareButtons({ title, slug }: ShareButtonsProps) {
             ${button.color} rounded-xl transition-all duration-300
             border border-neutral-200/50 dark:border-neutral-700/50
             hover:border-current hover:shadow-lg hover:scale-105 active:scale-95
-            backdrop-blur-sm bg-white/50 dark:bg-neutral-800/50`}
+            bg-white/50 dark:bg-neutral-800/50`}
           aria-label={`Share on ${button.name}`}
         >
           <button.icon className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
@@ -158,7 +158,7 @@ export default function ShareButtons({ title, slug }: ShareButtonsProps) {
           hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20
           rounded-xl transition-all duration-300 border border-neutral-200/50 dark:border-neutral-700/50
           hover:border-current hover:shadow-lg hover:scale-105 active:scale-95
-          backdrop-blur-sm bg-white/50 dark:bg-neutral-800/50`}
+          bg-white/50 dark:bg-neutral-800/50`}
         aria-label="Copy link"
       >
         {isCopied ? (
@@ -175,7 +175,7 @@ export default function ShareButtons({ title, slug }: ShareButtonsProps) {
           hover:text-neutral-900 dark:hover:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700
           rounded-xl transition-all duration-300 border border-neutral-200/50 dark:border-neutral-700/50
           hover:border-current hover:shadow-lg hover:scale-105 active:scale-95
-          backdrop-blur-sm bg-white/50 dark:bg-neutral-800/50"
+          bg-white/50 dark:bg-neutral-800/50"
         aria-label={showAll ? "Show fewer options" : "Show more options"}
       >
         <div className={`w-5 h-5 flex items-center justify-center transition-transform duration-300 ${showAll ? 'rotate-45' : ''}`}>
@@ -196,7 +196,7 @@ export default function ShareButtons({ title, slug }: ShareButtonsProps) {
                 ${button.color} rounded-xl transition-all duration-300
                 border border-neutral-200/50 dark:border-neutral-700/50
                 hover:border-current hover:shadow-lg hover:scale-105 active:scale-95
-                backdrop-blur-sm bg-white/50 dark:bg-neutral-800/50`}
+                bg-white/50 dark:bg-neutral-800/50`}
               aria-label={`Share on ${button.name}`}
             >
               <button.icon className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />

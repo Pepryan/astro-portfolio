@@ -147,7 +147,7 @@ export default function ArchiveClient({ posts }: ArchiveClientProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white/50 dark:bg-neutral-800/50 backdrop-blur-sm rounded-xl border border-neutral-200/50 
+          className="bg-white/50 dark:bg-neutral-800/50 rounded-xl border border-neutral-200/50 
             dark:border-neutral-700/50 p-6 mb-8"
         >
           <div className="space-y-6">
@@ -248,7 +248,7 @@ export default function ArchiveClient({ posts }: ArchiveClientProps) {
                     key={year}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-white/50 dark:bg-neutral-800/50 backdrop-blur-sm rounded-xl border border-neutral-200/50 
+                    className="bg-white/50 dark:bg-neutral-800/50 rounded-xl border border-neutral-200/50 
                       dark:border-neutral-700/50 overflow-hidden"
                   >
                     {/* Year Header */}

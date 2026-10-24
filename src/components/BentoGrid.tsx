@@ -174,7 +174,7 @@ export default function BentoGrid() {
                 title={card.interactive ? `Click to learn more about ${card.title}` : card.title}
                 className={`
                   ${getCardSize(card.size)}
-                  group relative p-6 rounded-2xl border backdrop-blur-sm
+                  group relative p-6 rounded-2xl border
                   bg-gradient-to-br ${colors.bg} ${colors.border}
                   hover:bg-gradient-to-br ${colors.hover}
                   transition-all duration-300 ${card.interactive ? 'cursor-pointer' : 'cursor-default'}

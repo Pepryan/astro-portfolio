@@ -162,7 +162,7 @@ export default function FeaturedWork() {
                   }}
                 >
                   <div className="w-full h-full bg-white/80 dark:bg-neutral-800/80 rounded-2xl shadow-xl
-                    border border-neutral-200 dark:border-neutral-700 backdrop-blur-sm overflow-hidden group">
+                    border border-neutral-200 dark:border-neutral-700 overflow-hidden group">
                     {/* Project Image */}
                     <div className="h-1/2 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/20 dark:to-purple-900/20 relative overflow-hidden">
                       {item.image ? (
@@ -296,7 +296,7 @@ export default function FeaturedWork() {
                 whileTap={{ scale: 0.98 }}
               >
                 <div className="bg-white/80 dark:bg-neutral-800/80 rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700 
-                  backdrop-blur-sm overflow-hidden hover:shadow-xl transition-shadow duration-300 hover-glow">
+                  overflow-hidden hover:shadow-xl transition-shadow duration-300 hover-glow">
                   {/* Image */}
                   <div className="h-48 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/20 dark:to-purple-900/20 relative overflow-hidden">
                     {item.image ? (

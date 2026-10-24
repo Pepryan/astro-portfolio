@@ -122,7 +122,7 @@ export default function CertificationsSection() {
         {certifications.map((cert, index) => (
           <motion.div
             key={cert.title}
-            className="bg-white/80 dark:bg-neutral-800/80 rounded-2xl p-6 shadow-sm border border-neutral-200 dark:border-neutral-700 group backdrop-blur-sm"
+            className="bg-white/80 dark:bg-neutral-800/80 rounded-2xl p-6 shadow-sm border border-neutral-200 dark:border-neutral-700 group"
             variants={itemVariants}
             whileHover={{ y: -5, transition: { duration: 0.2 } }}
           >

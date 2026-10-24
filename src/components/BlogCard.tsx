@@ -39,7 +39,7 @@ export default function BlogCard({ post, readingTime }: BlogCardProps) {
             <FiFileText className="h-10 w-10 text-neutral-400 dark:text-neutral-500" aria-hidden="true" />
           </div>
         )}
-        <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-neutral-700 backdrop-blur-sm dark:bg-neutral-900/90 dark:text-neutral-300">
+        <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-neutral-700 dark:bg-neutral-900/90 dark:text-neutral-300">
           <FiClock className="h-3 w-3" aria-hidden="true" />
           {minutes} min
         </span>

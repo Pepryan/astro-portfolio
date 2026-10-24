@@ -39,6 +39,11 @@ const prettyCodeOptions = {
 export default defineConfig({
   site: 'https://febryan.web.id',
   output: 'static',
+  // Fetch pages on link hover/focus so navigation feels instant
+  prefetch: {
+    prefetchAll: true,
+    defaultStrategy: 'hover',
+  },
   // Single canonical tag route lives under /blog/tags
   redirects: {
     '/tags/[tag]': '/blog/tags/[tag]',

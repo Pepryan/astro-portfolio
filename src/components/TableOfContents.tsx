@@ -231,7 +231,7 @@ export default function TableOfContents({ defaultExpanded = true, isMobile = fal
         <button
           onClick={() => setIsFloatingOpen(!isFloatingOpen)}
           className="fixed left-8 bottom-8 z-50 w-12 h-12 flex items-center justify-center
-            bg-white/90 dark:bg-neutral-800/90 backdrop-blur-sm rounded-full shadow-lg border border-neutral-200 dark:border-neutral-700
+            bg-white/90 dark:bg-neutral-800/90 rounded-full shadow-lg border border-neutral-200 dark:border-neutral-700
             text-neutral-600 dark:text-neutral-400 hover:text-blue-500 dark:hover:text-blue-400
             transition-all duration-200 hover:scale-110 active:scale-95"
           aria-label="Table of Contents"
