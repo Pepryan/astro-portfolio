@@ -13,7 +13,7 @@
  * 
  * @example
  * ```tsx
- * <TableOfContents content={postBody} isMobile={false} />
+ * <TableOfContents isMobile={false} />
  * ```
  */
 import { useState, useEffect, useRef } from 'react';
@@ -30,15 +30,13 @@ interface Heading {
 }
 
 interface TableOfContentsProps {
-  /** Raw content used to trigger heading extraction */
-  content: string;
   /** Whether TOC should be expanded by default */
   defaultExpanded?: boolean;
   /** Render mobile floating button instead of sidebar */
   isMobile?: boolean;
 }
 
-export default function TableOfContents({ content, defaultExpanded = true, isMobile = false }: TableOfContentsProps) {
+export default function TableOfContents({ defaultExpanded = true, isMobile = false }: TableOfContentsProps) {
   const [headings, setHeadings] = useState<Heading[]>([]);
   const [activeId, setActiveId] = useState<string>('');
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
@@ -54,7 +52,8 @@ export default function TableOfContents({ content, defaultExpanded = true, isMob
   // This ensures we get the exact same IDs that rehype-slug generates
   useEffect(() => {
     const extractHeadingsFromDOM = () => {
-      const headingElements = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+      // Only headings inside the article body (not the title, comments, related posts…)
+      const headingElements = document.querySelectorAll('[data-article-content] :is(h1, h2, h3, h4)');
       const extractedHeadings: Heading[] = [];
 
       headingElements.forEach((element) => {
@@ -76,11 +75,8 @@ export default function TableOfContents({ content, defaultExpanded = true, isMob
       setHeadings(extractedHeadings);
     };
 
-    // Wait a bit for the DOM to be fully rendered
-    const timer = setTimeout(extractHeadingsFromDOM, 100);
-
-    return () => clearTimeout(timer);
-  }, [content]);
+    extractHeadingsFromDOM();
+  }, []);
 
   // Track active heading with improved intersection observer
   useEffect(() => {
@@ -225,6 +221,8 @@ export default function TableOfContents({ content, defaultExpanded = true, isMob
 
   if (headings.length === 0) return null;
 
+  const minLevel = Math.min(...headings.map((heading) => heading.level));
+
   // Mobile floating TOC
   if (isMobile) {
     return (
@@ -281,7 +279,7 @@ export default function TableOfContents({ content, defaultExpanded = true, isMob
                     {headings.map((heading, index) => (
                       <div
                         key={index}
-                        style={{ paddingLeft: `${(heading.level - 1) * 0.75}rem` }}
+                        style={{ paddingLeft: `${(heading.level - minLevel) * 0.75}rem` }}
                       >
                         <button
                           ref={(el) => {
@@ -348,7 +346,7 @@ export default function TableOfContents({ content, defaultExpanded = true, isMob
               {headings.map((heading, index) => (
                 <li
                   key={index}
-                  style={{ paddingLeft: `${(heading.level - 1) * 0.75}rem` }}
+                  style={{ paddingLeft: `${(heading.level - minLevel) * 0.75}rem` }}
                 >
                   <button
                     ref={(el) => {

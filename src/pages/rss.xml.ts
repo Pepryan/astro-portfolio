@@ -1,14 +1,11 @@
 import rss from '@astrojs/rss';
-import { getCollection } from 'astro:content';
+import { getPublishedPosts } from '../lib/posts';
 import type { APIContext } from 'astro';
+import { seoConfig } from '../config/components';
 
 export async function GET(context: APIContext) {
-  const posts = await getCollection('posts');
-  
-  // Filter and sort posts
-  const publishedPosts = posts
-    .filter(post => !post.data.draft && !post.data.hidden)
-    .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+  const publishedPosts = await getPublishedPosts();
+  const { author } = seoConfig;
 
   return rss({
     title: 'Febryan Ramadhan Blog',
@@ -20,15 +17,12 @@ export async function GET(context: APIContext) {
       description: post.data.summary || post.data.description || '',
       link: `/blog/${post.slug}/`,
       categories: post.data.tags || [],
-      author: 'Febryan Ramadhan',
-      customData: post.data.updated 
-        ? `<lastBuildDate>${post.data.updated.toUTCString()}</lastBuildDate>`
-        : undefined,
+      author: `${author.email} (${author.name})`,
     })),
     customData: `
-      <language>en-us</language>
-      <managingEditor>febryan.ramadhan@example.com (Febryan Ramadhan)</managingEditor>
-      <webMaster>febryan.ramadhan@example.com (Febryan Ramadhan)</webMaster>
+      <language>${seoConfig.site.language}</language>
+      <managingEditor>${author.email} (${author.name})</managingEditor>
+      <webMaster>${author.email} (${author.name})</webMaster>
       <copyright>Copyright ${new Date().getFullYear()} Febryan Ramadhan</copyright>
       <category>Technology</category>
       <category>Cloud Engineering</category>

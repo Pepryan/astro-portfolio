@@ -1,4 +1,4 @@
-import { getCollection } from 'astro:content';
+import { getPublishedPosts } from '../lib/posts';
 import { seoConfig } from '../config/components';
 import { getEnabledStaticPages } from './pages';
 import { getAllSeries } from './series';
@@ -33,9 +33,7 @@ export async function generateSitemapURLs(): Promise<SitemapURL[]> {
     });
   });
 
-  // Get all blog posts (exclude drafts and hidden)
-  const posts = await getCollection('posts');
-  const publishedPosts = posts.filter(post => !post.data.draft && !post.data.hidden);
+  const publishedPosts = await getPublishedPosts();
 
   // Add blog post URLs
   publishedPosts.forEach(post => {
@@ -64,27 +62,9 @@ export async function generateSitemapURLs(): Promise<SitemapURL[]> {
     });
   });
 
-  // Add main tag pages (if they exist)
-  allTags.forEach(tag => {
-    urls.push({
-      loc: `${baseUrl}/tags/${encodeURIComponent(tag)}`,
-      lastmod: new Date().toISOString(),
-      changefreq: 'weekly',
-      priority: 0.5
-    });
-  });
-
   // Get all series and add series pages
   try {
     const allSeries = await getAllSeries();
-
-    // Add series listing page
-    urls.push({
-      loc: `${baseUrl}/series`,
-      lastmod: new Date().toISOString(),
-      changefreq: 'weekly',
-      priority: 0.8
-    });
 
     // Add individual series detail pages
     allSeries.forEach(series => {

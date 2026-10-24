@@ -3,79 +3,55 @@ import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import react from '@astrojs/react';
 import tailwind from '@astrojs/tailwind';
-// Removed @astrojs/sitemap - using custom sitemap implementation
 import remarkGfm from 'remark-gfm';
 import rehypePrettyCode from 'rehype-pretty-code';
+import rehypeLazyImages from './src/plugins/rehype-lazy-images.mjs';
+
+/**
+ * Syntax highlighting for code blocks.
+ * Two themes are emitted as CSS variables (--shiki-light / --shiki-dark) and
+ * switched by the `dark` class on <html> — see src/styles/prose.css.
+ * @type {import('rehype-pretty-code').Options}
+ */
+const prettyCodeOptions = {
+  theme: {
+    light: 'github-light',
+    dark: 'night-owl',
+  },
+  keepBackground: true,
+  defaultLang: 'plaintext',
+  grid: true,
+  onVisitLine(node) {
+    // Keep empty lines visible so line numbers & copy output stay intact
+    if (node.children.length === 0) {
+      node.children = [{ type: 'text', value: ' ' }];
+    }
+  },
+  onVisitHighlightedLine(node) {
+    node.properties.className = ['highlighted'];
+  },
+  onVisitHighlightedChars(node) {
+    node.properties.className = ['word'];
+  },
+};
 
 // https://astro.build/config
 export default defineConfig({
   site: 'https://febryan.web.id',
   output: 'static',
-  integrations: [
-    mdx({
-      remarkPlugins: [remarkGfm],
-      rehypePlugins: [
-        [rehypePrettyCode, {
-          theme: 'night-owl',
-          keepBackground: true,
-          defaultLang: 'plaintext',
-          grid: true,
-          onVisitLine(node) {
-            if (node.children.length === 0) {
-              node.children = [{type: 'text', value: ' '}];
-            }
-          },
-          onVisitHighlightedLine(node) {
-            node.properties.className = ['highlighted'];
-          },
-          onVisitHighlightedWord(node) {
-            node.properties.className = ['word'];
-          },
-          transformers: [
-            {
-              name: 'add-copy-button-class',
-              pre(node) {
-                // Add group class for copy button hover effect
-                this.addClassToHast(node, 'group');
-              }
-            }
-          ]
-        }]
-      ],
-      syntaxHighlight: false
-    }),
-    react(),
-    tailwind({
-      applyBaseStyles: false
-    }),
-    // Custom sitemap implementation in src/pages/sitemap.xml.ts
-  ],
+  // Single canonical tag route lives under /blog/tags
+  redirects: {
+    '/tags/[tag]': '/blog/tags/[tag]',
+  },
   markdown: {
     remarkPlugins: [remarkGfm],
-    rehypePlugins: [
-      [rehypePrettyCode, {
-        theme: 'night-owl',
-        keepBackground: true,
-        defaultLang: 'plaintext',
-        grid: true,
-        onVisitLine(node) {
-          if (node.children.length === 0) {
-            node.children = [{type: 'text', value: ' '}];
-          }
-        },
-        onVisitHighlightedLine(node) {
-          node.properties.className = ['highlighted'];
-        },
-        onVisitHighlightedWord(node) {
-          node.properties.className = ['word'];
-        }
-      }]
-    ],
-    syntaxHighlight: false
+    rehypePlugins: [[rehypePrettyCode, prettyCodeOptions], rehypeLazyImages],
+    syntaxHighlight: false,
   },
-  vite: {
-    optimizeDeps: {
-      exclude: ['@resvg/resvg-js']
-    }
-  }
+  integrations: [
+    // MDX inherits the markdown config above (extendMarkdownConfig defaults to true)
+    mdx(),
+    react(),
+    tailwind({ applyBaseStyles: false }),
+  ],
 });

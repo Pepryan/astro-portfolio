@@ -53,7 +53,7 @@ export default function SeriesCard({ series }: SeriesCardProps) {
 
   const handleTagClick = (tag: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    window.location.href = `/blog/tags/${tag}`;
+    window.location.href = `/blog/tags/${encodeURIComponent(tag)}`;
   };
 
   return (
@@ -196,10 +196,7 @@ export default function SeriesCard({ series }: SeriesCardProps) {
                   className="flex items-center gap-1.5"
                 >
                   <FiCalendar className="w-4 h-4" />
-                  {series.startDate.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short'
-                  })}
+                  {new Date(series.startDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', timeZone: 'UTC' })}
                 </time>
               )}
 

@@ -340,8 +340,8 @@
     }
 }
 
-/* Hide cube on mobile - screen too small */
-@media (max-width: 1024px) {
+/* Only on wide screens where it cannot overlap the content column */
+@media (max-width: 1439px) {
     .cube-wrapper {
         display: none;
     }

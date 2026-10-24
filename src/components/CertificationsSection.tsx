@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { FiAward, FiExternalLink, FiCalendar, FiCheckCircle } from 'react-icons/fi';
 

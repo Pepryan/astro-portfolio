@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { FiSearch, FiGrid, FiList, FiBookOpen, FiTrendingUp } from 'react-icons/fi';
 import SeriesCard from './SeriesCard';
 import ReadingProgress from './ReadingProgress';
-import type { SeriesInfo, SeriesPageClientProps } from '../types';
+import type { SeriesPageClientProps } from '../types';
 
 export default function SeriesPageClient({ series }: SeriesPageClientProps) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -204,6 +204,8 @@ export default function SeriesPageClient({ series }: SeriesPageClientProps) {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setViewMode('grid')}
+                aria-label="Grid view"
+                aria-pressed={viewMode === 'grid'}
                 className={`p-2 rounded-lg transition-colors duration-200 ${viewMode === 'grid'
                   ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
                   : 'text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700'
@@ -213,6 +215,8 @@ export default function SeriesPageClient({ series }: SeriesPageClientProps) {
               </button>
               <button
                 onClick={() => setViewMode('list')}
+                aria-label="List view"
+                aria-pressed={viewMode === 'list'}
                 className={`p-2 rounded-lg transition-colors duration-200 ${viewMode === 'list'
                   ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
                   : 'text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700'

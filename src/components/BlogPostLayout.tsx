@@ -18,7 +18,6 @@
  *   post={post}
  *   readingTime={5}
  *   wordCount={1200}
- *   postUrl={url}
  *   allPosts={allBlogPosts}
  *   seriesNavigation={seriesNav}
  * >
@@ -28,7 +27,7 @@
  */
 import { FiArrowLeft, FiCalendar, FiClock, FiTag, FiUser } from 'react-icons/fi';
 import ShareButtons from './ShareButtons';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import TableOfContents from './TableOfContents';
 import ReadingProgress from './ReadingProgress';
 import GiscusComments from './GiscusComments';
@@ -36,67 +35,16 @@ import RelatedPosts from './RelatedPosts';
 import PostNavigation from './PostNavigation';
 import SeriesIndicator from './SeriesIndicator';
 import SeriesNavigation from './SeriesNavigation';
-
-interface BlogPostData {
-  title: string;
-  summary?: string;
-  description?: string;
-  date: Date;
-  updated?: Date;
-  tags?: string[];
-  category?: string;
-  thumbnail?: string;
-  author?: string;
-  series?: {
-    name: string;
-    slug: string;
-    part: number;
-    total?: number;
-    description?: string;
-    thumbnail?: string;
-    order?: number;
-  };
-}
-
-interface BlogPost {
-  slug: string;
-  data: BlogPostData;
-  readingTime: number;
-}
+import { formatDate } from '../lib/format';
+import type { BlogPost } from '../types';
+import type { SeriesNavigationData } from '../utils/series';
 
 interface BlogPostLayoutProps {
-  post: {
-    slug: string;
-    data: BlogPostData;
-    body: string;
-  };
+  post: Pick<BlogPost, 'slug' | 'data'>;
   readingTime: number;
   wordCount: number;
-  postUrl: string;
   allPosts?: BlogPost[];
-  seriesNavigation?: {
-    series: {
-      name: string;
-      slug: string;
-      description: string;
-      thumbnail?: string;
-      status: 'ongoing' | 'completed' | 'planned';
-      tags: string[];
-      category?: string;
-      difficulty?: string;
-      totalParts: number;
-      completedParts: number;
-      startDate?: Date;
-      endDate?: Date;
-      featured: boolean;
-      posts: BlogPost[];
-    };
-    currentPart: number;
-    totalParts: number;
-    previousPost?: BlogPost | null;
-    nextPost?: BlogPost | null;
-    progress: number;
-  } | null;
+  seriesNavigation?: SeriesNavigationData | null;
   children: React.ReactNode;
 }
 
@@ -104,120 +52,71 @@ export default function BlogPostLayout({
   post,
   readingTime,
   wordCount,
-  postUrl,
   allPosts = [],
   seriesNavigation = null,
   children
 }: BlogPostLayoutProps) {
-  const [mounted, setMounted] = useState(false);
-
+  // Click-to-zoom for images inside the article body (the cover image is excluded)
   useEffect(() => {
-    setMounted(true);
+    const content = document.querySelector<HTMLElement>('[data-article-content]');
+    if (!content) return;
+
+    content.querySelectorAll('img').forEach((img) => {
+      img.classList.add('cursor-zoom-in');
+      img.tabIndex = 0;
+    });
+
+    const openLightbox = (img: HTMLImageElement) => {
+      const overlay = document.createElement('div');
+      overlay.className = 'fixed inset-0 z-[70] flex cursor-zoom-out items-center justify-center bg-black/85 p-4 backdrop-blur-sm';
+      overlay.setAttribute('role', 'dialog');
+      overlay.setAttribute('aria-modal', 'true');
+      overlay.setAttribute('aria-label', img.alt || 'Image preview');
+
+      const preview = document.createElement('img');
+      preview.src = img.currentSrc || img.src;
+      preview.alt = img.alt;
+      preview.className = 'max-h-[90vh] max-w-[90vw] rounded-lg object-contain';
+      overlay.appendChild(preview);
+
+      const close = () => {
+        overlay.remove();
+        document.removeEventListener('keydown', onKeyDown);
+        img.focus();
+      };
+      const onKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') close();
+      };
+
+      overlay.addEventListener('click', close);
+      document.addEventListener('keydown', onKeyDown);
+      document.body.appendChild(overlay);
+    };
+
+    const targetImage = (e: Event) => {
+      const target = e.target as HTMLElement;
+      return target instanceof HTMLImageElement && content.contains(target) ? target : null;
+    };
+    const onClick = (e: MouseEvent) => {
+      const img = targetImage(e);
+      if (img) openLightbox(img);
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      const img = targetImage(e);
+      if (img && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        openLightbox(img);
+      }
+    };
+
+    content.addEventListener('click', onClick);
+    content.addEventListener('keydown', onKeyDown);
+    return () => {
+      content.removeEventListener('click', onClick);
+      content.removeEventListener('keydown', onKeyDown);
+    };
   }, []);
 
-  // Add lightbox functionality to images
-  useEffect(() => {
-    const addLightboxToImages = () => {
-      // console.log('Adding lightbox to images...');
-      const images = document.querySelectorAll('.prose img') as NodeListOf<HTMLImageElement>;
-      // console.log('Found images:', images.length);
-
-      images.forEach((img, index) => {
-        // Skip if already processed
-        if (img.parentElement?.classList.contains('lightbox-wrapper')) {
-          // console.log('Image already processed:', index);
-          return;
-        }
-
-        // console.log('Processing image:', index, img.src);
-
-        // Create wrapper
-        const wrapper = document.createElement('span');
-        wrapper.className = 'lightbox-wrapper inline-block cursor-pointer';
-        wrapper.setAttribute('role', 'button');
-        wrapper.setAttribute('tabindex', '0');
-        wrapper.setAttribute('aria-label', 'Click to view image in lightbox');
-
-        // Add click handler
-        const handleClick = () => {
-          // console.log('Image clicked, opening lightbox for:', img.src);
-          openLightbox(img.src, img.alt || '');
-        };
-
-        wrapper.addEventListener('click', handleClick);
-        wrapper.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter') {
-            // console.log('Enter pressed on image');
-            handleClick();
-          }
-        });
-
-        // Wrap the image
-        img.parentNode?.insertBefore(wrapper, img);
-        wrapper.appendChild(img);
-
-        // Update image styles
-        img.className = 'my-8 rounded-lg cursor-pointer hover:opacity-90 transition-opacity max-w-full h-auto';
-      });
-    };
-
-    const openLightbox = (src: string, alt: string) => {
-      // console.log('Opening lightbox for:', src);
-
-      // Create modal
-      const modal = document.createElement('div');
-      modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm';
-      modal.setAttribute('role', 'dialog');
-      modal.setAttribute('aria-modal', 'true');
-
-      // Create close button
-      const closeBtn = document.createElement('button');
-      closeBtn.className = 'absolute top-4 right-4 p-2 text-white hover:text-gray-300 transition-colors';
-      closeBtn.innerHTML = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
-      closeBtn.setAttribute('aria-label', 'Close image preview');
-
-      // Create image
-      const modalImg = document.createElement('img');
-      modalImg.src = src;
-      modalImg.alt = alt;
-      modalImg.className = 'rounded-lg max-h-[90vh] max-w-[90vw] object-contain';
-
-      // Close handlers
-      const closeModal = () => {
-        // console.log('Closing lightbox');
-        document.body.removeChild(modal);
-      };
-
-      closeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        closeModal();
-      });
-
-      modal.addEventListener('click', closeModal);
-      modalImg.addEventListener('click', (e) => e.stopPropagation());
-
-      // Escape key handler
-      const handleEscape = (e: KeyboardEvent) => {
-        if (e.key === 'Escape') {
-          closeModal();
-          document.removeEventListener('keydown', handleEscape);
-        }
-      };
-      document.addEventListener('keydown', handleEscape);
-
-      // Append elements
-      modal.appendChild(closeBtn);
-      modal.appendChild(modalImg);
-      document.body.appendChild(modal);
-    };
-
-    // Add lightbox functionality after component mounts
-    const timer = setTimeout(addLightboxToImages, 100);
-    return () => clearTimeout(timer);
-  }, [children]);
-
-  // Note: Copy buttons are now handled by CopyCodeScript.astro included in Layout.astro
-  // This ensures consistent copy button behavior across all pages
 
   return (
     <div className="min-h-screen bg-white dark:bg-neutral-900">
@@ -267,11 +166,7 @@ export default function BlogPostLayout({
                 <div className="flex items-center gap-2">
                   <FiCalendar className="w-4 h-4" />
                   <time dateTime={post.data.date.toISOString()}>
-                    {post.data.date.toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
+                    {formatDate(post.data.date)}
                   </time>
                 </div>
 
@@ -279,11 +174,7 @@ export default function BlogPostLayout({
                   <div className="flex items-center gap-2">
                     <span>Updated:</span>
                     <time dateTime={post.data.updated.toISOString()}>
-                      {post.data.updated.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                      })}
+                      {formatDate(post.data.updated)}
                     </time>
                   </div>
                 )}
@@ -328,12 +219,12 @@ export default function BlogPostLayout({
 
               {/* Mobile Table of Contents - Floating Button */}
               <div className="lg:hidden">
-                <TableOfContents content={post.body} defaultExpanded={false} isMobile={true} />
+                <TableOfContents defaultExpanded={false} isMobile={true} />
               </div>
             </header>
 
             {/* Article Content */}
-            <div className="">
+            <div data-article-content>
               {children}
             </div>
           </article>
@@ -341,7 +232,7 @@ export default function BlogPostLayout({
           {/* Desktop Sidebar */}
           <aside className="hidden lg:block">
             <div className="sticky top-24 space-y-6">
-              <TableOfContents content={post.body} defaultExpanded={true} />
+              <TableOfContents defaultExpanded={true} />
             </div>
           </aside>
         </div>
@@ -355,7 +246,7 @@ export default function BlogPostLayout({
                 <FiUser className="w-4 h-4" />
                 <span>Written by <strong className="text-neutral-900 dark:text-neutral-100">{post.data.author || 'Febryan Ramadhan'}</strong></span>
               </div>
-              <p>Published on {post.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+              <p>Published on {formatDate(post.data.date)}</p>
             </div>
 
             {/* Share buttons */}
@@ -367,7 +258,7 @@ export default function BlogPostLayout({
         </footer>
 
         {/* Post Navigation */}
-        {mounted && allPosts.length > 0 && (
+        {allPosts.length > 0 && (
           <PostNavigation
             currentPost={{
               slug: post.slug,
@@ -381,7 +272,7 @@ export default function BlogPostLayout({
         )}
 
         {/* Series Navigation */}
-        {mounted && seriesNavigation && (
+        {seriesNavigation && (
           <div className="mt-8">
             <SeriesNavigation
               series={seriesNavigation.series}
@@ -395,7 +286,7 @@ export default function BlogPostLayout({
         )}
 
         {/* Related Posts */}
-        {mounted && allPosts.length > 0 && (
+        {allPosts.length > 0 && (
           <RelatedPosts
             currentPost={{
               slug: post.slug,
@@ -408,12 +299,7 @@ export default function BlogPostLayout({
         )}
 
         {/* Comments */}
-        {mounted && (
-          <GiscusComments
-            slug={post.slug}
-            title={post.data.title}
-          />
-        )}
+        <GiscusComments />
       </main>
 
       {/* Reading Progress Indicator */}

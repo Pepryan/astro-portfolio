@@ -47,7 +47,7 @@ export default function BlogList({
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(post => {
         const titleMatch = post.data.title.toLowerCase().includes(query);
-        const summaryMatch = post.data.summary?.toLowerCase().includes(query);
+        const summaryMatch = (post.data.summary || post.data.description)?.toLowerCase().includes(query);
         const tagsMatch = post.data.tags?.some(tag =>
           tag.toLowerCase().includes(query)
         );
@@ -69,7 +69,7 @@ export default function BlogList({
   // Reset to first page when filters or postsPerPage change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, selectedTag, postsPerPage]);
+  }, [searchQuery, selectedTag, selectedSeries, postsPerPage]);
 
   // Ensure current page is valid when total pages change
   useEffect(() => {
@@ -95,7 +95,7 @@ export default function BlogList({
               group-hover:bg-neutral-100 dark:group-hover:bg-neutral-800 group-hover:scale-105">
               <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
               <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-                {(searchQuery || selectedTag) ? (
+                {(searchQuery || selectedTag || selectedSeries) ? (
                   <>
                     Found <span className="text-blue-600 dark:text-blue-400 font-semibold">{filteredPosts.length}</span> post{filteredPosts.length !== 1 ? 's' : ''}
                     {selectedTag && <span className="text-neutral-500"> in "{selectedTag}"</span>}
@@ -175,7 +175,7 @@ export default function BlogList({
             </div>
           )}
         </>
-      ) : (searchQuery || selectedTag) ? (
+      ) : (searchQuery || selectedTag || selectedSeries) ? (
         <div className="text-center py-16">
           <div className="text-neutral-500 dark:text-neutral-400 mb-6">
             <svg className="w-20 h-20 mx-auto mb-6 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">

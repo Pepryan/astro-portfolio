@@ -5,6 +5,8 @@
  * Used by: SeriesPageClient, SeriesDetailClient, SeriesCard
  */
 
+import type { BlogPost } from './blog';
+
 /**
  * Series status options
  */
@@ -29,26 +31,31 @@ export interface SeriesInfo {
     endDate?: Date;
     featured: boolean;
     estimatedParts?: number;
+    order?: number;
 }
 
 /**
- * Blog post that belongs to a series
- * Used by: SeriesDetailClient
+ * Blog post that belongs to a series (same lightweight shape as BlogPost)
  */
-export interface SeriesPost {
-    slug: string;
-    data: {
-        title: string;
-        summary?: string;
-        date: Date;
-        updated?: Date;
-        tags?: string[];
-        thumbnail?: string;
-        series?: {
-            part: number;
-        };
-    };
-    readingTime: number;
+export type SeriesPost = BlogPost;
+
+/**
+ * Series together with its published posts, ordered by part
+ */
+export interface SeriesWithPosts extends SeriesInfo {
+    posts: SeriesPost[];
+}
+
+/**
+ * Data for the "previous / next in series" block on a post page
+ */
+export interface SeriesNavigationData {
+    series: SeriesWithPosts;
+    currentPart: number;
+    totalParts: number;
+    previousPost: SeriesPost | null;
+    nextPost: SeriesPost | null;
+    progress: number;
 }
 
 /**
@@ -62,7 +69,5 @@ export interface SeriesPageClientProps {
  * Props for SeriesDetailClient component
  */
 export interface SeriesDetailProps {
-    series: SeriesInfo & {
-        posts: SeriesPost[];
-    };
+    series: SeriesWithPosts;
 }

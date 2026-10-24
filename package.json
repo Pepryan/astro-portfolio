@@ -1,46 +1,47 @@
 {
   "name": "febryan-portfolio-astro",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "homepage": "https://febryan.web.id",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro check && astro build",
     "preview": "astro preview",
     "astro": "astro",
     "deploy": "npm run build && touch dist/.nojekyll && gh-pages -d dist --dotfiles",
     "validate-sitemap": "node scripts/validate-sitemap.js",
     "build:validate": "npm run build && npm run validate-sitemap",
-    "compress-images": "node scripts/compress-images.js"
+    "compress-images": "node scripts/compress-images.js",
+    "check": "astro check"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.0.0",
     "@astrojs/react": "^4.0.0",
     "@astrojs/rss": "^4.0.12",
     "@astrojs/tailwind": "^6.0.0",
-    "@giscus/react": "^3.1.0",
-    "@mdx-js/react": "^3.1.0",
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
     "astro": "^5.9.1",
-    "chart.js": "^4.4.8",
     "framer-motion": "^11.16.4",
-    "gray-matter": "^4.0.3",
     "react": "^18.2.0",
-    "react-chartjs-2": "^5.3.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.3.0",
     "rehype-pretty-code": "^0.14.1",
-    "rehype-slug": "^6.0.0",
     "remark-gfm": "^4.0.0",
     "shiki": "^3.6.0",
-    "tailwindcss": "^3.4.1"
+    "tailwindcss": "^3.4.1",
+    "unist-util-visit": "^5.1.0"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.12",
     "@tailwindcss/typography": "^0.5.15",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "gh-pages": "^6.2.0",
-    "tailwind-scrollbar": "^3.1.0",
     "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=20.3.0"
   }
 }

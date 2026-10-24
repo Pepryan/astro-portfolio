@@ -1,9 +1,16 @@
+import defaultTheme from 'tailwindcss/defaultTheme';
+import typography from '@tailwindcss/typography';
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
   darkMode: 'class',
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['"Inter Variable"', ...defaultTheme.fontFamily.sans],
+        mono: ['"JetBrains Mono Variable"', ...defaultTheme.fontFamily.mono],
+      },
       typography: {
         DEFAULT: {
           css: {
@@ -13,22 +20,6 @@ export default {
             'pre code': false,
             'code::before': false,
             'code::after': false,
-
-            // Optimize spacing for compact layout with improved readability
-            '--tw-prose-body': '17px',
-            '--tw-prose-headings': '1.2em',
-            '--tw-prose-lead': '1.4em',
-            '--tw-prose-links': '17px',
-            '--tw-prose-bold': '17px',
-            '--tw-prose-counters': '17px',
-            '--tw-prose-bullets': '17px',
-            '--tw-prose-hr': '1px',
-            '--tw-prose-quotes': '19px',
-            '--tw-prose-quote-borders': '4px',
-            '--tw-prose-captions': '15px',
-            '--tw-prose-kbd': '15px',
-            '--tw-prose-th-borders': '1px',
-            '--tw-prose-td-borders': '1px',
 
             // Tighter spacing between elements
             'h1': {
@@ -133,7 +124,6 @@ export default {
     },
   },
   plugins: [
-    require('@tailwindcss/typography'),
-    require('tailwind-scrollbar'),
+    typography,
   ],
 };

@@ -1,10 +1,14 @@
 ---
+import '@fontsource-variable/inter';
+import '@fontsource-variable/jetbrains-mono';
 import '../styles/globals.css';
 import CustomHead from '../components/CustomHead.astro';
 import GoogleAnalytics from '../components/GoogleAnalytics.astro';
 import StructuredData from '../components/StructuredData.astro';
 import CopyCodeScript from '../components/CopyCodeScript.astro';
-import PerformanceOptimizer from '../components/PerformanceOptimizer.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import KeyboardShortcuts from '../components/KeyboardShortcuts';
 import { seoConfig } from '../config/components';
 import { generateSEO } from '../utils/seo';
 
@@ -38,11 +42,10 @@ const {
   nofollow = false
 } = Astro.props;
 
-// Generate SEO data using utility function
 const seoData = generateSEO({
   title,
   description,
-  canonical,
+  canonical: canonical ?? Astro.url.pathname,
   image,
   type,
   keywords: Array.isArray(keywords) ? keywords : keywords?.split(',').map(k => k.trim()),
@@ -60,7 +63,28 @@ const seoData = generateSEO({
   <head>
     <meta charset={seoConfig.site.charset} />
 
-    <!-- Use CustomHead component for all SEO meta tags -->
+    <!-- Apply the theme before first paint to avoid a light/dark flash.
+         Keep the storage key in sync with src/lib/theme.ts -->
+    <script is:inline>
+      (function () {
+        var KEY = 'darkMode';
+        var media = window.matchMedia('(prefers-color-scheme: dark)');
+        var stored = null;
+        try { stored = localStorage.getItem(KEY); } catch (e) {}
+        document.documentElement.classList.toggle('dark', stored !== null ? stored === 'true' : media.matches);
+
+        // Follow OS changes until the visitor picks a theme explicitly
+        media.addEventListener('change', function (e) {
+          var hasChoice = null;
+          try { hasChoice = localStorage.getItem(KEY); } catch (err) {}
+          if (hasChoice === null) {
+            document.documentElement.classList.toggle('dark', e.matches);
+            window.dispatchEvent(new CustomEvent('themeChanged', { detail: { darkMode: e.matches } }));
+          }
+        });
+      })();
+    </script>
+
     <CustomHead
       title={seoData.title}
       description={seoData.description}
@@ -77,7 +101,6 @@ const seoData = generateSEO({
       nofollow={seoData.nofollow}
     />
 
-    <!-- Structured Data -->
     <StructuredData
       type={seoData.type}
       title={seoData.title}
@@ -92,49 +115,26 @@ const seoData = generateSEO({
       author={seoData.author}
     />
 
-    <!-- Google Analytics -->
     <GoogleAnalytics
       id={seoConfig.analytics.googleAnalyticsId}
       enabled={seoConfig.analytics.enabled}
     />
-
-    <!-- Theme Script -->
-    <script is:inline>
-      // Prevent flash of unstyled content (FOUC)
-      (function() {
-        try {
-          if (typeof localStorage !== 'undefined') {
-            const stored = localStorage.getItem('darkMode');
-            let isDark = false;
-
-            if (stored !== null) {
-              // Use stored preference
-              isDark = stored === 'true';
-            } else {
-              // Fallback to system preference
-              isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-            }
-
-            if (isDark) {
-              document.documentElement.classList.add('dark');
-            } else {
-              document.documentElement.classList.remove('dark');
-            }
-          }
-        } catch (error) {
-          // Silently fail if localStorage is not available
-          console.warn('Theme initialization failed:', error);
-        }
-      })();
-    </script>
   </head>
-  <body class="bg-white dark:bg-neutral-900 transition-colors">
-    <slot />
+  <body class="min-h-screen bg-white text-neutral-900 antialiased transition-colors dark:bg-neutral-900 dark:text-neutral-100">
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-blue-600 focus:px-4 focus:py-2 focus:text-white"
+    >
+      Skip to content
+    </a>
 
-    <!-- Performance Optimizations - moved to body to ensure DOM is ready -->
-    <PerformanceOptimizer />
+    <Header />
+    <div id="main-content">
+      <slot />
+    </div>
+    <Footer />
 
-    <!-- Copy Code Script for all pages -->
+    <KeyboardShortcuts client:idle />
     <CopyCodeScript />
   </body>
 </html>
