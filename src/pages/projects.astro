@@ -1,36 +1,25 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { ThemeProvider } from '../components/ThemeProvider';
-import LayoutWrapper from '../components/LayoutWrapper';
-import Header from '../components/Header';
 import ProjectsWithCategories from '../components/ProjectsWithCategories';
 import SkillsSection from '../components/SkillsSection';
 import CertificationsSection from '../components/CertificationsSection';
-import FloatingNavigation from '../components/FloatingNavigation';
-import Footer from '../components/Footer';
 import { generateSEO } from '../utils/seo';
 import { componentConfig } from '../config/components';
-import { validatePageAccess } from '../utils/pages';
+import { isPageEnabled } from '../utils/pages';
 
 const { pages } = componentConfig;
 
 // Generate SEO data for projects page
 const projectsSEO = generateSEO({
-  title: 'Projects - Febryan Ramadhan',
+  title: 'Projects',
+  canonical: '/projects',
   description: 'Explore my portfolio of cloud engineering, DevOps, and web development projects. Discover the technologies and solutions I\'ve built.',
   type: 'website',
   keywords: ['projects', 'portfolio', 'cloud engineering', 'devops', 'web development', 'aws', 'kubernetes']
 });
 
-// Validate page access - this will throw error if page is disabled
-try {
-  validatePageAccess('projects');
-} catch (error) {
-  // Page is disabled, return 404
-  return new Response(null, {
-    status: 404,
-    statusText: 'Page not found'
-  });
+if (!isPageEnabled('projects')) {
+  return new Response(null, { status: 404, statusText: 'Page not found' });
 }
 ---
 
@@ -41,11 +30,6 @@ try {
   type={projectsSEO.type}
   keywords={projectsSEO.keywords}
 >
-  <ThemeProvider client:load>
-    <LayoutWrapper client:load>
-      <div class="min-h-screen bg-white dark:bg-neutral-900">
-        <Header client:load />
-
         <main class="max-w-7xl mx-auto px-4 py-4 mb-10">
           <!-- Page Header -->
           <section class="pt-24 pb-16">
@@ -113,89 +97,4 @@ try {
             </section>
           )}
         </main>
-
-        <!-- Floating Navigation -->
-        <!-- <FloatingNavigation client:load /> -->
-
-        <!-- Footer -->
-        <Footer client:load />
-      </div>
-    </LayoutWrapper>
-  </ThemeProvider>
 </Layout>
-
-<style>
-  /* Custom styles for projects page */
-  .projects-page {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.02) 0%, rgba(147, 51, 234, 0.02) 100%);
-  }
-  
-  /* Smooth scroll behavior */
-  html {
-    scroll-behavior: smooth;
-  }
-  
-  /* Section spacing */
-  section {
-    scroll-margin-top: 80px;
-  }
-  
-  /* Project card hover effects */
-  .project-card {
-    transition: all 0.3s ease;
-  }
-  
-  .project-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  }
-</style>
-
-<script>
-  // Add interactive features for projects page
-  document.addEventListener('DOMContentLoaded', () => {
-    // Filter functionality (if needed)
-    const filterButtons = document.querySelectorAll('[data-filter]');
-    const projectCards = document.querySelectorAll('[data-category]');
-    
-    filterButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        const filter = button.getAttribute('data-filter');
-        
-        // Update active button
-        filterButtons.forEach(btn => btn.classList.remove('active'));
-        button.classList.add('active');
-        
-        // Filter projects
-        projectCards.forEach(card => {
-          const category = card.getAttribute('data-category');
-          const htmlCard = card as HTMLElement;
-          if (filter === 'all' || category === filter) {
-            htmlCard.style.display = 'block';
-            htmlCard.style.animation = 'fadeIn 0.5s ease';
-          } else {
-            htmlCard.style.display = 'none';
-          }
-        });
-      });
-    });
-    
-    // Lazy loading for project images
-    const images = document.querySelectorAll('img[data-src]');
-    const imageObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const img = entry.target as HTMLImageElement;
-          const dataSrc = img.getAttribute('data-src');
-          if (dataSrc) {
-            img.src = dataSrc;
-            img.removeAttribute('data-src');
-          }
-          imageObserver.unobserve(img);
-        }
-      });
-    });
-    
-    images.forEach(img => imageObserver.observe(img));
-  });
-</script>

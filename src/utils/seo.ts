@@ -188,7 +188,7 @@ export function generateTagPageSEO(tag: string, posts: any[] = []): SEOData {
   return generateSEO({
     title: tagTitle,
     description: tagDescription,
-    canonical: `/tags/${tag}`,
+    canonical: `/blog/tags/${encodeURIComponent(tag)}`,
     type: 'website',
     keywords: [tag, 'articles', 'tutorials', 'blog']
   });

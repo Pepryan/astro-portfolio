@@ -1,46 +1,12 @@
-import { FiBookOpen, FiCalendar, FiClock, FiCheck, FiPlay, FiArrowRight, FiTag, FiTrendingUp } from 'react-icons/fi';
+import { FiBookOpen, FiClock, FiCheck, FiPlay, FiArrowRight, FiTag, FiTrendingUp } from 'react-icons/fi';
 import SeriesHeader from './SeriesHeader';
 import BlogCard from './BlogCard';
 import ReadingProgress from './ReadingProgress';
+import { formatDate } from '../lib/format';
+import type { SeriesDetailProps } from '../types';
 
-interface SeriesPost {
-  slug: string;
-  data: {
-    title: string;
-    summary?: string;
-    date: Date;
-    updated?: Date;
-    tags?: string[];
-    thumbnail?: string;
-    series?: {
-      part: number;
-    };
-  };
-  readingTime: number;
-}
-
-interface SeriesDetailProps {
-  series: {
-    name: string;
-    slug: string;
-    description: string;
-    thumbnail?: string;
-    status: 'ongoing' | 'completed' | 'planned';
-    tags: string[];
-    category?: string;
-    difficulty?: string;
-    estimatedParts?: number;
-    startDate?: Date;
-    endDate?: Date;
-    featured: boolean;
-    posts: SeriesPost[];
-    totalParts: number;
-    completedParts: number;
-  };
-}
 
 export default function SeriesDetailClient({ series }: SeriesDetailProps) {
-  const progressPercentage = (series.completedParts / series.totalParts) * 100;
   
   const getStatusIcon = () => {
     switch (series.status) {
@@ -82,7 +48,7 @@ export default function SeriesDetailClient({ series }: SeriesDetailProps) {
   };
 
   const handleTagClick = (tag: string) => {
-    window.location.href = `/blog/tags/${tag}`;
+    window.location.href = `/blog/tags/${encodeURIComponent(tag)}`;
   };
 
   return (
@@ -197,11 +163,7 @@ export default function SeriesDetailClient({ series }: SeriesDetailProps) {
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-neutral-600 dark:text-neutral-400">Started</span>
                       <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
-                        {series.startDate.toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric'
-                        })}
+                        {formatDate(series.startDate, 'short')}
                       </span>
                     </div>
                   )}
@@ -210,11 +172,7 @@ export default function SeriesDetailClient({ series }: SeriesDetailProps) {
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-neutral-600 dark:text-neutral-400">Completed</span>
                       <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
-                        {series.endDate.toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric'
-                        })}
+                        {formatDate(series.endDate, 'short')}
                       </span>
                     </div>
                   )}

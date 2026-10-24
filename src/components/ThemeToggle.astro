@@ -1,0 +1,35 @@
+---
+// Theme switch. Icons are swapped purely with the `dark` class, so there is
+// no hydration step and no flash of the wrong state.
+import { FiMoon, FiSun } from 'react-icons/fi';
+---
+
+<button
+  type="button"
+  data-theme-toggle
+  class="group relative inline-flex h-9 w-9 items-center justify-center rounded-full
+    text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900
+    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500
+    dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
+  aria-label="Toggle dark mode"
+  title="Toggle theme (t)"
+>
+  <FiSun aria-hidden="true" className="h-[18px] w-[18px] transition-transform duration-300 group-hover:rotate-45 dark:hidden" />
+  <FiMoon aria-hidden="true" className="hidden h-[18px] w-[18px] transition-transform duration-300 group-hover:-rotate-12 dark:block" />
+</button>
+
+<script>
+  import { isDarkMode, onThemeChange, toggleDarkMode } from '../lib/theme';
+
+  const sync = (dark: boolean) => {
+    document.querySelectorAll('[data-theme-toggle]').forEach((button) => {
+      button.setAttribute('aria-pressed', String(dark));
+    });
+  };
+
+  document.querySelectorAll('[data-theme-toggle]').forEach((button) => {
+    button.addEventListener('click', toggleDarkMode);
+  });
+  sync(isDarkMode());
+  onThemeChange(sync);
+</script>

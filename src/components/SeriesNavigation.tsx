@@ -1,29 +1,11 @@
 import { FiChevronLeft, FiChevronRight, FiList, FiBookOpen } from 'react-icons/fi';
 import { useState } from 'react';
+import { formatDate } from '../lib/format';
+import type { SeriesNavigationData } from '../types';
 
-interface SeriesPost {
-  slug: string;
-  data: {
-    title: string;
-    date: Date;
-    series?: {
-      part: number;
-    };
-  };
-}
-
-interface SeriesNavigationProps {
-  series: {
-    name: string;
-    slug: string;
-    posts: SeriesPost[];
-  };
-  currentPart: number;
-  totalParts: number;
-  previousPost?: SeriesPost | null;
-  nextPost?: SeriesPost | null;
-  progress: number;
-}
+type SeriesNavigationProps = Omit<SeriesNavigationData, 'series'> & {
+  series: Pick<SeriesNavigationData['series'], 'name' | 'slug' | 'posts'>;
+};
 
 export default function SeriesNavigation({ 
   series, 
@@ -113,11 +95,7 @@ export default function SeriesNavigation({
                       {post.data.title}
                     </h4>
                     <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                      {post.data.date.toLocaleDateString('id-ID', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
-                      })}
+                      {formatDate(post.data.date, 'short')}
                     </p>
                   </div>
                   {isCurrent && (

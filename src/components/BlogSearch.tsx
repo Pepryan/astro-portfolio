@@ -4,129 +4,102 @@ import { FiSearch, FiX } from 'react-icons/fi';
 interface BlogSearchProps {
   onSearch: (query: string) => void;
   placeholder?: string;
+  /** Initial value, e.g. from the ?search= URL parameter */
+  initialQuery?: string;
+  autoFocus?: boolean;
 }
 
-export default function BlogSearch({ onSearch, placeholder = "Search posts..." }: BlogSearchProps) {
-  const [query, setQuery] = useState('');
-  const [isFocused, setIsFocused] = useState(false);
+export default function BlogSearch({
+  onSearch,
+  placeholder = 'Search posts...',
+  initialQuery = '',
+  autoFocus = false,
+}: BlogSearchProps) {
+  const [query, setQuery] = useState(initialQuery);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleClear = () => {
+  // Keep in sync when the parent resets filters
+  useEffect(() => setQuery(initialQuery), [initialQuery]);
+
+  useEffect(() => {
+    if (autoFocus) inputRef.current?.focus();
+  }, [autoFocus]);
+
+  // Debounce filtering while typing
+  useEffect(() => {
+    const handler = setTimeout(() => onSearch(query), 250);
+    return () => clearTimeout(handler);
+  }, [query, onSearch]);
+
+  // Ctrl/Cmd + K focuses search ("/" and "k" are handled globally by KeyboardShortcuts)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        inputRef.current?.focus();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const clear = () => {
     setQuery('');
     onSearch('');
     inputRef.current?.focus();
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      handleClear();
-      inputRef.current?.blur();
-    }
-  };
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      onSearch(query);
-    }, 300);
-
-    return () => clearTimeout(handler);
-  }, [query, onSearch]);
-
-  // Add keyboard shortcut (Ctrl/Cmd + K)
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        inputRef.current?.focus();
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
   return (
-    <div className="relative w-full z-10">
-      <div className={`relative transition-all duration-300 ease-out ${isFocused
-          ? 'ring-2 ring-blue-500/50 shadow-lg shadow-blue-500/10'
-          : 'shadow-sm hover:shadow-md'
-        } rounded-xl overflow-hidden z-10`}>
-        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
-          <FiSearch className={`w-4 h-4 transition-all duration-300 ${isFocused ? 'text-blue-500 scale-110' : 'text-neutral-400'
-            }`} />
-        </div>
+    <div className="relative w-full">
+      <label htmlFor="blog-search" className="sr-only">
+        Search posts
+      </label>
+      <FiSearch
+        className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400"
+        aria-hidden="true"
+      />
+      <input
+        ref={inputRef}
+        type="search"
+        id="blog-search"
+        name="search"
+        data-search-trigger
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Escape') {
+            query ? clear() : inputRef.current?.blur();
+          }
+        }}
+        placeholder={placeholder}
+        autoComplete="off"
+        className="peer w-full rounded-xl border border-neutral-200 bg-white py-3 pl-10 pr-12 text-sm text-neutral-900
+          shadow-sm transition-colors placeholder:text-neutral-500 hover:border-neutral-300
+          focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30
+          dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder:text-neutral-400
+          dark:hover:border-neutral-600 [&::-webkit-search-cancel-button]:hidden"
+      />
 
-        <input
-          ref={inputRef}
-          type="text"
-          id="blog-search"
-          name="blog-search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          onKeyDown={handleKeyDown}
-          placeholder={placeholder}
-          autoComplete="off"
-          className="w-full pl-10 pr-12 py-3 bg-white dark:bg-neutral-800
-            border border-neutral-200 dark:border-neutral-700
-            text-neutral-900 dark:text-neutral-100 placeholder-neutral-500 dark:placeholder-neutral-400
-            focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300
-            hover:border-neutral-300 dark:hover:border-neutral-600
-            transition-all duration-300 text-sm
-            rounded-xl"
-        />
-
-        {query && (
-          <button
-            onClick={handleClear}
-            className="absolute inset-y-0 right-0 pr-3 flex items-center justify-center z-10
-              text-neutral-400 hover:text-red-500 dark:hover:text-red-400
-              transition-all duration-200 hover:scale-110"
-            aria-label="Clear search"
-          >
-            <div className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20">
-              <FiX className="w-3.5 h-3.5" />
-            </div>
-          </button>
-        )}
-
-        {!query && !isFocused && (
-          <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-            <div className="flex items-center gap-0.5">
-              <kbd className="inline-flex items-center px-1.5 py-0.5 text-[10px] font-semibold
-                text-neutral-600 dark:text-neutral-300 bg-white dark:bg-neutral-700
-                border border-neutral-300 dark:border-neutral-600 rounded shadow-sm
-                transition-all duration-200">
-                <span className="text-[9px]">⌘</span>
-              </kbd>
-              <kbd className="inline-flex items-center px-1.5 py-0.5 text-[10px] font-semibold
-                text-neutral-600 dark:text-neutral-300 bg-white dark:bg-neutral-700
-                border border-neutral-300 dark:border-neutral-600 rounded shadow-sm
-                transition-all duration-200">
-                K
-              </kbd>
-            </div>
-          </div>
-        )}
-
-        {/* Modern gradient border effect */}
-        <div className={`absolute inset-0 rounded-xl transition-opacity duration-300 pointer-events-none ${isFocused ? 'opacity-100' : 'opacity-0'
-          }`}>
-          <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-blue-500/20 blur-sm"></div>
-        </div>
-      </div>
-
-      {query && (
-        <div className="absolute top-full left-0 right-0 mt-2 px-4 py-2 text-sm
-          text-neutral-600 dark:text-neutral-400 bg-white dark:bg-neutral-800
-          rounded-lg border border-neutral-200 dark:border-neutral-700
-          shadow-lg animate-in slide-in-from-top-2 duration-200 z-20">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-            <span>Searching for "<span className="font-medium text-neutral-900 dark:text-neutral-100">{query}</span>"...</span>
-          </div>
-        </div>
+      {query ? (
+        <button
+          type="button"
+          onClick={clear}
+          className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full
+            text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-700
+            dark:hover:bg-neutral-700 dark:hover:text-neutral-200"
+          aria-label="Clear search"
+        >
+          <FiX className="h-4 w-4" />
+        </button>
+      ) : (
+        <kbd
+          className="pointer-events-none absolute right-3 top-1/2 hidden -translate-y-1/2 rounded border border-neutral-300
+            bg-white px-1.5 py-0.5 text-[10px] font-semibold text-neutral-500 peer-focus:hidden
+            dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-300 sm:inline-block"
+          aria-hidden="true"
+        >
+          /
+        </kbd>
       )}
     </div>
   );

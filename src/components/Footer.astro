@@ -1,0 +1,45 @@
+---
+import { FiGithub, FiGitlab, FiLinkedin, FiMail, FiRss } from 'react-icons/fi';
+import { FaXTwitter } from 'react-icons/fa6';
+import { seoConfig } from '../config/components';
+
+const { social, author } = seoConfig;
+
+// Rendered at build time — a static site only needs the year of the last deploy.
+const year = new Date().getFullYear();
+
+const links = [
+  { href: social.github, label: 'GitHub', icon: FiGithub },
+  { href: social.gitlab, label: 'GitLab', icon: FiGitlab },
+  { href: social.linkedin, label: 'LinkedIn', icon: FiLinkedin },
+  { href: `https://x.com/${social.twitter.username.replace('@', '')}`, label: 'X', icon: FaXTwitter },
+  { href: `mailto:${author.email}`, label: 'Email', icon: FiMail },
+  { href: '/rss.xml', label: 'RSS feed', icon: FiRss },
+];
+---
+
+<footer class="border-t border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
+  <div class="mx-auto flex max-w-5xl flex-col items-center gap-3 px-4 py-6 sm:flex-row sm:justify-between">
+    <p class="text-sm text-neutral-600 dark:text-neutral-400">
+      © {year} {author.name}
+      <span class="text-neutral-400 dark:text-neutral-600">·</span>
+      <span class="text-neutral-500">Built with Astro and Claude AI</span>
+    </p>
+    <ul class="flex items-center gap-1">
+      {links.map(({ href, label, icon: LinkIcon }) => (
+        <li>
+          <a
+            href={href}
+            aria-label={label}
+            title={label}
+            {...(href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+            class="inline-flex h-9 w-9 items-center justify-center rounded-full text-neutral-500 transition-colors
+              hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
+          >
+            <LinkIcon className="h-4 w-4" aria-hidden="true" />
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</footer>

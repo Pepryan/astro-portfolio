@@ -13,39 +13,11 @@ export function isPageEnabled(pageName: keyof typeof componentConfig.pages): boo
 }
 
 /**
- * Get enabled pages for navigation and sitemap
- */
-export function getEnabledPages() {
-  const { pages } = componentConfig;
-  
-  return {
-    about: pages.about.enabled,
-    projects: pages.projects.enabled,
-    contact: pages.contact.enabled,
-    resume: pages.resume.enabled,
-  };
-}
-
-/**
  * Check if about section should be shown
  * About section depends on about page being enabled
  */
 export function shouldShowAboutSection(): boolean {
   return componentConfig.pages.about.enabled && componentConfig.about.enabled;
-}
-
-/**
- * Check if contact section should be shown
- */
-export function shouldShowContactSection(): boolean {
-  return componentConfig.pages.contact.enabled && componentConfig.contact.enabled;
-}
-
-/**
- * Get page configuration for a specific page
- */
-export function getPageConfig(pageName: keyof typeof componentConfig.pages) {
-  return componentConfig.pages[pageName];
 }
 
 /**
@@ -116,46 +88,3 @@ export function getEnabledStaticPages() {
   return allPages.filter(page => page.enabled);
 }
 
-/**
- * Check if a page should be included in navigation
- */
-export function shouldShowInNavigation(pageName: keyof typeof componentConfig.pages): boolean {
-  const pageConfig = componentConfig.pages[pageName];
-  return pageConfig?.enabled && pageConfig?.showInNavigation;
-}
-
-/**
- * Validate page access - throws error if page is disabled
- */
-export function validatePageAccess(pageName: keyof typeof componentConfig.pages): void {
-  if (!isPageEnabled(pageName)) {
-    throw new Error(`Page '${pageName}' is disabled in configuration`);
-  }
-}
-
-/**
- * Get page metadata for enabled pages
- */
-export function getPageMetadata() {
-  const enabledPages = getEnabledPages();
-  
-  return {
-    about: enabledPages.about ? {
-      title: 'About - Febryan Ramadhan',
-      description: 'Learn more about Febryan Ramadhan - Cloud Engineer, DevOps specialist, and web developer.',
-      path: '/about'
-    } : null,
-    
-    projects: enabledPages.projects ? {
-      title: 'Projects - Febryan Ramadhan',
-      description: 'Explore my portfolio of cloud engineering, DevOps, and web development projects.',
-      path: '/projects'
-    } : null,
-    
-    contact: enabledPages.contact ? {
-      title: 'Contact - Febryan Ramadhan',
-      description: 'Get in touch for collaborations, opportunities, or just to say hello!',
-      path: '/contact'
-    } : null,
-  };
-}

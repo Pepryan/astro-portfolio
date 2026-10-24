@@ -23,6 +23,8 @@ export type {
     SeriesStatus,
     SeriesInfo,
     SeriesPost,
+    SeriesWithPosts,
+    SeriesNavigationData,
     SeriesPageClientProps,
     SeriesDetailProps,
 } from './series';

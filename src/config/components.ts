@@ -19,7 +19,7 @@ export const seoConfig = {
     jobTitle: "Cloud, DevOps, WebDev | Tinkering with AI & Automation",
     location: "Bogor, Indonesia",
     bio: "Cloud, DevOps, WebDev | Tinkering with AI & Automation",
-    image: "https://febryan.web.id/images/profile.jpg"
+    image: "https://febryan.web.id/images/photo-web-febryan.webp"
   },
 
   // Social Media
@@ -64,7 +64,7 @@ export const seoConfig = {
   theme: {
     color: "#3b82f6",
     backgroundColor: "#ffffff",
-    darkBackgroundColor: "#0a0a0a"
+    darkBackgroundColor: "#171717"
   },
 
   // Analytics and Tracking
@@ -417,42 +417,36 @@ export const componentConfig = {
           name: "All",
           description: "All projects and work",
           icon: "🚀",
-          count: 9
         },
         {
           id: "cloud",
           name: "Cloud",
           description: "Cloud infrastructure and architecture",
           icon: "☁️",
-          count: 0
         },
         {
           id: "devops",
           name: "DevOps",
           description: "CI/CD, automation, and infrastructure",
           icon: "⚙️",
-          count: 1
         },
         {
           id: "automation",
           name: "Automation",
           description: "Process automation and scripting",
           icon: "🤖",
-          count: 1
         },
         {
           id: "open-source",
           name: "Open Source",
           description: "Open source contributions and projects",
           icon: "🌟",
-          count: 1
         },
         {
           id: "web",
           name: "Web",
           description: "Web applications and development",
           icon: "🌐",
-          count: 4
         }
       ],
       cta: {

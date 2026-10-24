@@ -1,120 +1,73 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
+import { isDarkMode, onThemeChange } from '../lib/theme';
 
-interface GiscusCommentsProps {
-  slug: string;
-  title: string;
-}
+const GISCUS_ORIGIN = 'https://giscus.app';
 
-export default function GiscusComments({ slug, title }: GiscusCommentsProps) {
+const giscusTheme = (dark: boolean) => (dark ? 'dark' : 'light');
+
+/**
+ * Giscus comments (GitHub Discussions). The script is injected only when the
+ * section scrolls near the viewport, and the iframe theme follows the site theme.
+ */
+export default function GiscusComments() {
   const ref = useRef<HTMLDivElement>(null);
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    const container = ref.current;
+    if (!container) return;
 
-  useEffect(() => {
-    if (!ref.current || !mounted) return;
-
-    // Function to get current theme from DOM
-    const getCurrentTheme = () => {
-      return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+    const load = () => {
+      const script = document.createElement('script');
+      script.src = `${GISCUS_ORIGIN}/client.js`;
+      script.async = true;
+      script.crossOrigin = 'anonymous';
+      Object.entries({
+        repo: 'pepryan/astro-portfolio',
+        'repo-id': 'R_kgDOO5SeXA',
+        category: 'General',
+        'category-id': 'DIC_kwDOO5SeXM4CrbXV',
+        mapping: 'pathname',
+        strict: '0',
+        'reactions-enabled': '1',
+        'emit-metadata': '0',
+        'input-position': 'bottom',
+        theme: giscusTheme(isDarkMode()),
+        lang: 'en',
+        loading: 'lazy',
+      }).forEach(([key, value]) => script.setAttribute(`data-${key}`, value));
+      container.replaceChildren(script);
     };
 
-    // Clear existing Giscus
-    ref.current.innerHTML = '';
-
-    const script = document.createElement('script');
-    script.src = 'https://giscus.app/client.js';
-    script.setAttribute('data-repo', 'pepryan/astro-portfolio');
-    script.setAttribute('data-repo-id', 'R_kgDOO5SeXA');
-    script.setAttribute('data-category', 'General');
-    script.setAttribute('data-category-id', 'DIC_kwDOO5SeXM4CrbXV');
-    script.setAttribute('data-mapping', 'pathname');
-    script.setAttribute('data-strict', '0');
-    script.setAttribute('data-reactions-enabled', '1');
-    script.setAttribute('data-emit-metadata', '0');
-    script.setAttribute('data-input-position', 'bottom');
-    script.setAttribute('data-theme', getCurrentTheme());
-    script.setAttribute('data-lang', 'en');
-    script.setAttribute('crossorigin', 'anonymous');
-    script.async = true;
-
-    ref.current.appendChild(script);
-
-    // Theme change handler
-    const handleThemeChange = () => {
-      setTimeout(() => {
-        const iframe = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame');
-        if (iframe && iframe.contentWindow) {
-          const theme = getCurrentTheme();
-          try {
-            iframe.contentWindow.postMessage(
-              { giscus: { setConfig: { theme } } },
-              'https://giscus.app'
-            );
-          } catch (error) {
-            // Silent error handling
-          }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          observer.disconnect();
+          load();
         }
-      }, 100);
-    };
+      },
+      { rootMargin: '400px' }
+    );
+    observer.observe(container);
 
-    // Setup theme listeners after Giscus loads
-    const setupThemeListeners = () => {
-      // Listen for DOM class changes
-      const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-          if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-            handleThemeChange();
-          }
-        });
-      });
-
-      observer.observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ['class']
-      });
-
-      // Listen for custom theme change events
-      window.addEventListener('themeChanged', handleThemeChange);
-
-      return () => {
-        observer.disconnect();
-        window.removeEventListener('themeChanged', handleThemeChange);
-      };
-    };
-
-    // Wait for Giscus iframe to load
-    let cleanup: (() => void) | null = null;
-    const checkForGiscus = () => {
-      const iframe = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame');
-      if (iframe) {
-        // console.log('✅ Giscus iframe detected, setting up theme listeners');
-        cleanup = setupThemeListeners();
-      } else {
-        setTimeout(checkForGiscus, 500);
-      }
-    };
-
-    // Start checking after a delay
-    setTimeout(checkForGiscus, 1000);
+    const unsubscribe = onThemeChange((dark) => {
+      container.querySelector<HTMLIFrameElement>('iframe.giscus-frame')?.contentWindow?.postMessage(
+        { giscus: { setConfig: { theme: giscusTheme(dark) } } },
+        GISCUS_ORIGIN
+      );
+    });
 
     return () => {
-      if (cleanup) {
-        cleanup();
-      }
+      observer.disconnect();
+      unsubscribe();
     };
-  }, [mounted, slug]);
+  }, []);
 
   return (
-    <div className="mt-16">
-      <div className="border-t border-neutral-200 dark:border-neutral-700 pt-8">
-        <h3 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100 mb-6">
-          Comments
-        </h3>
-        <div ref={ref} className="giscus-container" />
-      </div>
-    </div>
+    <section className="mt-16 border-t border-neutral-200 pt-8 dark:border-neutral-700" aria-labelledby="comments-title">
+      <h2 id="comments-title" className="mb-6 text-xl font-semibold text-neutral-900 dark:text-neutral-100">
+        Comments
+      </h2>
+      <div ref={ref} className="giscus-container min-h-[200px]" />
+    </section>
   );
 }

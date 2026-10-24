@@ -4,7 +4,6 @@ interface PaginationProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
-  showFirstLast?: boolean;
   maxVisiblePages?: number;
   className?: string;
 }
@@ -13,7 +12,6 @@ export default function Pagination({
   currentPage,
   totalPages,
   onPageChange,
-  showFirstLast = true,
   maxVisiblePages = 7,
   className = ''
 }: PaginationProps) {
@@ -119,24 +117,6 @@ export default function Pagination({
         <span className="hidden sm:inline ml-1 transition-all duration-200">Previous</span>
       </button>
 
-      {/* First page button (if not using showFirstLast) */}
-      {showFirstLast && currentPage > 3 && totalPages > maxVisiblePages && (
-        <>
-          <button
-            onClick={() => handlePageChange(1)}
-            className={pageButtonClass}
-            aria-label="Go to page 1"
-          >
-            1
-          </button>
-          {currentPage > 4 && (
-            <span className="flex items-center justify-center min-w-[44px] h-11 text-neutral-400 dark:text-neutral-500">
-              <FiMoreHorizontal className="w-4 h-4" />
-            </span>
-          )}
-        </>
-      )}
-
       {/* Page numbers */}
       {visiblePages.map((page, index) => {
         if (page === 'ellipsis') {
@@ -163,24 +143,6 @@ export default function Pagination({
           </button>
         );
       })}
-
-      {/* Last page button (if not using showFirstLast) */}
-      {showFirstLast && currentPage < totalPages - 2 && totalPages > maxVisiblePages && (
-        <>
-          {currentPage < totalPages - 3 && (
-            <span className="flex items-center justify-center min-w-[44px] h-11 text-neutral-400 dark:text-neutral-500">
-              <FiMoreHorizontal className="w-4 h-4" />
-            </span>
-          )}
-          <button
-            onClick={() => handlePageChange(totalPages)}
-            className={pageButtonClass}
-            aria-label={`Go to page ${totalPages}`}
-          >
-            {totalPages}
-          </button>
-        </>
-      )}
 
       {/* Next button */}
       <button

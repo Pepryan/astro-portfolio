@@ -1,57 +1,31 @@
 ---
-import { getCollection } from 'astro:content';
 import Layout from '../../../layouts/Layout.astro';
-import { ThemeProvider } from '../../../components/ThemeProvider';
-import LayoutWrapper from '../../../components/LayoutWrapper';
-import Header from '../../../components/Header';
 import BlogList from '../../../components/BlogList';
-import Footer from '../../../components/Footer';
-import { calculateReadingTime } from '../../../utils/readingTime';
+import { getBlogPosts } from '../../../lib/posts';
+import { generateTagPageSEO } from '../../../utils/seo';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('posts');
-  const publishedPosts = posts.filter(post => !post.data.draft && !post.data.hidden);
-  
-  // Get all unique tags
-  const allTags = Array.from(new Set(publishedPosts.flatMap(post => post.data.tags || [])));
-  
-  return allTags.map((tag) => ({
+  const posts = await getBlogPosts();
+  const tags = [...new Set(posts.flatMap((post) => post.data.tags ?? []))];
+  return tags.map((tag) => ({
     params: { tag },
-    props: { tag, allPosts: publishedPosts },
+    props: { tag, posts: posts.filter((post) => post.data.tags?.includes(tag)) },
   }));
 }
 
-const { tag, allPosts } = Astro.props;
-
-// Filter posts by tag
-const tagPosts = allPosts.filter(post => post.data.tags?.includes(tag));
-
-// Calculate reading times
-const postsWithReadingTime = tagPosts.map(post => {
-  const readingTimeResult = calculateReadingTime(post.body || '', {
-    wordsPerMinute: 200,
-    includeCodeBlocks: true,
-    includeImages: true
-  });
-  return { ...post, readingTime: readingTimeResult.minutes };
-}).sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
-
-// Generate metadata
-const postCount = postsWithReadingTime.length;
-const description = `Explore ${postCount} blog posts tagged with "${tag}". Discover articles about ${tag} and related topics by Febryan Ramadhan.`;
-const title = `Posts tagged "${tag}" | Febryan Blog`;
+const { tag, posts } = Astro.props;
+const seo = generateTagPageSEO(tag, posts);
+const description = `Explore ${posts.length} blog posts tagged with "${tag}". Discover articles about ${tag} and related topics by Febryan Ramadhan.`;
 ---
 
-<Layout 
-  title={title}
-  description={description}
-  canonical={`https://febryan.web.id/blog/tags/${tag}`}
+<Layout
+  title={seo.title}
+  description={seo.description}
+  canonical={seo.canonical}
+  type={seo.type}
+  keywords={seo.keywords}
 >
-  <ThemeProvider client:load>
-    <LayoutWrapper client:load>
-      <div class="min-h-screen bg-white dark:bg-neutral-900">
-        <Header client:load />
-        
+
         <main class="max-w-7xl mx-auto px-4 pt-24 pb-16">
           {/* Tag Header */}
           <div class="text-center mb-12">
@@ -105,15 +79,10 @@ const title = `Posts tagged "${tag}" | Febryan Blog`;
 
           {/* Posts List */}
           <BlogList
-            posts={postsWithReadingTime}
+            posts={posts}
             selectedTag={tag}
             postsPerPage={9}
             client:load
           />
         </main>
-        
-        <Footer client:load />
-      </div>
-    </LayoutWrapper>
-  </ThemeProvider>
 </Layout>

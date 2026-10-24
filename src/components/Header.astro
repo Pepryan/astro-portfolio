@@ -1,0 +1,67 @@
+---
+import { FiArchive, FiBookOpen, FiEdit3, FiFolder, FiHome, FiMail, FiUser } from 'react-icons/fi';
+import type { IconType } from 'react-icons';
+import ThemeToggle from './ThemeToggle.astro';
+import { componentConfig } from '../config/components';
+
+interface NavLink {
+  href: string;
+  label: string;
+  icon: IconType;
+  enabled: boolean;
+}
+
+const { pages } = componentConfig;
+
+const links: NavLink[] = [
+  { href: '/about', label: 'About', icon: FiUser, enabled: pages.about.enabled && pages.about.showInNavigation },
+  { href: '/projects', label: 'Projects', icon: FiFolder, enabled: pages.projects.enabled && pages.projects.showInNavigation },
+  { href: '/blog', label: 'Blog', icon: FiEdit3, enabled: true },
+  { href: '/series', label: 'Series', icon: FiBookOpen, enabled: pages.series.enabled && pages.series.showInNavigation },
+  { href: '/contact', label: 'Contact', icon: FiMail, enabled: pages.contact.enabled && pages.contact.showInNavigation },
+  { href: '/archive', label: 'Archive', icon: FiArchive, enabled: true },
+].filter((link) => link.enabled);
+
+const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
+---
+
+<header class="fixed left-3 right-3 top-4 z-40 sm:left-4 sm:right-4 sm:top-6">
+  <div class="floating-header mx-auto flex h-14 max-w-4xl items-center justify-between rounded-2xl px-3 sm:px-5">
+    <a
+      href="/"
+      class="flex items-center gap-2 rounded-lg p-2 font-medium text-neutral-600 transition-colors hover:text-neutral-900
+        dark:text-neutral-400 dark:hover:text-neutral-100"
+      aria-label="Febryan Ramadhan — Home"
+      aria-current={pathname === '/' ? 'page' : undefined}
+    >
+      <FiHome className="h-5 w-5" aria-hidden="true" />
+      <span class="hidden font-bold sm:inline">FR</span>
+    </a>
+
+    <nav aria-label="Main" class="flex items-center gap-0.5 sm:gap-1">
+      {links.map(({ href, label, icon: LinkIcon }) => {
+        const active = isActive(href);
+        return (
+          <a
+            href={href}
+            title={label}
+            aria-current={active ? 'page' : undefined}
+            class:list={[
+              'inline-flex items-center gap-1.5 rounded-lg p-2 text-sm transition-colors md:px-3',
+              active
+                ? 'bg-neutral-900/5 font-medium text-neutral-900 dark:bg-white/10 dark:text-white'
+                : 'text-neutral-600 hover:bg-neutral-900/5 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-white/5 dark:hover:text-neutral-100',
+            ]}
+          >
+            <LinkIcon className="h-4 w-4" aria-hidden="true" />
+            {/* Archive stays icon-only; other labels appear from md up */}
+            <span class:list={[href === '/archive' ? 'sr-only' : 'sr-only md:not-sr-only']}>{label}</span>
+          </a>
+        );
+      })}
+      <span class="mx-1 h-5 w-px bg-neutral-200 dark:bg-neutral-700" aria-hidden="true"></span>
+      <ThemeToggle />
+    </nav>
+  </div>
+</header>

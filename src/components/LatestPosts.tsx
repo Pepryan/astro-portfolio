@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { FiArrowRight, FiClock, FiCalendar } from 'react-icons/fi';
+import { formatDate as formatPostDate } from '../lib/format';
 
 interface Post {
     slug: string;
@@ -43,15 +44,6 @@ export default function LatestPosts({ posts }: LatestPostsProps) {
                 stiffness: 120
             }
         }
-    };
-
-    const formatDate = (date: Date | string) => {
-        const d = new Date(date);
-        return d.toLocaleDateString('id-ID', {
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric'
-        });
     };
 
     const getCategoryIcon = (category?: string) => {
@@ -141,7 +133,7 @@ export default function LatestPosts({ posts }: LatestPostsProps) {
                             <div className="flex items-center gap-4 text-xs text-neutral-500 dark:text-neutral-500">
                                 <span className="flex items-center gap-1">
                                     <FiCalendar className="w-3 h-3" />
-                                    {formatDate(post.data.date)}
+                                    {formatPostDate(post.data.date, 'short')}
                                 </span>
                                 {post.readingTime && (
                                     <span className="flex items-center gap-1">

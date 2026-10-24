@@ -4,6 +4,7 @@ import { FiCalendar, FiClock, FiTag, FiSearch, FiArchive, FiTrendingUp } from 'r
 import BlogSearch from './BlogSearch';
 import ReadingProgress from './ReadingProgress';
 import type { BlogPost } from '../types';
+import { formatDate, getYear } from '../lib/format';
 
 interface ArchiveClientProps {
   posts: BlogPost[];
@@ -24,7 +25,7 @@ export default function ArchiveClient({ posts }: ArchiveClientProps) {
         post.data.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
 
       const matchesTag = !selectedTag || post.data.tags?.includes(selectedTag);
-      const matchesYear = !selectedYear || new Date(post.data.date).getFullYear().toString() === selectedYear;
+      const matchesYear = !selectedYear || getYear(post.data.date).toString() === selectedYear;
 
       return matchesSearch && matchesTag && matchesYear;
     });
@@ -44,7 +45,7 @@ export default function ArchiveClient({ posts }: ArchiveClientProps) {
 
     // Group by year
     const grouped = sortedPosts.reduce((acc, post) => {
-      const year = new Date(post.data.date).getFullYear();
+      const year = getYear(post.data.date);
       if (!acc[year]) acc[year] = [];
       acc[year].push(post);
       return acc;
@@ -55,7 +56,7 @@ export default function ArchiveClient({ posts }: ArchiveClientProps) {
       .sort((a, b) => a.localeCompare(b));
 
     // Get all years
-    const yearsSet = Array.from(new Set(posts.map(post => new Date(post.data.date).getFullYear())))
+    const yearsSet = Array.from(new Set(posts.map(post => getYear(post.data.date))))
       .sort((a, b) => b - a);
 
     // Calculate stats
@@ -75,14 +76,6 @@ export default function ArchiveClient({ posts }: ArchiveClientProps) {
     setSearchQuery('');
     setSelectedTag('');
     setSelectedYear('');
-  };
-
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    }).format(new Date(date));
   };
 
   return (

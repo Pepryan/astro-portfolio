@@ -1,6 +1,7 @@
 import { FiClock, FiTag, FiArrowRight } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 import type { BlogPost } from '../types';
+import { formatDate } from '../lib/format';
 
 interface RelatedPostsProps {
   currentPost: BlogPost;
@@ -102,15 +103,8 @@ export default function RelatedPosts({ currentPost, allPosts, maxPosts = 3 }: Re
 
                 {/* Metadata */}
                 <div className="flex items-center justify-between text-xs text-neutral-500 dark:text-neutral-400 mb-4">
-                  <time className="font-medium">
-                    {(() => {
-                      const d = new Date(post.data.date);
-                      const day = d.getDate();
-                      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                      const month = months[d.getMonth()];
-                      const year = d.getFullYear();
-                      return `${day}-${month}-${year}`;
-                    })()}
+                  <time className="font-medium" dateTime={new Date(post.data.date).toISOString()}>
+                    {formatDate(post.data.date, 'short')}
                   </time>
                   <div className="flex items-center gap-1">
                     <FiClock className="w-3 h-3" />

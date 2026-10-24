@@ -52,5 +52,5 @@ export interface ProjectCategoryConfig {
     name: string;
     description: string;
     icon: string;
-    count: number;
+    count?: number;
 }

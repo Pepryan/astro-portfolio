@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ProjectCard from './ProjectCard';
 import { componentConfig } from '../config/components';
@@ -6,24 +6,27 @@ import { componentConfig } from '../config/components';
 export default function ProjectsWithCategories() {
   const [activeCategory, setActiveCategory] = useState('all');
 
-  const categories = componentConfig.pages.projects.categories;
   const projects = componentConfig.projects;
 
-  const filteredProjects = useMemo(() => {
-    if (activeCategory === 'all') {
-      return projects.items;
-    }
-    return projects.items.filter(project => {
-      const categoryMap: { [key: string]: string } = {
-        'cloud': 'Cloud',
-        'devops': 'DevOps',
-        'automation': 'Automation',
-        'open-source': 'Open Source',
-        'web': 'Web'
-      };
-      return project.category === categoryMap[activeCategory];
-    });
-  }, [activeCategory]);
+  // Category ids are slugs of the project `category` field ("Open Source" -> "open-source")
+  const toCategoryId = (category: string) => category.toLowerCase().replace(/\s+/g, '-');
+
+  // Counts are derived from the data so they never drift from the config
+  const categories = componentConfig.pages.projects.categories.map((category) => ({
+    ...category,
+    count:
+      category.id === 'all'
+        ? projects.items.length
+        : projects.items.filter((project) => toCategoryId(project.category) === category.id).length,
+  }));
+
+  const filteredProjects = useMemo(
+    () =>
+      activeCategory === 'all'
+        ? projects.items
+        : projects.items.filter((project) => toCategoryId(project.category) === activeCategory),
+    [activeCategory]
+  );
 
   const containerVariants = {
     hidden: { opacity: 0 },
