@@ -1,185 +1,90 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
 import { FiArrowUp } from 'react-icons/fi';
 import { componentConfig } from '../config/components';
 
 interface ReadingProgressProps {
-  showAfter?: number; // Show progress bar after scrolling this many pixels
-  showBackToTop?: boolean; // Show back to top button when progress is visible
-  height?: number; // Height of the progress bar in pixels
-  className?: string; // Additional CSS classes
-  gradient?: string; // Custom gradient classes
+  /** Show the bar after scrolling this many pixels */
+  showAfter?: number;
+  /** Show a back-to-top button while the bar is visible */
+  showBackToTop?: boolean;
+  /** Bar height in pixels */
+  height?: number;
 }
 
-export default function ReadingProgress({
-  showAfter,
-  showBackToTop,
-  height,
-  className = '',
-  gradient
-}: ReadingProgressProps) {
+/**
+ * Scroll progress bar + back-to-top button.
+ *
+ * The bar is updated by writing `transform: scaleX()` straight to the DOM
+ * inside requestAnimationFrame, so scrolling never re-renders React and only
+ * touches a compositor-friendly property. React state changes only when
+ * crossing the `showAfter` threshold.
+ */
+export default function ReadingProgress({ showAfter, showBackToTop, height }: ReadingProgressProps) {
   const config = componentConfig.readingProgress;
+  const threshold = showAfter ?? config.showAfter;
+  const withBackToTop = showBackToTop ?? config.showBackToTop;
+  const barHeight = height ?? config.height;
 
-  // Use props or fall back to config defaults
-  const finalShowAfter = showAfter ?? config.showAfter;
-  const finalShowBackToTop = showBackToTop ?? config.showBackToTop;
-  const finalHeight = height ?? config.height;
-  const finalGradient = gradient ?? config.gradient;
-  const [isVisible, setIsVisible] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const [mounted, setMounted] = useState(false);
+  const barRef = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    let frame = 0;
 
-    let ticking = false;
-
-    const handleScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          const scrollTop = window.scrollY;
-          const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-          const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-
-          setScrollProgress(Math.min(Math.max(progress, 0), 100));
-          setIsVisible(scrollTop > finalShowAfter);
-          ticking = false;
-        });
-        ticking = true;
-      }
+    const update = () => {
+      frame = 0;
+      const scrollTop = window.scrollY;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = max > 0 ? Math.min(scrollTop / max, 1) : 0;
+      if (barRef.current) barRef.current.style.transform = `scaleX(${progress})`;
+      setVisible(scrollTop > threshold); // no-op re-render when unchanged
     };
 
-    // Initial calculation
-    handleScroll();
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', handleScroll, { passive: true });
-
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
     return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleScroll);
+      cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
     };
-  }, [finalShowAfter]);
+  }, [threshold]);
 
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  };
-
-  // Don't render if disabled in config or on server to prevent hydration mismatch
-  if (!config.enabled || !mounted) {
-    return null;
-  }
+  if (!config.enabled) return null;
 
   return (
     <>
-      {/* Fixed Progress Bar at Top */}
-      <AnimatePresence>
-        {isVisible && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
-            className={`fixed top-0 left-0 right-0 z-[60] ${className}`}
-            style={{
-              willChange: 'transform',
-              backfaceVisibility: 'hidden',
-              perspective: 1000,
-            }}
-          >
-            {/* Progress bar container - minimal design without background track */}
-            <div className="relative w-full overflow-hidden" style={{ height: `${finalHeight}px` }}>
-              {/* Progress fill with clean gradient - no background track or shadows */}
-              <motion.div
-                className={`absolute top-0 left-0 h-full bg-gradient-to-r ${finalGradient} overflow-hidden`}
-                style={{
-                  width: `${scrollProgress}%`,
-                  background: `linear-gradient(90deg,
-                    rgb(37, 99, 235) 0%,
-                    rgb(79, 70, 229) 25%,
-                    rgb(99, 102, 241) 50%,
-                    rgb(129, 140, 248) 75%,
-                    rgb(147, 51, 234) 100%
-                  )`,
-                  willChange: 'width',
-                  backfaceVisibility: 'hidden',
-                  transform: 'translateZ(0)', // Force hardware acceleration
-                }}
-                initial={{ width: 0 }}
-                animate={{ width: `${scrollProgress}%` }}
-                transition={{
-                  duration: 0.1,
-                  ease: 'linear',
-                  type: 'tween'
-                }}
-              >
-                {/* Enhanced shimmer effect constrained within progress fill */}
-                {config.animation.shimmer && scrollProgress > 5 && scrollProgress < 100 && (
-                  <motion.div
-                    className="absolute top-0 left-0 h-full w-32 opacity-60"
-                    style={{
-                      background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.6) 50%, transparent 100%)',
-                      willChange: 'transform',
-                      backfaceVisibility: 'hidden',
-                      transform: 'translateZ(0)',
-                    }}
-                    animate={{
-                      x: [-128, `calc(100% + 32px)`],
-                    }}
-                    transition={{
-                      duration: 2.5,
-                      repeat: Infinity,
-                      ease: 'linear',
-                      repeatDelay: 4,
-                      type: 'tween',
-                    }}
-                  />
-                )}
-              </motion.div>
+      <div
+        className={`pointer-events-none fixed inset-x-0 top-0 z-[60] transition-opacity duration-200 ${visible ? 'opacity-100' : 'opacity-0'}`}
+        style={{ height: barHeight }}
+        aria-hidden="true"
+      >
+        <div
+          ref={barRef}
+          className="h-full origin-left bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600"
+          style={{ transform: 'scaleX(0)' }}
+        />
+      </div>
 
-
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Back to Top Button - positioned at bottom right corner */}
-      <AnimatePresence>
-        {isVisible && finalShowBackToTop && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8, y: 20 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="fixed bottom-8 right-8 z-50"
-            style={{
-              willChange: 'transform',
-              backfaceVisibility: 'hidden',
-              perspective: 1000,
-            }}
-          >
-            <motion.button
-              onClick={scrollToTop}
-              className="group flex items-center justify-center w-12 h-12 bg-white dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-700 border border-neutral-200 dark:border-neutral-700 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              aria-label="Back to top"
-              title="Back to top"
-            >
-              {/* Arrow icon */}
-              <FiArrowUp className="w-5 h-5 text-neutral-600 dark:text-neutral-400 group-hover:text-blue-500 transition-colors" />
-
-              {/* Simple tooltip without percentage */}
-              <span className="absolute bottom-full right-0 mb-2 px-2 py-1 bg-neutral-800 dark:bg-neutral-700 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                Back to top
-              </span>
-            </motion.button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {withBackToTop && (
+        <button
+          type="button"
+          onClick={() => window.scrollTo({ top: 0 })}
+          className={`fixed bottom-8 right-8 z-50 flex h-12 w-12 items-center justify-center rounded-full border border-neutral-200
+            bg-white text-neutral-600 shadow-lg transition-all duration-200 hover:text-blue-600 dark:border-neutral-700
+            dark:bg-neutral-800 dark:text-neutral-400 dark:hover:text-blue-400
+            ${visible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-4 opacity-0'}`}
+          aria-label="Back to top"
+          title="Back to top"
+          tabIndex={visible ? 0 : -1}
+        >
+          <FiArrowUp className="h-5 w-5" />
+        </button>
+      )}
     </>
   );
 }

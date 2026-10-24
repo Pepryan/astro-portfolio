@@ -51,7 +51,7 @@ export default function SkillsSection() {
         {skills.categories.map((category, categoryIndex) => (
           <motion.div
             key={category.title}
-            className="bg-white/80 dark:bg-neutral-800/80 rounded-2xl p-8 shadow-sm border border-neutral-200 dark:border-neutral-700 backdrop-blur-sm"
+            className="bg-white/80 dark:bg-neutral-800/80 rounded-2xl p-8 shadow-sm border border-neutral-200 dark:border-neutral-700"
             variants={itemVariants}
             whileHover={{ y: -5, transition: { duration: 0.2 } }}
           >

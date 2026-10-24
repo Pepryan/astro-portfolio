@@ -18,7 +18,7 @@ export default function SeriesNavigation({
   const [showAllParts, setShowAllParts] = useState(false);
 
   return (
-    <div className="bg-white dark:bg-neutral-800/80 backdrop-blur-sm rounded-2xl border border-neutral-200/60 dark:border-neutral-700/60 overflow-hidden">
+    <div className="bg-white dark:bg-neutral-800/80 rounded-2xl border border-neutral-200/60 dark:border-neutral-700/60 overflow-hidden">
       {/* Header */}
       <div className="p-4 border-b border-neutral-200/60 dark:border-neutral-700/60">
         <div className="flex items-center justify-between">

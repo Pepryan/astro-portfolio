@@ -48,29 +48,24 @@
 
 .animate-float {
     animation: float-gentle 4s ease-in-out infinite;
-    will-change: transform;
 }
 
 .animate-float-slow {
     animation: float-slow 5s ease-in-out infinite;
-    will-change: transform;
 }
 
 .animate-float-delayed {
     animation: float-gentle 4s ease-in-out infinite;
     animation-delay: 1s;
-    will-change: transform;
 }
 
 .animate-float-delayed-2 {
     animation: float-slow 6s ease-in-out infinite;
     animation-delay: 2s;
-    will-change: transform;
 }
 
 .animate-pulse-glow {
     animation: pulse-glow 3s ease-in-out infinite;
-    will-change: opacity, transform;
 }
 
 /* ===== GRADIENT SHIMMER EFFECT ===== */
@@ -132,8 +127,14 @@
         blink-caret 0.75s step-end infinite;
 }
 
-/* ===== HERO TITLE GRADIENT ANIMATION ===== */
-/* Performant animated gradient for hero title */
+/* Decorative loops pause while their section is off-screen (see Layout.astro) */
+[data-offscreen] *,
+[data-offscreen] {
+    animation-play-state: paused !important;
+}
+
+/* ===== HERO TITLE GRADIENT ===== */
+
 
 @keyframes gradient-shift {
     0% {
@@ -160,8 +161,8 @@
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: gradient-shift 6s ease-in-out infinite;
-    will-change: background-position;
+    /* Static on purpose: animating background-position on clipped text
+       repaints the whole title every frame, even when scrolled away. */
     /* Extra padding for descender letters like y, g, p */
     line-height: 1.2;
 }
@@ -197,11 +198,15 @@
     opacity: 1;
 }
 
+.cube-wrapper:hover .cube-container {
+    animation-play-state: running;
+}
+
 .cube-container {
     position: relative;
     transform: skewY(-20deg);
-    animation: cube-hue-rotate 5s linear infinite;
-    will-change: filter;
+    /* hue-rotate repaints every frame; only run it while hovered */
+    animation: cube-hue-rotate 5s linear infinite paused;
     display: flex;
     flex-direction: column;
     align-items: center;

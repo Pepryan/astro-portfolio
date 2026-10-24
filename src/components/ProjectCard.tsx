@@ -72,7 +72,7 @@ export default function ProjectCard({
         whileTap={{ scale: 0.98 }}
       >
         <div className="bg-white/80 dark:bg-neutral-800/80 rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700 
-          backdrop-blur-sm overflow-hidden hover:shadow-xl transition-all duration-300 p-6">
+          overflow-hidden hover:shadow-xl transition-all duration-300 p-6">
 
           <div className="flex items-start gap-6">
             {/* Icon/Image */}
@@ -182,7 +182,7 @@ export default function ProjectCard({
       data-category={project.category.toLowerCase()}
     >
       <div className="bg-white/80 dark:bg-neutral-800/80 rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700 
-        backdrop-blur-sm overflow-hidden hover:shadow-xl transition-all duration-300 h-full flex flex-col">
+        overflow-hidden hover:shadow-xl transition-all duration-300 h-full flex flex-col">
 
         {/* Image/Icon */}
         <div className="h-48 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/20 dark:to-purple-900/20 relative overflow-hidden">
@@ -204,7 +204,7 @@ export default function ProjectCard({
           {showCategory && (
             <div className="absolute top-3 left-3">
               <span className="flex items-center gap-1 px-2 py-1 text-xs font-medium bg-white/90 dark:bg-neutral-800/90 
-                text-neutral-700 dark:text-neutral-300 rounded-full backdrop-blur-sm">
+                text-neutral-700 dark:text-neutral-300 rounded-full">
                 <FiTag className="w-3 h-3" />
                 {project.category}
               </span>
@@ -214,7 +214,7 @@ export default function ProjectCard({
           {/* Status Badge */}
           {showStatus && project.status && (
             <div className="absolute top-3 right-3">
-              <span className={`px-2 py-1 text-xs font-medium rounded-full backdrop-blur-sm ${getStatusColor(project.status)}`}>
+              <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(project.status)}`}>
                 {project.status}
               </span>
             </div>

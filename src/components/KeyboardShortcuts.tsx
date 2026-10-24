@@ -121,8 +121,8 @@ export default function KeyboardShortcuts() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="fixed bottom-6 left-6 z-40 hidden rounded-full border border-neutral-200 bg-white/60 p-2.5 shadow-lg
-          backdrop-blur-sm transition-colors hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/60
+        className="fixed bottom-6 left-6 z-40 hidden rounded-full border border-neutral-200 bg-white/90 p-2.5 shadow-lg
+          transition-colors hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/90
           dark:hover:bg-neutral-700 lg:block"
         aria-label="Keyboard shortcuts"
         title="Keyboard shortcuts (?)"

@@ -128,7 +128,7 @@ export default function SeriesPageClient({ series }: SeriesPageClientProps) {
         )}
 
         {/* Filters and Search */}
-        <div className="bg-white dark:bg-neutral-800/80 backdrop-blur-sm rounded-2xl border border-neutral-200/60 dark:border-neutral-700/60 p-6 mb-8">
+        <div className="bg-white dark:bg-neutral-800/80 rounded-2xl border border-neutral-200/60 dark:border-neutral-700/60 p-6 mb-8">
           {/* Search */}
           <div className="relative mb-6">
             <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-neutral-400" />
