@@ -37,11 +37,6 @@ function createSimplePNG(size, filename) {
   // In a real implementation, you'd use a library like sharp or canvas to convert SVG to PNG
   console.log(`Creating ${filename} (${size}x${size})`);
 
-  // Create a simple placeholder file
-  const placeholderContent = `<!-- Placeholder for ${filename} - ${size}x${size} -->
-<!-- In production, this should be converted to actual PNG -->
-${svgContent}`;
-
   fs.writeFileSync(outputPath.replace('.png', '.svg'), svgContent);
   console.log(`✓ Created ${filename.replace('.png', '.svg')}`);
 }
@@ -50,7 +45,7 @@ ${svgContent}`;
 console.log('Generating favicon files...');
 
 faviconSizes.forEach(({ name, size }) => {
-  const [width, height] = size.split('x').map(Number);
+  const [width] = size.split('x').map(Number);
   createSimplePNG(width, name);
 });
 
