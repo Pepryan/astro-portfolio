@@ -68,7 +68,7 @@ const prompt = `${term.user}@${term.host}:~$`;
     <p class="term__echo term__echo--intro"><span class="term__prompt">{prompt}</span> <span class="term__typed">fastfetch</span></p>
 
     <div class="term__fetch" data-term-fetch>
-      <img src="/images/photo-web-febryan.webp" alt={`Portrait of ${hero.title}`} width="300" height="300" loading="eager" fetchpriority="high" decoding="async" />
+      <img class="term__photo" src="/images/photo-web-febryan.webp" alt={`Portrait of ${hero.title}`} width="300" height="300" loading="eager" fetchpriority="high" decoding="async" draggable="false" />
       <div class="term__info">
         <p class="term__host"><span class="term__key">{term.owner}</span>@<span class="term__key">{term.host}</span></p>
         <p class="term__rule" aria-hidden="true">{'-'.repeat(header.length)}</p>
@@ -210,6 +210,15 @@ const prompt = `${term.user}@${term.host}:~$`;
     object-fit: cover;
     border-radius: var(--ds-radius);
     filter: grayscale(0.35) contrast(1.05);
+  }
+
+  /* Deterrent, not DRM: clicks, drags and long-presses pass through the photo,
+     so the browser offers no "Save image" / "Open image in new tab". */
+  .term__fetch .term__photo {
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    -webkit-touch-callout: none;
   }
 
   .term__host {
