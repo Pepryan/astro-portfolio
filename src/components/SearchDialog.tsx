@@ -106,7 +106,10 @@ export default function SearchDialog() {
     listRef.current?.children[active]?.scrollIntoView({ block: 'nearest' });
   }, [active]);
 
-  if (!open) return null;
+  // An empty fragment, not null: Astro's React renderer only recognises a
+  // component that returns a React element. With null it falls through to
+  // the MDX renderer, which calls the hooks outside render ("Invalid hook call").
+  if (!open) return <></>;
 
   const onInputKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Escape') {

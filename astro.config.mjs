@@ -54,9 +54,14 @@ export default defineConfig({
     syntaxHighlight: false,
   },
   integrations: [
+    // React must come before MDX: Astro picks a renderer for each framework
+    // component by running every renderer's check() in this order. MDX's check
+    // calls the component as a plain function, so hooks run outside React's
+    // render and log "Invalid hook call" on every page. React's own check
+    // claims the component first and MDX never touches it.
+    react(),
     // MDX inherits the markdown config above (extendMarkdownConfig defaults to true)
     mdx(),
-    react(),
     tailwind({ applyBaseStyles: false }),
   ],
   vite: {
