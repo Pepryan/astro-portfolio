@@ -3,7 +3,8 @@
  * Closing contact band — the one inverted surface on the page.
  * One primary action (email), one quiet secondary link.
  */
-import { componentConfig } from '../../config/components';
+import { componentConfig, seoConfig } from '../../config/components';
+import { encodeEmail } from '../../lib/email';
 
 interface Props {
   /** Section number on the homepage; omitted elsewhere */
@@ -26,7 +27,7 @@ const { cta } = componentConfig;
     <div class="contact__side">
       <p class="contact__text">{cta.subtitle}</p>
       <div class="contact__actions">
-        <a class="ds-button" href={cta.primaryAction.link}>
+        <a class="ds-button" href={cta.primaryAction.link} data-email={cta.primaryAction.revealEmail ? encodeEmail(seoConfig.author.email) : undefined}>
           {cta.primaryAction.text} <span class="ds-arrow" aria-hidden="true">→</span>
         </a>
         <a class="ds-link" href={cta.secondaryAction.link}>

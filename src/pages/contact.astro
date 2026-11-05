@@ -4,14 +4,16 @@ import PageHeader from '../components/blog/PageHeader.astro';
 import { generateSEO } from '../utils/seo';
 import { componentConfig, seoConfig } from '../config/components';
 import { isPageEnabled } from '../utils/pages';
+import { encodeEmail } from '../lib/email';
 
 if (!isPageEnabled('contact')) {
   return new Response(null, { status: 404, statusText: 'Page not found' });
 }
 
 const { contact, hero } = componentConfig;
-const email = contact.email;
-const channels = Object.values(contact.social).filter((channel) => channel.enabled && !channel.url.startsWith('mailto:'));
+// Never in the HTML as plain text; src/lib/email.ts reveals it in the browser
+const email = encodeEmail(seoConfig.author.email);
+const channels = Object.values(contact.social).filter((channel) => channel.enabled);
 
 const seo = generateSEO({
   title: 'Contact',
@@ -31,7 +33,7 @@ const seo = generateSEO({
       lede="Questions about Linux, AI tooling or something I wrote are welcome. Email works best, and every post has a comment section if you'd rather ask in public."
     >
       <div class="contact-cta">
-        <a class="ds-button" href={`mailto:${email}`}>
+        <a class="ds-button" href="#email" data-email={email}>
           Send an email <span class="ds-arrow" aria-hidden="true">→</span>
         </a>
         <button type="button" class="ds-link" data-copy-email={email}>
@@ -41,14 +43,17 @@ const seo = generateSEO({
     </PageHeader>
 
     <dl class="ds-ledger channels">
-      <div class="channel">
+      <div class="channel" id="email">
         <dt class="ds-label">Email</dt>
-        <dd><a href={`mailto:${email}`}>{email}</a></dd>
+        <dd>
+          <a href="#email" data-email={email} data-email-text></a>
+          <noscript>Turn on JavaScript to see the address, or leave a comment under any post.</noscript>
+        </dd>
       </div>
       <div class="channel">
         <dt class="ds-label">Location</dt>
         <dd>
-          {contact.location} · {hero.terminal.utcOffset}
+          {seoConfig.author.location} · {hero.terminal.utcOffset}
           <span class="channel__note" data-local-time data-tz={hero.terminal.timezone}></span>
         </dd>
       </div>
@@ -71,7 +76,9 @@ const seo = generateSEO({
 </Layout>
 
 <script>
-  // Local time in Bogor, computed once — a hint for when a reply might come
+  import { decodeEmail } from '../lib/email';
+
+  // Local time (UTC+7), computed once — a hint for when a reply might come
   document.querySelectorAll<HTMLElement>('[data-local-time]').forEach((el) => {
     const time = new Date().toLocaleTimeString('en-GB', { timeZone: el.dataset.tz, hour: '2-digit', minute: '2-digit' });
     el.textContent = `It's ${time} there right now.`;
@@ -81,7 +88,7 @@ const seo = generateSEO({
     const label = button.querySelector<HTMLElement>('[data-copy-label]');
     button.addEventListener('click', async () => {
       try {
-        await navigator.clipboard.writeText(button.dataset.copyEmail ?? '');
+        await navigator.clipboard.writeText(decodeEmail(button.dataset.copyEmail ?? ''));
         if (label) label.textContent = 'Copied';
       } catch {
         if (label) label.textContent = 'Copy failed';

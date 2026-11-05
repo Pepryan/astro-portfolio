@@ -7,6 +7,7 @@
 import { componentConfig, seoConfig } from '../../config/components';
 import type { BlogPost } from '../../types';
 import { primaryText } from '../../lib/format';
+import { encodeEmail } from '../../lib/email';
 
 interface Props {
   posts: BlogPost[];
@@ -20,7 +21,6 @@ const [current, previous] = experience.items;
 const shortCompany = (name: string) => name.replace(/^PT\.?\s*/, '');
 const startYear = Number.parseInt(storyJourney.milestones[0]?.year ?? '2011', 10);
 const uptimeYears = new Date().getFullYear() - startYear;
-const [city] = seoConfig.author.location.split(',');
 
 const header = `${term.owner}@${term.host}`;
 const fetchRows = [
@@ -28,7 +28,7 @@ const fetchRows = [
   ['Focus', term.focus],
   ['Uptime', `${uptimeYears} years (since ${startYear})`],
   ['Shell', term.shell],
-  ['Location', `${city}, ID · ${term.utcOffset}`],
+  ['Location', `${seoConfig.author.location} · ${term.utcOffset}`],
   previous && ['Previous', `${previous.role} @ ${shortCompany(previous.company)}`],
   ['Stack', term.stack.join(' · ')],
 ].filter(Boolean) as [string, string][];
@@ -43,7 +43,7 @@ const data = {
   company: current.company,
   startYear,
   timezone: term.timezone,
-  email: seoConfig.author.email,
+  emailEncoded: encodeEmail(seoConfig.author.email),
   about: hero.lede,
   posts: posts.map((post) => ({
     title: primaryText(post.data.title),

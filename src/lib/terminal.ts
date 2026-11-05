@@ -7,6 +7,7 @@
  */
 import { toggleDarkMode, setDarkMode, isDarkMode } from './theme';
 import { openSearch } from './search';
+import { decodeEmail } from './email';
 
 export interface TerminalData {
   user: string;
@@ -16,7 +17,7 @@ export interface TerminalData {
   company: string;
   startYear: number;
   timezone: string;
-  email: string;
+  emailEncoded: string;
   about: string;
   posts: { title: string; href: string; date: string }[];
   links: { label: string; href: string }[];
@@ -55,6 +56,7 @@ export function initTerminal(root: HTMLElement): void {
   if (!screen || !form || !input) return;
 
   const prompt = `${data.user}@${data.host}:~$`;
+  const email = decodeEmail(data.emailEncoded ?? '');
   const history: string[] = [];
   let historyIndex = 0;
 
@@ -157,7 +159,7 @@ export function initTerminal(root: HTMLElement): void {
     contact: {
       summary: 'how to reach me',
       run: () => [
-        ['Email  ', { text: data.email, href: `mailto:${data.email}` }],
+        ['Email  ', { text: email, href: `mailto:${email}` }],
         'Or leave a comment under any post.',
         ...data.links.map((link) => [`${link.label.padEnd(7)}`, { text: link.href.replace(/^https?:\/\//, ''), href: link.href }] as Segment[]),
       ],
@@ -180,7 +182,7 @@ export function initTerminal(root: HTMLElement): void {
       ],
     },
     date: {
-      summary: 'time in Bogor',
+      summary: 'local time (UTC+7)',
       run: () => [jakartaTime({ dateStyle: 'full', timeStyle: 'long' })],
     },
     theme: {

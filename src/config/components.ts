@@ -17,7 +17,7 @@ export const seoConfig = {
     email: "febryanramadhan@gmail.com",
     url: "https://febryan.web.id",
     jobTitle: "System Administrator at Odoo",
-    location: "Bogor, Indonesia",
+    location: "Indonesia",
     bio: "Linux sysadmin at Odoo, tinkering with AI. Background in cloud, DevOps and CI/CD.",
     image: "https://febryan.web.id/images/photo-web-febryan.webp"
   },
@@ -137,7 +137,8 @@ export const componentConfig = {
       { platform: 'gitlab', url: 'https://gitlab.com/Pepryan', enabled: true },
       { platform: 'linkedin', url: 'https://linkedin.com/in/febryanramadhan', enabled: true },
       { platform: 'twitter', url: 'https://x.com/pepryan', enabled: true },
-      { platform: 'email', url: 'mailto:febryanramadhan@gmail.com', enabled: true }
+      // Address comes from author.email and is revealed client-side (src/lib/email.ts)
+      { platform: 'email', url: '/contact', enabled: true }
     ]
   },
 
@@ -149,9 +150,9 @@ export const componentConfig = {
     // Oldest first; the homepage renders newest first.
     milestones: [
       { year: "2011", title: "Building PCs", description: "Started with PC building, overclocking and hardware optimization." },
-      { year: "2012–2014", title: "Networking at SMK", description: "Computer and network engineering at SMKN 3 Bogor, with networking fundamentals from Cisco Academy." },
+      { year: "2012–2014", title: "Networking at vocational school", description: "Computer and network engineering, with networking fundamentals from Cisco Academy." },
       { year: "2014", title: "Linux & PHP", description: "First serious time on Linux systems, PHP development and troubleshooting." },
-      { year: "2014–2021", title: "Information Systems degree", description: "SDLC, algorithms and business IT at Gunadarma University." },
+      { year: "2014–2021", title: "Information Systems degree", description: "SDLC, algorithms and business IT at university." },
       { year: "2020", title: "Web developer", description: "CRM solutions in PHP, Docker containerization and client support at PT. Ciptadra Softindo." },
       { year: "2022", title: "Cloud engineer", description: "OpenStack and Kubernetes infrastructure, Grafana and Prometheus monitoring, Python and Bash automation at PT. Boer Technology." },
       { year: "2026", title: "Sysadmin at Odoo", description: "Linux systems day to day, with AI tooling on the side." }
@@ -172,7 +173,8 @@ export const componentConfig = {
     enabled: true,
     title: "Questions about Linux, AI or something I wrote?",
     subtitle: "Email is the best way to reach me. Every post also has a comment section if you'd rather ask in public.",
-    primaryAction: { text: "Send an email", link: "mailto:febryanramadhan@gmail.com" },
+    // link is the no-JS fallback; the button becomes a mailto: for author.email
+    primaryAction: { text: "Send an email", link: "/contact", revealEmail: true },
     secondaryAction: { text: "Contact page", link: "/contact" }
   },
 
@@ -215,35 +217,6 @@ export const componentConfig = {
     }
   },
 
-  // About Section Configuration (For separate /about page)
-  about: {
-    enabled: true,
-    title: "About Me",
-    showStats: true,
-    showInterests: true,
-    showCurrentFocus: true,
-    content: {
-      introduction: "Hello, and welcome to my blog!\n\nMy name is Ryan a tech enthusiast living in Bogor, Indonesia. My main interest in Information Technology started since I was at junior high school. That time, I had built some PCs, over-clocked them, enjoyed some gaming, and hardware optimization.",
-      current: "Now, I work as a Cloud Engineer focusing on DevOps practices, infrastructure automation, and cloud-native applications. I'm passionate about building scalable, reliable systems and sharing knowledge through this blog.",
-      personal: "When I'm not coding or managing infrastructure, you'll find me exploring new technologies, contributing to open-source projects, or enjoying the great outdoors. I believe in continuous learning and love sharing what I discover along the way."
-    },
-    stats: {
-      experience: "4+ Years",
-      location: "Bogor, ID",
-      focus: "Cloud & DevOps"
-    },
-    currentFocus: [
-      "Cloud Architecture",
-      "Infrastructure Automation",
-      "Web Development",
-      "Cloud-Native Apps"
-    ],
-    interests: [
-      "New Technologies",
-      "Trekking & Nature",
-      "Reading"
-    ]
-  },
   // Experience Section Configuration
   experience: {
     enabled: true,
@@ -256,7 +229,6 @@ export const componentConfig = {
         role: 'System Administrator',
         company: 'Odoo',
         period: '2026 - Present',
-        location: 'Indonesia',
         type: 'Full-time',
         current: true,
         responsibilities: [],
@@ -267,7 +239,6 @@ export const componentConfig = {
         role: 'Cloud Engineer',
         company: 'PT. Boer Technology',
         period: '2022 - 2026',
-        location: 'Jakarta',
         type: 'Full-time',
         current: false,
         responsibilities: [
@@ -283,7 +254,6 @@ export const componentConfig = {
         role: 'Web Developer',
         company: 'PT. Ciptadra Softindo',
         period: '2020 - 2021',
-        location: 'Depok',
         type: 'Full-time',
         current: false,
         responsibilities: [
@@ -296,36 +266,6 @@ export const componentConfig = {
       }
     ]
   },
-  // Education Section Configuration
-  education: {
-    enabled: true,
-    title: "Education",
-    showTimeline: true,
-    animateOnScroll: true,
-    items: [
-      {
-        id: 'gunadarma',
-        degree: 'Bachelor of Information Systems',
-        institution: 'Gunadarma University',
-        period: '2014 - 2021',
-        location: 'Depok',
-        type: 'Bachelor\'s Degree',
-        gpa: null, // Optional
-        achievements: []
-      },
-      {
-        id: 'smkn3',
-        degree: 'Computer and Network Engineering',
-        institution: 'SMKN 3 Bogor',
-        period: '2012 - 2014',
-        location: 'Bogor',
-        type: 'Vocational High School',
-        gpa: null,
-        achievements: []
-      }
-    ]
-  },
-
   // Skills Section Configuration
   // Skills table on /projects. "now" = daily work, "experience" = earlier roles that still hold.
   skills: {
@@ -497,8 +437,6 @@ export const componentConfig = {
   // Contact Section Configuration
   contact: {
     enabled: true,
-    email: 'febryanramadhan@gmail.com',
-    location: 'Bogor, Indonesia',
     social: {
       linkedin: {
         url: 'https://linkedin.com/in/febryanramadhan',
@@ -519,11 +457,6 @@ export const componentConfig = {
         url: 'https://x.com/pepryan',
         enabled: true,
         label: 'X (Twitter)'
-      },
-      email: {
-        url: 'mailto:febryanramadhan@gmail.com',
-        enabled: true,
-        label: 'Email'
       }
     }
   },

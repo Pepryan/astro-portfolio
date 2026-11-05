@@ -9,7 +9,8 @@ export async function GET(context: APIContext) {
 
   return rss({
     title: 'Febryan Ramadhan Blog',
-    description: 'Technical articles about cloud engineering, DevOps, infrastructure, automation, and modern web development.',
+    description: seoConfig.blog.description,
+    xmlns: { dc: 'http://purl.org/dc/elements/1.1/' },
     site: context.site ?? 'https://febryan.web.id',
     items: publishedPosts.map((post) => ({
       title: post.data.title,
@@ -17,17 +18,15 @@ export async function GET(context: APIContext) {
       description: post.data.summary || post.data.description || '',
       link: `/blog/${post.slug}/`,
       categories: post.data.tags || [],
-      author: `${author.email} (${author.name})`,
+      customData: `<dc:creator>${author.name}</dc:creator>`,
     })),
     customData: `
       <language>${seoConfig.site.language}</language>
-      <managingEditor>${author.email} (${author.name})</managingEditor>
-      <webMaster>${author.email} (${author.name})</webMaster>
       <copyright>Copyright ${new Date().getFullYear()} Febryan Ramadhan</copyright>
-      <category>Technology</category>
-      <category>Cloud Engineering</category>
+      <category>Linux</category>
+      <category>System Administration</category>
+      <category>AI</category>
       <category>DevOps</category>
-      <category>Web Development</category>
       <ttl>60</ttl>
     `,
   });

@@ -4,7 +4,8 @@
  * interactive grid that lights up under the cursor (data-spotlight).
  * Tokens live in src/styles/tokens.css.
  */
-import { componentConfig } from '../../config/components';
+import { componentConfig, seoConfig } from '../../config/components';
+import { encodeEmail } from '../../lib/email';
 import type { BlogPost } from '../../types';
 import Terminal from './Terminal.astro';
 
@@ -30,7 +31,8 @@ const socialLinks = hero.showSocialLinks
       .map((link) => ({
         href: link.url,
         label: socialLabels[link.platform],
-        external: !link.url.startsWith('mailto:'),
+        external: /^https?:/.test(link.url),
+        email: link.platform === 'email' ? encodeEmail(seoConfig.author.email) : undefined,
       }))
   : [];
 ---
@@ -56,9 +58,9 @@ const socialLinks = hero.showSocialLinks
 
         {socialLinks.length > 0 && (
           <ul class="hero__social" aria-label="Elsewhere">
-            {socialLinks.map(({ href, label, external }) => (
+            {socialLinks.map(({ href, label, external, email }) => (
               <li>
-                <a class="ds-link" href={href} {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+                <a class="ds-link" href={href} data-email={email} {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
                   {label}
                   {external && <span class="sr-only"> (opens in a new tab)</span>}
                 </a>

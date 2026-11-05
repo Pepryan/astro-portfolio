@@ -2,6 +2,7 @@
 import { FiGithub, FiGitlab, FiLinkedin, FiMail, FiRss } from 'react-icons/fi';
 import { FaXTwitter } from 'react-icons/fa6';
 import { seoConfig } from '../config/components';
+import { encodeEmail } from '../lib/email';
 
 const { social, author } = seoConfig;
 
@@ -13,7 +14,7 @@ const links = [
   { href: social.gitlab, label: 'GitLab', icon: FiGitlab },
   { href: social.linkedin, label: 'LinkedIn', icon: FiLinkedin },
   { href: `https://x.com/${social.twitter.username.replace('@', '')}`, label: 'X', icon: FaXTwitter },
-  { href: `mailto:${author.email}`, label: 'Email', icon: FiMail },
+  { href: '/contact', label: 'Email', icon: FiMail, email: encodeEmail(author.email) },
   { href: '/rss.xml', label: 'RSS feed', icon: FiRss },
 ];
 ---
@@ -26,11 +27,12 @@ const links = [
       <span>Built with Astro and Claude</span>
     </p>
     <ul class="site-footer__links">
-      {links.map(({ href, label, icon: LinkIcon }) => (
+      {links.map(({ href, label, icon: LinkIcon, email }) => (
         <li>
           <a
             class="icon-btn"
             href={href}
+            data-email={email}
             aria-label={label}
             title={label}
             {...(href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
