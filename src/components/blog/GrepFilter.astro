@@ -7,6 +7,8 @@
 interface Props {
   /** [tag, count] pairs, most used first */
   tags?: [string, number][];
+  /** Series chips (second row); rows match on their data-series slug */
+  series?: { slug: string; name: string; count: number }[];
   maxTags?: number;
   /** What the rows are, for the status line ("posts", "projects") */
   noun?: string;
@@ -20,6 +22,7 @@ interface Props {
 
 const {
   tags = [],
+  series = [],
   maxTags = 10,
   noun = 'posts',
   placeholder = 'strace, tcp, ansible…',
@@ -46,6 +49,7 @@ const shownTags = tags.slice(0, maxTags);
 
   {shownTags.length > 0 && (
     <div class="grep__tags" role="group" aria-label={hash ? 'Filter by tag' : 'Filter by category'}>
+      {series.length > 0 && <span class="ds-label grep__group" aria-hidden="true">Tags</span>}
       <button type="button" class="grep__tag" data-filter-tag="" aria-pressed="true">all</button>
       {shownTags.map(([tag, count]) => (
         <button type="button" class="grep__tag" data-filter-tag={tag.toLowerCase()} aria-pressed="false">
@@ -53,6 +57,19 @@ const shownTags = tags.slice(0, maxTags);
         </button>
       ))}
       {moreLink && <a class="ds-link grep__more" href={moreLink.href}>{moreLink.text} <span class="ds-arrow" aria-hidden="true">→</span></a>}
+    </div>
+  )}
+
+  {series.length > 0 && (
+    <div class="grep__tags" role="group" aria-label="Filter by series">
+      <span class="ds-label grep__group" aria-hidden="true">Series</span>
+      <button type="button" class="grep__tag" data-filter-series="" aria-pressed="true">all</button>
+      {series.map(({ slug, name, count }) => (
+        <button type="button" class="grep__tag" data-filter-series={slug} data-name={name} aria-pressed="false">
+          {name}<span class="grep__count">{count}</span>
+        </button>
+      ))}
+      <a class="ds-link grep__more" href="/series">All series <span class="ds-arrow" aria-hidden="true">→</span></a>
     </div>
   )}
 
@@ -143,6 +160,7 @@ const shownTags = tags.slice(0, maxTags);
     color: var(--ds-muted);
     font-family: var(--ds-font-display);
     font-size: var(--ds-fs-small);
+    text-align: left;
     cursor: pointer;
     transition:
       color var(--ds-dur) var(--ds-ease),
@@ -158,6 +176,11 @@ const shownTags = tags.slice(0, maxTags);
     border-color: var(--ds-accent);
     background: var(--ds-accent);
     color: var(--ds-on-accent);
+  }
+
+  /* Row label so the two chip rows read as "Tags" and "Series" */
+  .grep__group {
+    min-width: var(--ds-s16);
   }
 
   .grep__count {

@@ -8,6 +8,13 @@ import { generateBlogListingSEO } from '../../utils/seo';
 
 const posts = await getBlogPosts();
 const tags = getTagCounts(posts);
+
+// Series that have published posts, most parts first
+const series = [...posts.reduce((map, post) => {
+  const s = post.data.series;
+  if (s) map.set(s.slug, { slug: s.slug, name: s.name, count: (map.get(s.slug)?.count ?? 0) + 1 });
+  return map;
+}, new Map<string, { slug: string; name: string; count: number }>()).values()].sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
 const seo = generateBlogListingSEO(posts);
 ---
 
@@ -31,7 +38,7 @@ const seo = generateBlogListingSEO(posts);
       ]}
     />
 
-    <GrepFilter tags={tags} />
+    <GrepFilter tags={tags} series={series} />
     <PostLedger posts={posts} groupByYear />
   </main>
 </Layout>

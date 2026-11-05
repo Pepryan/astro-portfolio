@@ -9,6 +9,7 @@ export function initPostFilter(root: HTMLElement): void {
   const scope = root.closest('main') ?? document;
   const input = root.querySelector<HTMLInputElement>('[data-filter-input]');
   const chips = [...root.querySelectorAll<HTMLButtonElement>('[data-filter-tag]')];
+  const seriesChips = [...root.querySelectorAll<HTMLButtonElement>('[data-filter-series]')];
   const status = root.querySelector<HTMLElement>('[data-filter-status]');
   const reset = root.querySelector<HTMLButtonElement>('[data-filter-reset]');
   const empty = scope.querySelector<HTMLElement>('[data-filter-empty]');
@@ -24,6 +25,11 @@ export function initPostFilter(root: HTMLElement): void {
     tag: (params.get('tag') ?? '').toLowerCase(),
     series: (params.get('series') ?? '').toLowerCase(),
   };
+
+  // Old links used the series name (?series=deep dive linux …); map it to the slug
+  const byName = seriesChips.find((chip) => chip.dataset.name?.toLowerCase() === state.series);
+  if (byName) state.series = byName.dataset.filterSeries ?? state.series;
+  const seriesName = (slug: string) => seriesChips.find((chip) => chip.dataset.filterSeries === slug)?.dataset.name ?? slug;
 
   const apply = () => {
     const terms = state.query.toLowerCase().split(/\s+/).filter(Boolean);
@@ -46,10 +52,11 @@ export function initPostFilter(root: HTMLElement): void {
     });
 
     chips.forEach((chip) => chip.setAttribute('aria-pressed', String(chip.dataset.filterTag === state.tag)));
+    seriesChips.forEach((chip) => chip.setAttribute('aria-pressed', String(chip.dataset.filterSeries === state.series)));
 
     const filtered = Boolean(state.query || state.tag || state.series);
     if (status) {
-      const scopeLabel = [state.tag && `#${state.tag}`, state.series && `series “${state.series}”`].filter(Boolean).join(', ');
+      const scopeLabel = [state.tag && `#${state.tag}`, state.series && `“${seriesName(state.series)}”`].filter(Boolean).join(', ');
       status.textContent = filtered
         ? `${visible} of ${rows.length} ${noun}${scopeLabel ? ` in ${scopeLabel}` : ''}`
         : `${rows.length} ${noun}`;
@@ -75,6 +82,13 @@ export function initPostFilter(root: HTMLElement): void {
   chips.forEach((chip) =>
     chip.addEventListener('click', () => {
       state.tag = chip.dataset.filterTag ?? '';
+      apply();
+    })
+  );
+
+  seriesChips.forEach((chip) =>
+    chip.addEventListener('click', () => {
+      state.series = chip.dataset.filterSeries ?? '';
       apply();
     })
   );
