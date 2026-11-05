@@ -6,7 +6,8 @@
 import { componentConfig } from '../../config/components';
 
 interface Props {
-  index: string;
+  /** Section number on the homepage; omitted elsewhere */
+  index?: string;
 }
 
 const { index } = Astro.props;
@@ -15,7 +16,7 @@ const { cta } = componentConfig;
 
 <section class="contact" aria-labelledby="contact-title">
   <p class="ds-eyebrow contact__eyebrow">
-    <span class="ds-index">{index}</span>
+    {index && <span class="ds-index">{index}</span>}
     <span>Contact</span>
   </p>
 

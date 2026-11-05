@@ -1,100 +1,220 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import ProjectsWithCategories from '../components/ProjectsWithCategories';
-import SkillsSection from '../components/SkillsSection';
-import CertificationsSection from '../components/CertificationsSection';
+import PageHeader from '../components/blog/PageHeader.astro';
+import GrepFilter from '../components/blog/GrepFilter.astro';
+import ProjectRow from '../components/ProjectRow.astro';
+import Contact from '../components/home/Contact.astro';
 import { generateSEO } from '../utils/seo';
 import { componentConfig } from '../config/components';
 import { isPageEnabled } from '../utils/pages';
-
-const { pages } = componentConfig;
-
-// Generate SEO data for projects page
-const projectsSEO = generateSEO({
-  title: 'Projects',
-  canonical: '/projects',
-  description: 'Explore my portfolio of cloud engineering, DevOps, and web development projects. Discover the technologies and solutions I\'ve built.',
-  type: 'website',
-  keywords: ['projects', 'portfolio', 'cloud engineering', 'devops', 'web development', 'aws', 'kubernetes']
-});
+import type { Project } from '../types';
 
 if (!isPageEnabled('projects')) {
   return new Response(null, { status: 404, statusText: 'Page not found' });
 }
+
+const { skills, certifications } = componentConfig;
+
+// Newest first; within a year, featured first
+const projects = [...(componentConfig.projects.items as Project[])].sort(
+  (a, b) => Number(b.year ?? 0) - Number(a.year ?? 0) || Number(Boolean(b.featured)) - Number(Boolean(a.featured))
+);
+const categories = [...projects.reduce((map, p) => map.set(p.category, (map.get(p.category) ?? 0) + 1), new Map<string, number>())]
+  .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+
+const seo = generateSEO({
+  title: 'Projects',
+  canonical: '/projects',
+  description: 'Infrastructure tooling, AI and automation experiments, and web apps by Febryan Ramadhan, plus skills and certifications.',
+  type: 'website',
+  keywords: ['projects', 'portfolio', 'linux', 'automation', 'ai', 'openstack', 'devops'],
+});
 ---
 
-<Layout
-  title={projectsSEO.title}
-  description={projectsSEO.description}
-  canonical={projectsSEO.canonical}
-  type={projectsSEO.type}
-  keywords={projectsSEO.keywords}
->
-        <main class="max-w-7xl mx-auto px-4 py-4 mb-10">
-          <!-- Page Header -->
-          <section class="pt-24 pb-16">
-            <div class="text-center max-w-4xl mx-auto">
-              <h1 class="text-4xl md:text-6xl font-bold bg-clip-text text-transparent
-                bg-gradient-to-r from-blue-600 to-purple-600
-                dark:from-blue-400 dark:to-purple-400 mb-6 leading-tight pb-3">
-                Febryan Ramadhan Portfolio & Projects
-              </h1>
-              <p class="text-lg md:text-xl text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                Explore my journey in cloud infrastructure, DevOps automation, and scalable solutions.
-                Each project showcases modern engineering practices and innovative problem-solving.
-              </p>
-            </div>
-          </section>
+<Layout title={seo.title} description={seo.description} canonical={seo.canonical} type={seo.type} keywords={seo.keywords}>
+  <main class="ds-page">
+    <PageHeader
+      eyebrow="Projects"
+      title="Things I've built"
+      lede="Infrastructure tooling, AI and automation experiments, and a few web apps, newest first."
+      links={[
+        { href: '#skills', text: 'Skills' },
+        { href: '#certifications', text: 'Certifications' },
+      ]}
+    />
 
-          <!-- Projects with Categories -->
-          <section id="projects" class="py-16">
-            <ProjectsWithCategories client:load />
-          </section>
+    <GrepFilter
+      tags={categories}
+      noun="projects"
+      placeholder="openstack, n8n, laravel…"
+      moreLink={null}
+      hash={false}
+      emptyHint="Try a shorter word or another category."
+    />
 
-          <!-- Skills Section -->
-          <SkillsSection client:load />
+    <ol class="ds-ledger">
+      {projects.map((project, i) => <ProjectRow project={project} number={i + 1} showStatus clamp={false} />)}
+    </ol>
 
-          <!-- Certifications Section -->
-          <CertificationsSection client:load />
+    {skills.enabled && (
+      <section class="ds-section block" id="skills" aria-labelledby="skills-title">
+        <div class="block__head">
+          <p class="ds-eyebrow"><span>Skills</span></p>
+          <h2 class="ds-h2" id="skills-title">What I know</h2>
+          <p class="block__lede">Linux and AI are the daily work; the rest comes from earlier roles and still holds.</p>
+        </div>
+        <ul class="ds-ledger">
+          {skills.categories.map((category) => (
+            <li class="skill">
+              <h3 class="ds-h3">{category.title}</h3>
+              <ul class="skill__items">
+                {category.items.map((item) => <li>{item}</li>)}
+              </ul>
+              <span class:list={['ds-label', 'skill__status', { 'skill__status--now': category.status === 'now' }]}>
+                {category.status === 'now' && <span class="ds-marker" aria-hidden="true"></span>}
+                {category.status === 'now' ? 'Now' : 'Experience'}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
 
-          <!-- Call to Action -->
-          {pages.projects.cta.enabled && (
-            <section id="cta" class="py-16">
-              <div class="max-w-4xl mx-auto text-center">
-                <div class={`p-8 md:p-12 rounded-3xl ${
-                  pages.projects.cta.backgroundStyle === 'gradient'
-                    ? 'bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 text-white'
-                    : pages.projects.cta.backgroundStyle === 'pattern'
-                    ? 'bg-neutral-900 dark:bg-neutral-800 text-white'
-                    : 'bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100'
-                }`}>
-                  <h2 class="text-3xl md:text-4xl font-bold mb-4">
-                    {pages.projects.cta.title}
-                  </h2>
-                  <p class={`text-lg md:text-xl mb-8 ${
-                    pages.projects.cta.backgroundStyle === 'minimal'
-                      ? 'text-neutral-600 dark:text-neutral-400'
-                      : 'text-white/90'
-                  }`}>
-                    {pages.projects.cta.subtitle}
-                  </p>
-                  <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href={pages.projects.cta.primaryAction.link} class="btn-stylized">
-                      <span>{pages.projects.cta.primaryAction.text}</span>
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                      </svg>
-                    </a>
-                    <a href={pages.projects.cta.secondaryAction.link} class="btn-stylized-outline">
-                      <span>{pages.projects.cta.secondaryAction.text}</span>
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                      </svg>
-                    </a>
-                  </div>
-                </div>
+    {certifications.length > 0 && (
+      <section class="ds-section block" id="certifications" aria-labelledby="certs-title">
+        <div class="block__head">
+          <p class="ds-eyebrow"><span>Certifications</span></p>
+          <h2 class="ds-h2" id="certs-title">On paper, too</h2>
+        </div>
+        <ul class="ds-ledger">
+          {certifications.map((cert) => (
+            <li class="cert">
+              <span class="ds-label cert__year">{cert.year}</span>
+              <div>
+                <h3 class="ds-h3">{cert.title}</h3>
+                <p class="ds-label cert__issuer">{cert.issuer}{cert.active ? '' : ' · expired'}</p>
               </div>
-            </section>
-          )}
-        </main>
+              {cert.url ? (
+                <a class="ds-link" href={cert.url} target="_blank" rel="noopener noreferrer">
+                  Credential <span class="ds-arrow" aria-hidden="true">↗</span>
+                  <span class="sr-only">: {cert.title} (opens in a new tab)</span>
+                </a>
+              ) : <span />}
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <Contact />
+  </main>
 </Layout>
+
+<style>
+  .block {
+    display: grid;
+    gap: var(--ds-s8);
+    padding-bottom: 0;
+  }
+
+  .block__head {
+    display: grid;
+    gap: var(--ds-s4);
+  }
+
+  .block__lede {
+    max-width: var(--ds-measure);
+    margin: 0;
+    color: var(--ds-muted);
+  }
+
+  @media (min-width: 1024px) {
+    .block {
+      grid-template-columns: var(--ds-side-col) minmax(0, 1fr);
+      gap: var(--ds-s16);
+      align-items: start;
+    }
+
+    .block__head {
+      position: sticky;
+      top: var(--ds-s24);
+    }
+  }
+
+  .skill,
+  .cert {
+    display: grid;
+    gap: var(--ds-s3) var(--ds-s6);
+    padding-block: var(--ds-s6);
+  }
+
+  .skill {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: 'title status' 'items items';
+  }
+
+  .skill h3 {
+    grid-area: title;
+  }
+
+  .skill__items {
+    grid-area: items;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ds-s2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .skill__items li {
+    padding: var(--ds-s1) var(--ds-s2);
+    border: var(--ds-hairline) solid var(--ds-rule);
+    border-radius: var(--ds-radius);
+    font-family: var(--ds-font-display);
+    font-size: var(--ds-fs-small);
+  }
+
+  .skill__status {
+    grid-area: status;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ds-s2);
+  }
+
+  .skill__status--now {
+    color: var(--ds-ink);
+    font-weight: 600;
+  }
+
+  .cert {
+    grid-template-columns: var(--ds-s16) minmax(0, 1fr);
+    align-items: baseline;
+  }
+
+  .cert .ds-link {
+    grid-column: 2;
+    justify-self: start;
+    padding: 0;
+  }
+
+  .cert__issuer {
+    margin: var(--ds-s1) 0 0;
+  }
+
+  @media (min-width: 768px) {
+    .skill {
+      grid-template-columns: var(--ds-side-col) minmax(0, 1fr) auto;
+      grid-template-areas: 'title items status';
+      align-items: baseline;
+    }
+
+    .cert {
+      grid-template-columns: var(--ds-s16) minmax(0, 1fr) auto;
+    }
+
+    .cert .ds-link {
+      grid-column: auto;
+    }
+  }
+</style>

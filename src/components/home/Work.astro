@@ -1,10 +1,11 @@
 ---
 /**
- * Selected projects as numbered rows: index │ title + description + stack │ year + links.
- * Projects are referenced by id from `projects.items`, so there is one source of truth.
+ * Selected projects on the homepage. Projects are referenced by id from
+ * `projects.items`, so there is one source of truth; rows are ProjectRow.
  */
 import { componentConfig } from '../../config/components';
 import type { Project } from '../../types';
+import ProjectRow from '../ProjectRow.astro';
 import SectionHeader from './SectionHeader.astro';
 
 interface Props {
@@ -17,19 +18,6 @@ const { featuredWork, projects } = componentConfig;
 const items = featuredWork.projectIds
   .map((id) => (projects.items as Project[]).find((project) => project.id === id))
   .filter((project): project is Project => Boolean(project));
-
-const isExternal = (href: string) => /^https?:\/\//.test(href) && !href.includes('febryan.web.id');
-const localPath = (href: string) => href.replace(/^https?:\/\/febryan\.web\.id/, '');
-
-const linksFor = (project: Project) => {
-  const links: { href: string; text: string; external: boolean }[] = [];
-  if (project.github) links.push({ href: project.github, text: 'Repository', external: true });
-  if (project.link && project.link !== project.github) {
-    const external = isExternal(project.link);
-    links.push({ href: external ? project.link : localPath(project.link), text: external ? 'Website' : 'Write-up', external });
-  }
-  return links;
-};
 ---
 
 {items.length > 0 && (
@@ -43,104 +31,7 @@ const linksFor = (project: Project) => {
     />
 
     <ol class="ds-ledger">
-      {items.map((project, i) => (
-        <li class="ds-hover-row ds-spot ds-nudge work__row" data-spotlight>
-          <span class="work__no" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-
-          <div class="work__body">
-            <h3 class="ds-h3">{project.title}</h3>
-            <p class="work__desc">{project.description}</p>
-            <p class="ds-label work__tags">{project.tags.join(' / ')}</p>
-          </div>
-
-          <div class="work__side">
-            {project.year && <span class="ds-label">{project.year}</span>}
-            <ul class="work__links">
-              {linksFor(project).map(({ href, text, external }) => (
-                <li>
-                  <a class="ds-link" href={href} {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
-                    {text}
-                    <span class="ds-arrow" aria-hidden="true">{external ? '↗' : '→'}</span>
-                    <span class="sr-only">: {project.title}{external ? ' (opens in a new tab)' : ''}</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </li>
-      ))}
+      {items.map((project, i) => <ProjectRow project={project} number={i + 1} />)}
     </ol>
   </section>
 )}
-
-<style>
-  .work__row {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: var(--ds-s2) var(--ds-s4);
-    padding-block: var(--ds-s8);
-  }
-
-  .work__no {
-    color: var(--ds-muted);
-    font-family: var(--ds-font-display);
-    font-size: var(--ds-fs-value);
-    font-weight: 600;
-    line-height: var(--ds-lh-snug);
-  }
-
-  .work__body {
-    min-width: 0;
-  }
-
-  .work__desc {
-    display: -webkit-box;
-    max-width: var(--ds-measure);
-    margin: var(--ds-s2) 0 0;
-    overflow: hidden;
-    color: var(--ds-muted);
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
-  }
-
-  .work__tags {
-    margin: var(--ds-s3) 0 0;
-  }
-
-  .work__side {
-    grid-column: 2;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0 var(--ds-s6);
-  }
-
-  .work__links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0 var(--ds-s4);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  @media (min-width: 768px) {
-    .work__row {
-      grid-template-columns: var(--ds-s16) minmax(0, 1fr) var(--ds-side-col);
-      gap: var(--ds-s8);
-      align-items: baseline;
-    }
-
-    .work__no {
-      font-size: var(--ds-fs-h2);
-      line-height: var(--ds-lh-tight);
-    }
-
-    .work__side {
-      grid-column: auto;
-      flex-direction: column;
-      align-items: flex-end;
-    }
-  }
-</style>

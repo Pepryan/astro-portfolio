@@ -1,12 +1,13 @@
 ---
-import { FiBookOpen, FiEdit3, FiFolder, FiHome } from 'react-icons/fi';
 import Layout from '../layouts/Layout.astro';
 
-const links = [
-  { href: '/', label: 'Home', hint: 'Back to the homepage', icon: FiHome },
-  { href: '/blog', label: 'Blog', hint: 'Latest articles', icon: FiEdit3 },
-  { href: '/series', label: 'Series', hint: 'Multi-part guides', icon: FiBookOpen },
-  { href: '/projects', label: 'Projects', hint: 'Things I have built', icon: FiFolder },
+const dirs = [
+  { href: '/', label: '~', hint: 'home' },
+  { href: '/blog', label: 'blog/', hint: 'all posts' },
+  { href: '/series', label: 'series/', hint: 'multi-part guides' },
+  { href: '/projects', label: 'projects/', hint: 'things I built' },
+  { href: '/archive', label: 'archive/', hint: 'every post, one line each' },
+  { href: '/contact', label: 'contact/', hint: 'say hello' },
 ];
 ---
 
@@ -15,31 +16,123 @@ const links = [
   description="The page you're looking for doesn't exist. Return to the homepage or explore other sections."
   noindex
 >
-  <main class="mx-auto max-w-4xl px-4 pb-20 pt-36 text-center">
-    <p class="font-mono text-sm font-medium text-blue-600 dark:text-blue-400">404</p>
-    <h1 class="mt-3 text-4xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 md:text-5xl">
-      Page not found
-    </h1>
-    <p class="mx-auto mt-4 max-w-xl text-lg text-neutral-600 dark:text-neutral-400">
-      The page you're looking for doesn't exist. It might have been moved or deleted.
-    </p>
+  <main class="ds-page notfound">
+    <p class="ds-eyebrow"><span class="ds-marker" aria-hidden="true"></span><span>Error 404</span></p>
 
-    <ul class="mx-auto mt-12 grid max-w-3xl grid-cols-1 gap-4 text-left sm:grid-cols-2">
-      {links.map(({ href, label, hint, icon: LinkIcon }) => (
-        <li>
-          <a
-            href={href}
-            class="group flex items-center gap-4 rounded-xl border border-neutral-200 p-5 transition-colors
-              hover:border-neutral-300 hover:bg-neutral-50 dark:border-neutral-800 dark:hover:border-neutral-700 dark:hover:bg-neutral-800/50"
-          >
-            <LinkIcon className="h-5 w-5 text-neutral-500 group-hover:text-blue-600 dark:group-hover:text-blue-400" aria-hidden="true" />
-            <span>
-              <span class="block font-semibold text-neutral-900 dark:text-neutral-100">{label}</span>
-              <span class="block text-sm text-neutral-600 dark:text-neutral-400">{hint}</span>
-            </span>
-          </a>
-        </li>
-      ))}
-    </ul>
+    <div class="notfound__term" role="presentation">
+      <p><span class="notfound__prompt">guest@bogor:~$</span> cd <span data-path>/this-page</span></p>
+      <p class="notfound__err">bash: cd: <span data-path>/this-page</span>: No such file or directory</p>
+    </div>
+
+    <h1 class="notfound__title">This page doesn't exist.</h1>
+    <p class="ds-lede">It may have moved when the site was rebuilt, or the link has a typo. One of these will get you back on track:</p>
+
+    <div class="notfound__term">
+      <p><span class="notfound__prompt">guest@bogor:~$</span> ls</p>
+      <ul class="notfound__ls">
+        {dirs.map(({ href, label, hint }) => (
+          <li><a href={href}>{label}</a><span>{hint}</span></li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="notfound__actions">
+      <a class="ds-button" href="/">Back to home <span class="ds-arrow" aria-hidden="true">→</span></a>
+      <button type="button" class="ds-link" data-open-search>Search the blog</button>
+    </div>
   </main>
 </Layout>
+
+<script>
+  import { openSearch } from '../lib/search';
+
+  const path = decodeURIComponent(window.location.pathname);
+  document.querySelectorAll('[data-path]').forEach((el) => (el.textContent = path));
+  document.querySelector('[data-open-search]')?.addEventListener('click', () => openSearch());
+</script>
+
+<style>
+  .notfound {
+    display: grid;
+    gap: var(--ds-s8);
+    max-width: calc(var(--ds-measure) + var(--ds-s24) * 2);
+  }
+
+  .notfound__term {
+    padding: var(--ds-s4);
+    border: var(--ds-hairline) solid var(--ds-rule);
+    border-radius: var(--ds-radius);
+    background: var(--ds-wash);
+    font-family: var(--ds-font-display);
+    font-size: var(--ds-fs-small);
+  }
+
+  .notfound__term p {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .notfound__prompt {
+    color: var(--ds-accent);
+    font-weight: 600;
+  }
+
+  .notfound__err {
+    color: var(--ds-muted);
+  }
+
+  .notfound__title {
+    margin: 0;
+    font-family: var(--ds-font-display);
+    font-size: var(--ds-fs-display);
+    font-weight: 700;
+    line-height: var(--ds-lh-tight);
+    letter-spacing: var(--ds-track-display);
+    text-wrap: balance;
+  }
+
+  .notfound__ls {
+    display: grid;
+    gap: var(--ds-s1);
+    margin: var(--ds-s2) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .notfound__ls li {
+    display: grid;
+    grid-template-columns: var(--ds-date-col) minmax(0, 1fr);
+    gap: var(--ds-s4);
+  }
+
+  .notfound__ls a {
+    color: var(--ds-accent);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: var(--ds-s1);
+    transition: text-decoration-color var(--ds-dur) var(--ds-ease);
+  }
+
+  .notfound__ls a:hover,
+  .notfound__ls a:focus-visible {
+    text-decoration-color: currentColor;
+  }
+
+  .notfound__ls span {
+    color: var(--ds-muted);
+  }
+
+  .notfound__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--ds-s4) var(--ds-s8);
+  }
+
+  .notfound__actions button {
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+</style>

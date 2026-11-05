@@ -1,36 +1,155 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import ContactComponent from '../components/Contact';
+import PageHeader from '../components/blog/PageHeader.astro';
 import { generateSEO } from '../utils/seo';
+import { componentConfig, seoConfig } from '../config/components';
 import { isPageEnabled } from '../utils/pages';
 
 if (!isPageEnabled('contact')) {
   return new Response(null, { status: 404, statusText: 'Page not found' });
 }
 
-// Generate SEO data for contact page
-const contactSEO = generateSEO({
+const { contact, hero } = componentConfig;
+const email = contact.email;
+const channels = Object.values(contact.social).filter((channel) => channel.enabled && !channel.url.startsWith('mailto:'));
+
+const seo = generateSEO({
   title: 'Contact',
-  description: 'Get in touch with Febryan Ramadhan for collaborations, opportunities, or just to say hello! Available for cloud engineering, DevOps, and web development projects.',
+  description: 'Get in touch with Febryan Ramadhan about Linux, AI tooling or anything on the blog.',
   canonical: '/contact',
   type: 'website',
-  keywords: ['contact', 'collaboration', 'cloud engineer', 'devops', 'web developer', 'freelance', 'opportunities']
+  keywords: ['contact', 'febryan ramadhan', 'linux', 'sysadmin', 'ai'],
 });
 ---
 
-<Layout
-  title={contactSEO.title}
-  description={contactSEO.description}
-  canonical={contactSEO.canonical}
-  image={contactSEO.image}
-  type={contactSEO.type}
-  keywords={contactSEO.keywords}
->
-  <main class="mx-auto mb-10 max-w-7xl px-4 py-4">
-    <section id="contact" class="-mt-16 flex min-h-screen items-center justify-center px-4">
-      <div class="mx-auto w-full max-w-6xl pt-20">
-        <ContactComponent client:load />
+<Layout title={seo.title} description={seo.description} canonical={seo.canonical} image={seo.image} type={seo.type} keywords={seo.keywords}>
+  <main class="ds-page">
+    <PageHeader
+      eyebrow="Contact"
+      eyebrowNote={hero.role}
+      title="Say hello"
+      lede="Questions about Linux, AI tooling or something I wrote are welcome. Email works best, and every post has a comment section if you'd rather ask in public."
+    >
+      <div class="contact-cta">
+        <a class="ds-button" href={`mailto:${email}`}>
+          Send an email <span class="ds-arrow" aria-hidden="true">→</span>
+        </a>
+        <button type="button" class="ds-link" data-copy-email={email}>
+          <span data-copy-label>Copy address</span>
+        </button>
       </div>
-    </section>
+    </PageHeader>
+
+    <dl class="ds-ledger channels">
+      <div class="channel">
+        <dt class="ds-label">Email</dt>
+        <dd><a href={`mailto:${email}`}>{email}</a></dd>
+      </div>
+      <div class="channel">
+        <dt class="ds-label">Location</dt>
+        <dd>
+          {contact.location} · {hero.terminal.utcOffset}
+          <span class="channel__note" data-local-time data-tz={hero.terminal.timezone}></span>
+        </dd>
+      </div>
+      {channels.map((channel) => (
+        <div class="channel">
+          <dt class="ds-label">{channel.label}</dt>
+          <dd>
+            <a href={channel.url} target="_blank" rel="noopener noreferrer">
+              {channel.url.replace(/^https?:\/\//, '')}<span class="sr-only"> (opens in a new tab)</span>
+            </a>
+          </dd>
+        </div>
+      ))}
+      <div class="channel">
+        <dt class="ds-label">RSS</dt>
+        <dd><a href="/rss.xml">{seoConfig.site.url.replace(/^https?:\/\//, '')}/rss.xml</a></dd>
+      </div>
+    </dl>
   </main>
 </Layout>
+
+<script>
+  // Local time in Bogor, computed once — a hint for when a reply might come
+  document.querySelectorAll<HTMLElement>('[data-local-time]').forEach((el) => {
+    const time = new Date().toLocaleTimeString('en-GB', { timeZone: el.dataset.tz, hour: '2-digit', minute: '2-digit' });
+    el.textContent = `It's ${time} there right now.`;
+  });
+
+  document.querySelectorAll<HTMLButtonElement>('[data-copy-email]').forEach((button) => {
+    const label = button.querySelector<HTMLElement>('[data-copy-label]');
+    button.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(button.dataset.copyEmail ?? '');
+        if (label) label.textContent = 'Copied';
+      } catch {
+        if (label) label.textContent = 'Copy failed';
+      }
+      window.setTimeout(() => label && (label.textContent = 'Copy address'), 2000);
+    });
+  });
+</script>
+
+<style>
+  .contact-cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--ds-s4) var(--ds-s8);
+  }
+
+  .contact-cta button {
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+
+  .channels {
+    margin: 0;
+  }
+
+  .channel {
+    display: grid;
+    gap: var(--ds-s1) var(--ds-s8);
+    padding-block: var(--ds-s4);
+    border-bottom: var(--ds-hairline) solid var(--ds-rule);
+  }
+
+  .channel dd {
+    margin: 0;
+    font-family: var(--ds-font-display);
+    overflow-wrap: anywhere;
+  }
+
+  .channel a {
+    color: var(--ds-ink);
+    text-decoration: underline;
+    text-decoration-color: var(--ds-rule);
+    text-underline-offset: var(--ds-s1);
+    transition:
+      color var(--ds-dur) var(--ds-ease),
+      text-decoration-color var(--ds-dur) var(--ds-ease);
+  }
+
+  .channel a:hover,
+  .channel a:focus-visible {
+    color: var(--ds-accent);
+    text-decoration-color: var(--ds-accent);
+  }
+
+  .channel__note {
+    display: block;
+    margin-top: var(--ds-s1);
+    color: var(--ds-muted);
+    font-family: var(--ds-font-text);
+    font-size: var(--ds-fs-small);
+  }
+
+  @media (min-width: 768px) {
+    .channel {
+      grid-template-columns: var(--ds-side-col) minmax(0, 1fr);
+      align-items: baseline;
+    }
+  }
+</style>

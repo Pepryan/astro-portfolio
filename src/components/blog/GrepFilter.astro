@@ -8,13 +8,29 @@ interface Props {
   /** [tag, count] pairs, most used first */
   tags?: [string, number][];
   maxTags?: number;
+  /** What the rows are, for the status line ("posts", "projects") */
+  noun?: string;
+  placeholder?: string;
+  /** Trailing link after the chips; null hides it */
+  moreLink?: { href: string; text: string } | null;
+  /** Prefix chips with # (tags) or not (categories) */
+  hash?: boolean;
+  emptyHint?: string;
 }
 
-const { tags = [], maxTags = 10 } = Astro.props;
+const {
+  tags = [],
+  maxTags = 10,
+  noun = 'posts',
+  placeholder = 'strace, tcp, ansible…',
+  moreLink = { href: '/blog/tags', text: 'All tags' },
+  hash = true,
+  emptyHint = 'Try a shorter word, or press / to search inside every post.',
+} = Astro.props;
 const shownTags = tags.slice(0, maxTags);
 ---
 
-<div class="grep" data-post-filter hidden>
+<div class="grep" data-post-filter data-noun={noun} hidden>
   <label class="grep__bar">
     <span class="grep__prompt" aria-hidden="true">$ grep -i</span>
     <input
@@ -23,20 +39,20 @@ const shownTags = tags.slice(0, maxTags);
       type="search"
       autocomplete="off"
       spellcheck="false"
-      placeholder="strace, tcp, ansible…"
-      aria-label="Filter posts by title, summary or tag"
+      placeholder={placeholder}
+      aria-label={`Filter ${noun} by text or ${hash ? 'tag' : 'category'}`}
     />
   </label>
 
   {shownTags.length > 0 && (
-    <div class="grep__tags" role="group" aria-label="Filter by tag">
+    <div class="grep__tags" role="group" aria-label={hash ? 'Filter by tag' : 'Filter by category'}>
       <button type="button" class="grep__tag" data-filter-tag="" aria-pressed="true">all</button>
       {shownTags.map(([tag, count]) => (
         <button type="button" class="grep__tag" data-filter-tag={tag.toLowerCase()} aria-pressed="false">
-          #{tag}<span class="grep__count">{count}</span>
+          {hash ? `#${tag}` : tag}<span class="grep__count">{count}</span>
         </button>
       ))}
-      <a class="ds-link grep__more" href="/blog/tags">All tags <span class="ds-arrow" aria-hidden="true">→</span></a>
+      {moreLink && <a class="ds-link grep__more" href={moreLink.href}>{moreLink.text} <span class="ds-arrow" aria-hidden="true">→</span></a>}
     </div>
   )}
 
@@ -47,7 +63,7 @@ const shownTags = tags.slice(0, maxTags);
 </div>
 
 <p class="grep__empty" data-filter-empty hidden>
-  grep: no posts match <span data-filter-query></span>. Try a shorter word, or press <kbd>/</kbd> to search inside every post.
+  grep: no {noun} match <span data-filter-query></span>. {emptyHint}
 </p>
 
 <script>
@@ -58,6 +74,8 @@ const shownTags = tags.slice(0, maxTags);
 <style>
   .grep {
     display: grid;
+    /* minmax(0, 1fr): never let the input's intrinsic width widen the page */
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--ds-s4);
     margin-bottom: var(--ds-s12);
   }
@@ -170,8 +188,4 @@ const shownTags = tags.slice(0, maxTags);
     font-family: var(--ds-font-display);
   }
 
-  .grep__empty kbd {
-    color: var(--ds-ink);
-    font-family: inherit;
-  }
 </style>

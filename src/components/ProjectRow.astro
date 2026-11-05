@@ -1,0 +1,142 @@
+---
+/**
+ * One project as a numbered ledger row: index │ title + description + stack │
+ * year/status + links. Used by the homepage Work section and /projects.
+ * data-* attributes let the grep filter (src/lib/post-filter.ts) work on it.
+ */
+import type { Project } from '../types';
+
+interface Props {
+  project: Project;
+  number: number;
+  showStatus?: boolean;
+  clamp?: boolean;
+}
+
+const { project, number, showStatus = false, clamp = true } = Astro.props;
+
+const isExternal = (href: string) => /^https?:\/\//.test(href) && !href.includes('febryan.web.id');
+const localPath = (href: string) => href.replace(/^https?:\/\/febryan\.web\.id/, '');
+
+const links: { href: string; text: string; external: boolean }[] = [];
+if (project.github) links.push({ href: project.github, text: 'Repository', external: true });
+if (project.demo && project.demo !== project.link) links.push({ href: project.demo, text: 'Demo', external: isExternal(project.demo) });
+if (project.link && project.link !== project.github) {
+  const external = isExternal(project.link);
+  links.push({ href: external ? project.link : localPath(project.link), text: external ? 'Website' : 'Write-up', external });
+}
+
+const category = project.category.toLowerCase();
+const text = [project.title, project.description, project.category, ...project.tags].join(' ').toLowerCase();
+---
+
+<li class="ds-hover-row ds-spot ds-nudge project-row" data-spotlight data-post data-text={text} data-tags={category} data-series="">
+  <span class="project-row__no" aria-hidden="true">{String(number).padStart(2, '0')}</span>
+
+  <div class="project-row__body">
+    <h3 class="ds-h3">{project.title}</h3>
+    <p class:list={['project-row__desc', { 'project-row__desc--clamp': clamp }]}>{project.description}</p>
+    <p class="ds-label project-row__tags">{project.tags.join(' / ')}</p>
+  </div>
+
+  <div class="project-row__side">
+    <span class="ds-label">
+      {[project.year, showStatus && project.status, showStatus && project.category].filter(Boolean).join(' · ')}
+    </span>
+    <ul class="project-row__links">
+      {links.map(({ href, text: label, external }) => (
+        <li>
+          <a class="ds-link" href={href} {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+            {label}
+            <span class="ds-arrow" aria-hidden="true">{external ? '↗' : '→'}</span>
+            <span class="sr-only">: {project.title}{external ? ' (opens in a new tab)' : ''}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</li>
+
+<style>
+  .project-row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--ds-s2) var(--ds-s4);
+    padding-block: var(--ds-s8);
+  }
+
+  .project-row[hidden] {
+    display: none;
+  }
+
+  .project-row__no {
+    color: var(--ds-muted);
+    font-family: var(--ds-font-display);
+    font-size: var(--ds-fs-value);
+    font-weight: 600;
+    line-height: var(--ds-lh-snug);
+  }
+
+  .project-row__body {
+    min-width: 0;
+  }
+
+  .project-row__desc {
+    max-width: var(--ds-measure);
+    margin: var(--ds-s2) 0 0;
+    color: var(--ds-muted);
+  }
+
+  .project-row__desc--clamp {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+  }
+
+  .project-row__tags {
+    margin: var(--ds-s3) 0 0;
+  }
+
+  .project-row__side {
+    grid-column: 2;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 var(--ds-s6);
+  }
+
+  .project-row__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--ds-s4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 768px) {
+    .project-row {
+      grid-template-columns: var(--ds-s16) minmax(0, 1fr) var(--ds-side-col);
+      gap: var(--ds-s8);
+      align-items: baseline;
+    }
+
+    .project-row__no {
+      font-size: var(--ds-fs-h2);
+      line-height: var(--ds-lh-tight);
+    }
+
+    .project-row__side {
+      grid-column: auto;
+      flex-direction: column;
+      align-items: flex-end;
+      text-align: right;
+    }
+
+    .project-row__links {
+      justify-content: flex-end;
+    }
+  }
+</style>

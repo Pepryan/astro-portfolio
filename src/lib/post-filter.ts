@@ -16,6 +16,7 @@ export function initPostFilter(root: HTMLElement): void {
   const rows = [...scope.querySelectorAll<HTMLElement>('[data-post]')];
   const groups = [...scope.querySelectorAll<HTMLElement>('[data-post-group]')];
   if (!input) return;
+  const noun = root.dataset.noun ?? 'posts';
 
   const params = new URLSearchParams(window.location.search);
   const state = {
@@ -50,8 +51,8 @@ export function initPostFilter(root: HTMLElement): void {
     if (status) {
       const scopeLabel = [state.tag && `#${state.tag}`, state.series && `series “${state.series}”`].filter(Boolean).join(', ');
       status.textContent = filtered
-        ? `${visible} of ${rows.length} posts${scopeLabel ? ` in ${scopeLabel}` : ''}`
-        : `${rows.length} posts`;
+        ? `${visible} of ${rows.length} ${noun}${scopeLabel ? ` in ${scopeLabel}` : ''}`
+        : `${rows.length} ${noun}`;
     }
     if (reset) reset.hidden = !filtered;
     if (empty) empty.hidden = visible > 0;

@@ -192,67 +192,13 @@ export const componentConfig = {
     },
     projects: {
       enabled: true,
-      showInNavigation: true,
-      layout: "grid", // "grid", "masonry", "list"
-      showFilters: true,
-      categories: [
-        {
-          id: "all",
-          name: "All",
-          description: "All projects and work",
-          icon: "🚀",
-        },
-        {
-          id: "cloud",
-          name: "Cloud",
-          description: "Cloud infrastructure and architecture",
-          icon: "☁️",
-        },
-        {
-          id: "devops",
-          name: "DevOps",
-          description: "CI/CD, automation, and infrastructure",
-          icon: "⚙️",
-        },
-        {
-          id: "automation",
-          name: "Automation",
-          description: "Process automation and scripting",
-          icon: "🤖",
-        },
-        {
-          id: "open-source",
-          name: "Open Source",
-          description: "Open source contributions and projects",
-          icon: "🌟",
-        },
-        {
-          id: "web",
-          name: "Web",
-          description: "Web applications and development",
-          icon: "🌐",
-        }
-      ],
-      cta: {
-        enabled: true,
-        title: "Have a Project in Mind?",
-        subtitle: "Let's collaborate and bring your ideas to life with modern technology and best practices.",
-        backgroundStyle: "minimal", // "gradient", "pattern", "minimal"
-        primaryAction: {
-          text: "Get In Touch",
-          link: "/contact"
-        },
-        secondaryAction: {
-          text: "Read My Blog",
-          link: "/blog"
-        }
-      }
+      showInNavigation: true
     },
     contact: {
       enabled: true,
       showInNavigation: true,
       title: "Contact",
-      description: "Get in touch for collaborations, opportunities, or just to say hello!"
+      description: "Questions about Linux, AI tooling or something I wrote"
     },
     series: {
       enabled: true,
@@ -381,65 +327,29 @@ export const componentConfig = {
   },
 
   // Skills Section Configuration
+  // Skills table on /projects. "now" = daily work, "experience" = earlier roles that still hold.
   skills: {
     enabled: true,
-    title: "Skills",
-    showProgress: false, // Show skill level progress bars
-    animateOnScroll: true,
-    layout: 'grid', // 'grid' or 'list'
     categories: [
-      {
-        id: 'devops-cloud',
-        title: "DevOps & Cloud",
-        color: 'blue',
-        items: [
-          { name: "DevOps", focus: "CI/CD, Automation", level: 90 },
-          { name: "Kubernetes", focus: "Container Orchestration", level: 85 },
-          { name: "Amazon Web Services (AWS)", focus: "Cloud Infrastructure", level: 88 },
-          { name: "Linux", focus: "System Administration", level: 95 },
-          { name: "OpenStack", focus: "Private Cloud", level: 85 },
-          { name: "Google Cloud Platform (GCP)", focus: "Cloud Services", level: 80 },
-          { name: "KVM", focus: "Virtualization", level: 85 }
-        ]
-      },
-      {
-        id: 'development-scripting',
-        title: "Development & Scripting",
-        color: 'green',
-        items: [
-          { name: "HTML, CSS, Javascript", focus: "Frontend Development", level: 85 },
-          { name: "Python", focus: "Automation & Development", level: 90 },
-          { name: "Bash", focus: "Shell Scripting", level: 95 },
-          { name: "Javascript", focus: "Full-stack Development", level: 85 }
-        ]
-      },
-      {
-        id: 'monitoring-tools',
-        title: "Monitoring & Tools",
-        color: 'purple',
-        items: [
-          { name: "Grafana", focus: "Data Visualization", level: 90 },
-          { name: "Prometheus", focus: "Metrics Collection", level: 88 },
-          { name: "Victoria Metrics", focus: "Time Series DB", level: 80 },
-          { name: "Uptime Kuma", focus: "Uptime Monitoring", level: 85 }
-        ]
-      },
-      {
-        id: 'automation-iac',
-        title: "Automation & IaC",
-        color: 'orange',
-        items: [
-          { name: "CI/CD", focus: "GitLab CI, Jenkins", level: 90 },
-          { name: "GitLab", focus: "DevOps Platform", level: 95 },
-          { name: "Git", focus: "Version Control", level: 95 },
-          { name: "Ansible", focus: "Configuration Management", level: 85 },
-          { name: "Terraform", focus: "Infrastructure as Code", level: 80 },
-          { name: "Docker/Podman", focus: "Containerization", level: 90 },
-          { name: "n8n", focus: "Automation", level: 90 }
-        ]
-      }
+      { title: "Linux & systems", status: "now", items: ["Linux", "Bash", "KVM", "Btrfs"] },
+      { title: "AI", status: "now", items: ["Claude", "Claude Code", "Python + LLM APIs", "n8n"] },
+      { title: "Cloud & containers", status: "experience", items: ["OpenStack", "Kubernetes", "Docker / Podman", "OpenShift / OKD", "AWS", "GCP"] },
+      { title: "Monitoring", status: "experience", items: ["Grafana", "Prometheus", "VictoriaMetrics", "Uptime Kuma"] },
+      { title: "Automation & CI/CD", status: "experience", items: ["Ansible", "Terraform", "GitLab CI", "Jenkins", "Git"] },
+      { title: "Development", status: "experience", items: ["Python", "HTML, CSS, JavaScript", "PHP"] }
     ]
   },
+
+  // Certifications on /projects, newest first
+  certifications: [
+    { title: "AWS Academy Cloud Architecting", issuer: "AWS", year: "2023", active: true, url: "https://www.credly.com/badges/576f0a39-1615-4d94-860b-d8fc2316de44/public_url" },
+    { title: "Certified DevOps Professional", issuer: "GitLab", year: "2023", active: true, url: "https://www.credly.com/badges/f3a13b0d-f6ef-41d8-884e-52060edc9e75/public_url" },
+    { title: "Certified Security Specialist", issuer: "GitLab", year: "2022", active: true, url: "https://www.credly.com/badges/fe4d83d0-b1b4-469c-8c41-953254e07476/public_url" },
+    { title: "Certified CI/CD Associate", issuer: "GitLab", year: "2022", active: true, url: "https://www.credly.com/badges/f9b78922-688e-4729-91de-9e90bd5cef1d/public_url" },
+    { title: "Certified Git Associate", issuer: "GitLab", year: "2022", active: true, url: "https://www.credly.com/badges/cef73c89-298d-44d5-8885-29d4eb6f3990/public_url" },
+    { title: "Certified Project Management Associate", issuer: "GitLab", year: "2022", active: true, url: "https://www.credly.com/badges/2063b57e-5d5e-4917-8199-edbcb766f635/public_url" },
+    { title: "Cisco Certified Network Associate (CCNA)", issuer: "Cisco", year: "2013", active: false, url: null as string | null }
+  ],
 
   // Projects/Portfolio Section Configuration
   projects: {
@@ -587,13 +497,8 @@ export const componentConfig = {
   // Contact Section Configuration
   contact: {
     enabled: true,
-    title: "Get In Touch",
-    subtitle: "Let's connect and discuss opportunities",
-    showForm: false, // Enable contact form
-    animateOnScroll: true,
     email: 'febryanramadhan@gmail.com',
     location: 'Bogor, Indonesia',
-    availability: 'Available for freelance and full-time opportunities',
     social: {
       linkedin: {
         url: 'https://linkedin.com/in/febryanramadhan',
