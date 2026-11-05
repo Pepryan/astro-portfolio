@@ -36,7 +36,7 @@ const socialLinks = hero.showSocialLinks
 ---
 
 <div class="hero" data-spotlight>
-  <div class="hero__bg" aria-hidden="true"></div>
+  <div class="hero__bg ds-gridbg" aria-hidden="true"></div>
 
   <p class="ds-eyebrow hero__eyebrow">
     <span class="ds-marker" aria-hidden="true"></span>
@@ -86,39 +86,10 @@ const socialLinks = hero.showSocialLinks
     line-height: var(--ds-lh-body);
   }
 
-  /* ---------- Interactive grid ---------- */
+  /* ---------- Interactive grid (shared .ds-gridbg), bleeding above and below ---------- */
   .hero__bg {
-    position: absolute;
-    inset: calc(var(--ds-s24) * -1) 0;
-    z-index: -1;
-    pointer-events: none;
-  }
-
-  .hero__bg::before,
-  .hero__bg::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(var(--line) var(--ds-hairline), transparent var(--ds-hairline)),
-      linear-gradient(90deg, var(--line) var(--ds-hairline), transparent var(--ds-hairline));
-    background-size: var(--ds-grid) var(--ds-grid);
-  }
-
-  /* Base grid, fading out toward the edges */
-  .hero__bg::before {
-    --line: var(--ds-grid-line);
-    mask-image: radial-gradient(ellipse 80% 70% at 60% 45%, black 20%, transparent 75%);
-  }
-
-  /* Accent grid, only visible in a circle under the cursor */
-  .hero__bg::after {
-    --line: var(--ds-grid-glow);
-    mask-image: radial-gradient(
-      var(--ds-spot-size) circle at var(--mx, -100%) calc(var(--my, -100%) + var(--ds-s24)),
-      black,
-      transparent 70%
-    );
+    --gridbg-inset: calc(var(--ds-s24) * -1) 0;
+    --gridbg-shift-y: var(--ds-s24);
   }
 
   /* One-shot scan line on load: a single pass, not a loop */

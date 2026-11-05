@@ -9,8 +9,8 @@ import type { BlogPost } from '../../types';
 import type { SeriesNavigationData } from '../../utils/series';
 import { formatDate, primaryText, secondaryText } from '../../lib/format';
 import { seoConfig } from '../../config/components';
-import { tagUrl } from '../../lib/posts';
 import PostRow from './PostRow.astro';
+import PostFacts from './PostFacts.astro';
 import { DISCUSSIONS_URL } from '../../lib/giscus';
 
 interface Props {
@@ -74,6 +74,10 @@ const shareLinks = [
   <a class="ds-link post__back" href="/blog"><span aria-hidden="true">←</span> All posts</a>
 
   <div class="post__grid">
+    <aside class="post__rail" aria-label="About this post" data-pagefind-ignore>
+      <PostFacts layout="rail" data={data} readingTime={readingTime} wordCount={wordCount} series={series} seriesPart={seriesPart} seriesTotal={seriesTotal} />
+    </aside>
+
     <article class="post__article" data-pagefind-body={data.hidden ? undefined : true}>
       <header class="post__head">
         <p class="ds-eyebrow">
@@ -86,28 +90,9 @@ const shareLinks = [
         {subtitle && <p class="post__subtitle" lang="id">{subtitle}</p>}
         {summary && <p class="ds-lede">{summary}</p>}
 
-        <dl class="post__meta">
-          <div><dt class="ds-label">Published</dt><dd>{formatDate(data.date, 'short')}</dd></div>
-          {data.updated && <div><dt class="ds-label">Updated</dt><dd>{formatDate(data.updated, 'short')}</dd></div>}
-          <div><dt class="ds-label">Reading</dt><dd>{readingTime} min</dd></div>
-          <div><dt class="ds-label">Words</dt><dd>{wordCount.toLocaleString('en-US')}</dd></div>
-        </dl>
-
-        {series && (
-          <a class="post__series ds-spot" data-spotlight href={`/series/${series.slug}`}>
-            <span class="ds-label">Series · Part {seriesPart} of {seriesTotal}</span>
-            <span class="post__series-name">{series.name}</span>
-            <span class="post__series-bar" style={`--progress: ${(seriesPart / seriesTotal) * 100}%`} aria-hidden="true"></span>
-          </a>
-        )}
-
-        {tags.length > 0 && (
-          <ul class="post__tags" aria-label="Tags">
-            {tags.map((tag) => (
-              <li><a href={tagUrl(tag)}>#{tag}</a></li>
-            ))}
-          </ul>
-        )}
+        <div class="post__facts-inline">
+          <PostFacts layout="inline" data={data} readingTime={readingTime} wordCount={wordCount} series={series} seriesPart={seriesPart} seriesTotal={seriesTotal} />
+        </div>
 
         {data.thumbnail && (
           <figure class="post__cover">
@@ -232,8 +217,9 @@ const shareLinks = [
 
 <style>
   .post {
-    --post-measure: 70ch;
-    --post-toc: 15rem;
+    --post-measure: 46rem;
+    --post-toc: 16rem;
+    --post-rail: 12rem;
   }
 
   .post__back {
@@ -250,10 +236,43 @@ const shareLinks = [
     max-width: var(--post-measure);
   }
 
+  .post__rail {
+    display: none;
+  }
+
+  /* Tablet/laptop: article + TOC */
   @media (min-width: 1024px) {
     .post__grid {
-      grid-template-columns: minmax(0, var(--post-measure)) var(--post-toc);
+      grid-template-columns: minmax(0, 1fr) var(--post-toc);
+      gap: var(--ds-s12);
+    }
+
+    .post__article {
+      max-width: none;
+    }
+  }
+
+  /* Wide: facts rail │ wider article │ TOC — uses the space instead of margins */
+  @media (min-width: 1280px) {
+    .post {
+      --post-measure: 52rem;
+    }
+
+    .post__grid {
+      grid-template-columns: var(--post-rail) minmax(0, var(--post-measure)) var(--post-toc);
       justify-content: space-between;
+      gap: var(--ds-s12);
+    }
+
+    .post__rail {
+      position: sticky;
+      top: calc(var(--ds-header) + var(--ds-s8));
+      display: block;
+      align-self: start;
+    }
+
+    .post__facts-inline {
+      display: none;
     }
   }
 
@@ -286,79 +305,6 @@ const shareLinks = [
     font-family: var(--ds-font-display);
     font-size: var(--ds-fs-body);
     text-wrap: balance;
-  }
-
-  .post__meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--ds-s4) var(--ds-s8);
-    margin: 0;
-    padding-block: var(--ds-s4);
-    border-block: var(--ds-hairline) solid var(--ds-rule);
-  }
-
-  .post__meta dd {
-    margin: var(--ds-s1) 0 0;
-    font-family: var(--ds-font-display);
-    font-weight: 600;
-  }
-
-  .post__series {
-    display: grid;
-    gap: var(--ds-s2);
-    padding: var(--ds-s4);
-    border: var(--ds-hairline) solid var(--ds-rule);
-    border-radius: var(--ds-radius);
-    color: inherit;
-    text-decoration: none;
-    transition: border-color var(--ds-dur) var(--ds-ease);
-  }
-
-  .post__series:hover,
-  .post__series:focus-visible {
-    border-color: var(--ds-accent);
-  }
-
-  .post__series .ds-label {
-    color: var(--ds-accent);
-  }
-
-  .post__series-name {
-    font-weight: 600;
-  }
-
-  .post__series-bar {
-    height: var(--ds-hairline);
-    background: linear-gradient(90deg, var(--ds-accent) var(--progress), var(--ds-rule) var(--progress));
-  }
-
-  .post__tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--ds-s2);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .post__tags a {
-    display: inline-block;
-    padding: var(--ds-s1) var(--ds-s3);
-    border: var(--ds-hairline) solid var(--ds-rule);
-    border-radius: var(--ds-radius);
-    color: var(--ds-muted);
-    font-family: var(--ds-font-display);
-    font-size: var(--ds-fs-small);
-    text-decoration: none;
-    transition:
-      color var(--ds-dur) var(--ds-ease),
-      border-color var(--ds-dur) var(--ds-ease);
-  }
-
-  .post__tags a:hover,
-  .post__tags a:focus-visible {
-    border-color: var(--ds-ink);
-    color: var(--ds-ink);
   }
 
   .post__cover {
@@ -422,7 +368,7 @@ const shareLinks = [
   @media (min-width: 1024px) {
     .post__toc {
       position: sticky;
-      top: var(--ds-s24);
+      top: calc(var(--ds-header) + var(--ds-s8));
       display: grid;
       gap: var(--ds-s4);
       align-self: start;

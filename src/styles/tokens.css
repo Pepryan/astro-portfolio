@@ -21,13 +21,6 @@
   --ds-accent-strong: #1e3a8a;
   --ds-on-accent: #ffffff;
 
-  --ds-band-bg: #171717;
-  --ds-band-ink: #fafafa;
-  --ds-band-muted: #a3a3a3;
-  --ds-band-rule: #404040;
-  --ds-band-accent: #60a5fa;
-  --ds-band-accent-strong: #93c5fd;
-  --ds-band-on-accent: #0a0a0a;
 
   /* ---- Type: mono display + neutral text ---- */
   --ds-font-display: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -66,7 +59,8 @@
   --ds-radius: 0.25rem;
   --ds-marker: 0.5rem;
   --ds-measure: 34rem;
-  --ds-container: 72rem;
+  --ds-container: 88rem;
+  --ds-header: 3.5rem;
   --ds-date-col: 7.5rem;
   --ds-side-col: 16rem;
   --ds-dur: 200ms;
@@ -112,10 +106,6 @@
   --ds-accent-strong: #93c5fd;
   --ds-on-accent: #0a0a0a;
 
-  --ds-band-bg: #262626;
-  --ds-band-ink: #f5f5f5;
-  --ds-band-muted: #a3a3a3;
-  --ds-band-rule: #525252;
 
   --ds-shadow: 0 24px 48px -24px rgb(0 0 0 / 0.7);
   --ds-spot: color-mix(in srgb, var(--ds-accent) 10%, transparent);
@@ -144,7 +134,7 @@
 .ds-page {
   max-width: var(--ds-container);
   margin-inline: auto;
-  padding: calc(var(--ds-s24) + var(--ds-s4)) var(--ds-s4) var(--ds-s16);
+  padding: calc(var(--ds-header) + var(--ds-s12)) var(--ds-s4) var(--ds-s16);
   color: var(--ds-ink);
 }
 
@@ -273,6 +263,35 @@
   background: var(--ds-accent-strong);
 }
 
+/* Square icon button (header search, theme, menu) */
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ds-s8);
+  height: var(--ds-s8);
+  padding: 0;
+  border: var(--ds-hairline) solid transparent;
+  border-radius: var(--ds-radius);
+  background: transparent;
+  color: var(--ds-muted);
+  cursor: pointer;
+  transition:
+    color var(--ds-dur) var(--ds-ease),
+    border-color var(--ds-dur) var(--ds-ease);
+}
+
+.icon-btn svg {
+  width: var(--ds-s4);
+  height: var(--ds-s4);
+}
+
+.icon-btn:hover,
+.icon-btn:focus-visible {
+  border-color: var(--ds-rule);
+  color: var(--ds-ink);
+}
+
 /* Secondary action: mono text link with an arrow */
 .ds-link {
   display: inline-flex;
@@ -353,6 +372,41 @@
   background-image: radial-gradient(
     var(--ds-spot-size) circle at var(--mx, -100%) var(--my, -100%),
     var(--ds-spot),
+    transparent 70%
+  );
+}
+
+/* Interactive grid background: base grid fading to the edges, plus an accent
+   grid revealed in a circle under the cursor (needs a [data-spotlight] parent) */
+.ds-gridbg {
+  position: absolute;
+  inset: var(--gridbg-inset, 0);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.ds-gridbg::before,
+.ds-gridbg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--line) var(--ds-hairline), transparent var(--ds-hairline)),
+    linear-gradient(90deg, var(--line) var(--ds-hairline), transparent var(--ds-hairline));
+  background-size: var(--ds-grid) var(--ds-grid);
+}
+
+.ds-gridbg::before {
+  --line: var(--ds-grid-line);
+  mask-image: var(--gridbg-mask, radial-gradient(ellipse 80% 70% at 60% 45%, black 20%, transparent 75%));
+}
+
+.ds-gridbg::after {
+  --line: var(--ds-grid-glow);
+  mask-image: radial-gradient(
+    var(--ds-spot-size) circle at calc(var(--mx, -100%) + var(--gridbg-shift-x, 0px))
+      calc(var(--my, -100%) + var(--gridbg-shift-y, 0px)),
+    black,
     transparent 70%
   );
 }

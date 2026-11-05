@@ -1,56 +1,73 @@
 #!/usr/bin/env node
+/**
+ * Generate every favicon / app icon from the ">_" mark.
+ *
+ *   npm run favicons
+ *
+ * - public/favicon.svg is the source of truth for the tab icon (rounded tile).
+ * - Home-screen icons (apple-touch, android, logo) use a full-bleed variant with
+ *   the glyph inside the maskable safe zone, because iOS/Android crop corners.
+ * - favicon.ico bundles 16/32/48 px PNGs.
+ * Keep the colours in sync with src/components/Logo.astro and src/styles/tokens.css.
+ */
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import sharp from 'sharp';
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
+const pub = (...p) => path.join(root, 'public', ...p);
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const tileSvg = fs.readFileSync(pub('favicon.svg'));
 
-// Simple favicon generation script
-// This creates basic PNG files from the existing favicon.ico
+// Same glyph, square background, scaled into the central ~60% (maskable safe zone)
+const fullBleedSvg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="-8 -8 48 48">
+  <rect x="-8" y="-8" width="48" height="48" fill="#171717"/>
+  <path d="M9.5 10.5 15 16l-5.5 5.5" fill="none" stroke="#fafafa" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="17" y="19.5" width="7.5" height="3" rx="1" fill="#60a5fa"/>
+</svg>`);
 
-const publicDir = path.join(__dirname, '..', 'public');
+const render = (svg, size) => sharp(svg, { density: Math.max(72, (size / 32) * 72 * 2) }).resize(size, size).png().toBuffer();
 
-// Create basic favicon files by copying the existing favicon.ico
-const faviconSizes = [
-  { name: 'favicon-16x16.png', size: '16x16' },
-  { name: 'favicon-32x32.png', size: '32x32' },
-  { name: 'apple-touch-icon.png', size: '180x180' },
-  { name: 'android-chrome-192x192.png', size: '192x192' },
-  { name: 'android-chrome-512x512.png', size: '512x512' }
-];
+/** Minimal ICO container holding PNG images (supported by every modern browser). */
+function toIco(pngs) {
+  const header = Buffer.alloc(6);
+  header.writeUInt16LE(0, 0); // reserved
+  header.writeUInt16LE(1, 2); // type: icon
+  header.writeUInt16LE(pngs.length, 4);
 
-// Create a simple SVG-based PNG generator
-function createSimplePNG(size, filename) {
-  const svgContent = `<?xml version="1.0" encoding="UTF-8"?>
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 32 32">
-<rect width="32" height="32" fill="#5935B9"/>
-<path d="M8 9 C18.56 8.63 18.56 8.63 21.91 10.26 C23.31 12.5 23.13 13.5 22.63 16.06 C21.64 19.77 21.64 19.77 23 22 C21.06 21.63 21.06 21.63 19 21 C18.67 20.34 18.34 19.68 18 19 C15.69 18.27 13.35 17.6 11 17 C11 18.65 11 20.3 11 22 C10.01 22 9.02 22 8 22 C8 17.71 8 13.42 8 9 Z" fill="#BEB9E6"/>
-<path d="M9 10 C10.96 9.95 12.92 9.91 14.88 9.88 C16.51 9.84 16.51 9.84 18.18 9.8 C21 10 21 10 23 12 C22.94 13.88 22.94 13.88 22.56 16 C21.94 19.1 21.94 19.1 23 22 C19.76 21.44 18.07 20.59 16 18 C16 17.34 16 16.68 16 16 C17.32 15.67 18.64 15.34 20 15 C20 14.34 20 13.68 20 13 C16.7 12.67 13.4 12.34 10 12 C9.67 12.99 9.34 13.98 9 15 C9 13.35 9 11.7 9 10 Z" fill="#F6F4FB"/>
-<path d="M11 12 C13.97 12 16.94 12 20 12 C20 13.32 20 14.64 20 16 C18.35 16 16.7 16 15 16 C15 15.34 15 14.68 15 14 C13.68 14 12.36 14 11 14 C11 13.34 11 12.68 11 12 Z" fill="#6045C0"/>
-</svg>`;
-
-  const outputPath = path.join(publicDir, filename);
-
-  // For now, we'll create a simple SVG file with PNG extension
-  // In a real implementation, you'd use a library like sharp or canvas to convert SVG to PNG
-  console.log(`Creating ${filename} (${size}x${size})`);
-
-  fs.writeFileSync(outputPath.replace('.png', '.svg'), svgContent);
-  console.log(`✓ Created ${filename.replace('.png', '.svg')}`);
+  let offset = 6 + pngs.length * 16;
+  const entries = pngs.map(({ size, data }) => {
+    const entry = Buffer.alloc(16);
+    entry.writeUInt8(size >= 256 ? 0 : size, 0);
+    entry.writeUInt8(size >= 256 ? 0 : size, 1);
+    entry.writeUInt8(0, 2); // palette
+    entry.writeUInt8(0, 3); // reserved
+    entry.writeUInt16LE(1, 4); // colour planes
+    entry.writeUInt16LE(32, 6); // bits per pixel
+    entry.writeUInt32LE(data.length, 8);
+    entry.writeUInt32LE(offset, 12);
+    offset += data.length;
+    return entry;
+  });
+  return Buffer.concat([header, ...entries, ...pngs.map((p) => p.data)]);
 }
 
-// Generate all favicon sizes
-console.log('Generating favicon files...');
+const outputs = [
+  { file: 'favicon-16x16.png', svg: tileSvg, size: 16 },
+  { file: 'favicon-32x32.png', svg: tileSvg, size: 32 },
+  { file: 'apple-touch-icon.png', svg: fullBleedSvg, size: 180 },
+  { file: 'android-chrome-192x192.png', svg: fullBleedSvg, size: 192 },
+  { file: 'android-chrome-512x512.png', svg: fullBleedSvg, size: 512 },
+  { file: 'images/logo.png', svg: fullBleedSvg, size: 512 },
+];
 
-faviconSizes.forEach(({ name, size }) => {
-  const [width] = size.split('x').map(Number);
-  createSimplePNG(width, name);
-});
+for (const { file, svg, size } of outputs) {
+  fs.writeFileSync(pub(file), await render(svg, size));
+  console.log(`✓ ${file} (${size}×${size})`);
+}
 
-console.log('\n✅ Favicon generation complete!');
-console.log('\nNote: For production, consider using a proper image conversion tool like:');
-console.log('- sharp (npm install sharp)');
-console.log('- @squoosh/lib');
-console.log('- or online tools like favicon.io');
+const icoSizes = [16, 32, 48];
+const icoPngs = await Promise.all(icoSizes.map(async (size) => ({ size, data: await render(tileSvg, size) })));
+fs.writeFileSync(pub('favicon.ico'), toIco(icoPngs));
+console.log(`✓ favicon.ico (${icoSizes.join(', ')})`);

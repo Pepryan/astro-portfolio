@@ -1,11 +1,11 @@
 {
-  "name": "Febryan Portfolio - Cloud Engineer & DevOps Specialist",
-  "short_name": "Febryan Portfolio",
-  "description": "Personal portfolio and technical blog by Febryan Ramadhan. Cloud Engineer specializing in DevOps, Infrastructure, and Automation.",
+  "name": "Febryan Ramadhan — Linux & AI notes",
+  "short_name": "Febryan",
+  "description": "Personal site and technical blog of Febryan Ramadhan, system administrator at Odoo. Notes on Linux, AI tooling, cloud and DevOps.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#3b82f6",
+  "theme_color": "#171717",
   "orientation": "portrait-primary",
   "scope": "/",
   "lang": "id",
@@ -13,8 +13,8 @@
     "portfolio",
     "blog",
     "technology",
-    "cloud",
-    "devops"
+    "linux",
+    "ai"
   ],
   "icons": [
     {

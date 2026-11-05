@@ -14,7 +14,8 @@ const { index } = Astro.props;
 const { cta } = componentConfig;
 ---
 
-<section class="contact" aria-labelledby="contact-title">
+<section class="contact" data-spotlight aria-labelledby="contact-title">
+  <div class="ds-gridbg contact__bg" aria-hidden="true"></div>
   <p class="ds-eyebrow contact__eyebrow">
     {index && <span class="ds-index">{index}</span>}
     <span>Contact</span>
@@ -37,21 +38,22 @@ const { cta } = componentConfig;
 </section>
 
 <style>
-  /* Swap the shared tokens for their band variants inside this surface */
+  /* Closing band: follows the theme, bookends the hero with the same live grid */
   .contact {
-    --ds-ink: var(--ds-band-ink);
-    --ds-muted: var(--ds-band-muted);
-    --ds-rule: var(--ds-band-rule);
-    --ds-accent: var(--ds-band-accent);
-    --ds-accent-strong: var(--ds-band-accent-strong);
-    --ds-on-accent: var(--ds-band-on-accent);
-
+    position: relative;
+    isolation: isolate;
     max-width: var(--ds-container);
     margin: var(--ds-s16) auto 0;
+    overflow: hidden;
     padding: var(--ds-s12) var(--ds-s6);
+    border: var(--ds-hairline) solid var(--ds-rule);
     border-radius: var(--ds-radius);
-    background: var(--ds-band-bg);
+    background: var(--ds-wash);
     color: var(--ds-ink);
+  }
+
+  .contact__bg {
+    --gridbg-mask: radial-gradient(ellipse 70% 90% at 85% 50%, black 10%, transparent 70%);
   }
 
   .contact__eyebrow {
@@ -81,7 +83,7 @@ const { cta } = componentConfig;
 
   /* Focus ring offset must match the band, not the page */
   .contact :focus-visible {
-    --tw-ring-offset-color: var(--ds-band-bg);
+    --tw-ring-offset-color: var(--ds-wash);
   }
 
   @media (min-width: 768px) {

@@ -118,7 +118,7 @@ export const componentConfig = {
     enabled: true,
     title: "Febryan Ramadhan",
     role: "System Administrator at Odoo",
-    headline: "Keeping Linux boring, making AI useful, writing down the rest.",
+    headline: "Keeping Linux reliable, making AI useful, sharing what I learn.",
     lede: "I keep Linux systems running at Odoo and experiment with Claude and LLM APIs in Python. Years of cloud, DevOps and CI/CD work still shape how I approach both.",
     // Interactive terminal in the hero (fastfetch-style). Visitors are "guest".
     terminal: {

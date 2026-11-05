@@ -26,6 +26,13 @@
   }
 }
 
+/* The wide three-column post layout gets a slightly larger reading size */
+@media (min-width: 1280px) {
+  .prose {
+    --prose-fs: 1.1875rem;
+  }
+}
+
 .prose * {
   max-width: 100%;
   box-sizing: border-box;

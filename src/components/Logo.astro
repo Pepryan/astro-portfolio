@@ -1,0 +1,36 @@
+---
+/**
+ * Site mark: a shell prompt ">_" on a tile. Colours come from the tokens, so
+ * it inverts with the theme. The static favicon is public/favicon.svg
+ * (regenerate PNG/ICO with `npm run favicons`).
+ */
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<svg class:list={['logo', className]} viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+  <rect class="logo__tile" width="32" height="32" rx="7"></rect>
+  <path class="logo__chevron" d="M9.5 10.5 15 16l-5.5 5.5"></path>
+  <rect class="logo__caret" x="17" y="19.5" width="7.5" height="3" rx="1"></rect>
+</svg>
+
+<style>
+  .logo__tile {
+    fill: var(--ds-ink);
+  }
+
+  .logo__chevron {
+    fill: none;
+    stroke: var(--ds-bg);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .logo__caret {
+    fill: var(--ds-accent);
+  }
+</style>

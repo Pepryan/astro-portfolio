@@ -18,28 +18,66 @@ const links = [
 ];
 ---
 
-<footer class="border-t border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
-  <div class="mx-auto flex max-w-5xl flex-col items-center gap-3 px-4 py-6 sm:flex-row sm:justify-between">
-    <p class="text-sm text-neutral-600 dark:text-neutral-400">
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <p class="ds-label site-footer__text">
       © {year} {author.name}
-      <span class="text-neutral-400 dark:text-neutral-600">·</span>
-      <span class="text-neutral-500">Built with Astro and Claude AI</span>
+      <span aria-hidden="true">·</span>
+      <span>Built with Astro and Claude</span>
     </p>
-    <ul class="flex items-center gap-1">
+    <ul class="site-footer__links">
       {links.map(({ href, label, icon: LinkIcon }) => (
         <li>
           <a
+            class="icon-btn"
             href={href}
             aria-label={label}
             title={label}
             {...(href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-            class="inline-flex h-9 w-9 items-center justify-center rounded-full text-neutral-500 transition-colors
-              hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
           >
-            <LinkIcon className="h-4 w-4" aria-hidden="true" />
+            <LinkIcon aria-hidden="true" />
           </a>
         </li>
       ))}
     </ul>
   </div>
 </footer>
+
+<style>
+  .site-footer {
+    border-top: var(--ds-hairline) solid var(--ds-rule);
+    background: var(--ds-bg);
+  }
+
+  .site-footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ds-s4);
+    max-width: var(--ds-container);
+    margin-inline: auto;
+    padding: var(--ds-s6) var(--ds-s4);
+  }
+
+  @media (min-width: 640px) {
+    .site-footer__inner {
+      padding-inline: var(--ds-s8);
+    }
+  }
+
+  .site-footer__text {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--ds-s2);
+    margin: 0;
+  }
+
+  .site-footer__links {
+    display: flex;
+    gap: var(--ds-s1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+</style>
