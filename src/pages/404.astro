@@ -1,5 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { componentConfig } from '../config/components';
+
+const { terminal } = componentConfig.hero;
+const prompt = `${terminal.user}@${terminal.host}:~$`;
 
 const dirs = [
   { href: '/', label: '~', hint: 'home' },
@@ -20,7 +24,7 @@ const dirs = [
     <p class="ds-eyebrow"><span class="ds-marker" aria-hidden="true"></span><span>Error 404</span></p>
 
     <div class="notfound__term" role="presentation">
-      <p><span class="notfound__prompt">guest@bogor:~$</span> cd <span data-path>/this-page</span></p>
+      <p><span class="notfound__prompt">{prompt}</span> cd <span data-path>/this-page</span></p>
       <p class="notfound__err">bash: cd: <span data-path>/this-page</span>: No such file or directory</p>
     </div>
 
@@ -28,7 +32,7 @@ const dirs = [
     <p class="ds-lede">This address may have moved when the site was rebuilt. Everything is still here, starting from one of these:</p>
 
     <div class="notfound__term">
-      <p><span class="notfound__prompt">guest@bogor:~$</span> ls</p>
+      <p><span class="notfound__prompt">{prompt}</span> ls</p>
       <ul class="notfound__ls">
         {dirs.map(({ href, label, hint }) => (
           <li><a href={href}>{label}</a><span>{hint}</span></li>

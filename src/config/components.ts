@@ -123,8 +123,8 @@ export const componentConfig = {
     // Interactive terminal in the hero (fastfetch-style). Visitors are "guest".
     terminal: {
       user: "guest",
-      owner: "febryan",
-      host: "bogor",
+      owner: "feram",
+      host: "web",
       shell: "bash",
       focus: "Linux, AI tooling",
       stack: ["Linux", "Claude Code", "Python"],
