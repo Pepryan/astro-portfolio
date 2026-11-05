@@ -1,0 +1,361 @@
+---
+/**
+ * Hero terminal: fastfetch-style system card (portrait as the "logo") and a
+ * real prompt. The fetch output is plain HTML, so it reads fine without JS;
+ * src/lib/terminal.ts adds the commands. The only glass surface on the page.
+ */
+import { componentConfig, seoConfig } from '../../config/components';
+import type { BlogPost } from '../../types';
+
+interface Props {
+  posts: BlogPost[];
+}
+
+const { posts } = Astro.props;
+const { hero, experience, storyJourney } = componentConfig;
+const term = hero.terminal;
+
+const [current, previous] = experience.items;
+const shortCompany = (name: string) => name.replace(/^PT\.?\s*/, '');
+const startYear = Number.parseInt(storyJourney.milestones[0]?.year ?? '2011', 10);
+const uptimeYears = new Date().getFullYear() - startYear;
+const [city] = seoConfig.author.location.split(',');
+
+const header = `${term.owner}@${term.host}`;
+const fetchRows = [
+  ['Role', `${current.role} @ ${current.company}`],
+  ['Focus', term.focus],
+  ['Uptime', `${uptimeYears} years (since ${startYear})`],
+  ['Shell', term.shell],
+  ['Location', `${city}, ID · ${term.utcOffset}`],
+  previous && ['Previous', `${previous.role} @ ${shortCompany(previous.company)}`],
+  ['Stack', term.stack.join(' · ')],
+].filter(Boolean) as [string, string][];
+
+const firstPart = (text = '') => text.split(' | ')[0].trim();
+const socialLabels: Record<string, string> = { github: 'GitHub', gitlab: 'GitLab', linkedin: 'LinkedIn', twitter: 'X' };
+
+const data = {
+  user: term.user,
+  owner: term.owner,
+  host: term.host,
+  role: current.role,
+  company: current.company,
+  startYear,
+  timezone: term.timezone,
+  email: seoConfig.author.email,
+  about: hero.lede,
+  posts: posts.map((post) => ({
+    title: firstPart(post.data.title),
+    href: `/blog/${post.slug}`,
+    date: new Date(post.data.date).toISOString().slice(0, 10),
+  })),
+  links: hero.socialLinks
+    .filter((link) => link.enabled && socialLabels[link.platform])
+    .map((link) => ({ label: socialLabels[link.platform], href: link.url })),
+};
+
+const prompt = `${term.user}@${term.host}:~$`;
+---
+
+<div class="term" data-terminal>
+  <div class="term__bar">
+    <span class="term__title">{term.user}@{term.host}: ~</span>
+    <span class="term__meta" aria-hidden="true">{term.shell}</span>
+  </div>
+
+  <div class="term__screen" data-term-screen role="log" aria-live="polite" aria-label="Terminal output">
+    <p class="term__echo term__echo--intro"><span class="term__prompt">{prompt}</span> <span class="term__typed">fastfetch</span></p>
+
+    <div class="term__fetch" data-term-fetch>
+      <img src="/images/photo-web-febryan.webp" alt={`Portrait of ${hero.title}`} width="300" height="300" loading="eager" fetchpriority="high" decoding="async" />
+      <div class="term__info">
+        <p class="term__host"><span class="term__key">{term.owner}</span>@<span class="term__key">{term.host}</span></p>
+        <p class="term__rule" aria-hidden="true">{'-'.repeat(header.length)}</p>
+        <dl>
+          {fetchRows.map(([key, value]) => (
+            <div>
+              <dt class="term__key">{key}</dt>
+              <dd>{value}</dd>
+            </div>
+          ))}
+        </dl>
+        <p class="term__swatches" aria-hidden="true">
+          {Array.from({ length: 8 }, (_, i) => <span style={`--i:${i}`}></span>)}
+        </p>
+      </div>
+    </div>
+
+    <p class="term__hint">Type <kbd>help</kbd> and press Enter.</p>
+  </div>
+
+  <form class="term__form" data-term-form>
+    <label for="term-input" class="term__prompt">{prompt}</label>
+    <input
+      id="term-input"
+      class="term__input"
+      data-term-input
+      type="text"
+      autocomplete="off"
+      autocapitalize="off"
+      autocorrect="off"
+      spellcheck="false"
+      enterkeyhint="send"
+      placeholder="help"
+      aria-describedby="term-help"
+    />
+    <span class="ds-caret term__caret" aria-hidden="true"></span>
+    <span id="term-help" class="sr-only">Interactive terminal. Type help and press Enter to list commands.</span>
+  </form>
+
+  <script type="application/json" data-term-data set:html={JSON.stringify(data).replace(/</g, '\\u003c')} />
+</div>
+
+<script>
+  import { initTerminal } from '../../lib/terminal';
+  document.querySelectorAll<HTMLElement>('[data-terminal]').forEach(initTerminal);
+</script>
+
+<style>
+  .term {
+    --term-height: 26rem;
+    --term-logo: 6rem;
+    --term-key-col: 5.5rem;
+
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: var(--ds-hairline) solid var(--ds-rule);
+    border-radius: var(--ds-radius);
+    background: var(--ds-glass);
+    box-shadow: var(--ds-shadow);
+    -webkit-backdrop-filter: blur(var(--ds-blur));
+    backdrop-filter: blur(var(--ds-blur));
+    font-family: var(--ds-font-display);
+    font-size: var(--ds-fs-small);
+    line-height: var(--ds-lh-body);
+  }
+
+  .term__bar {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--ds-s4);
+    padding: var(--ds-s2) var(--ds-s4);
+    border-bottom: var(--ds-hairline) solid var(--ds-rule);
+    color: var(--ds-muted);
+    font-size: var(--ds-fs-label);
+  }
+
+  .term__title {
+    color: var(--ds-ink);
+    font-weight: 600;
+  }
+
+  .term__screen {
+    height: var(--term-height);
+    padding: var(--ds-s4);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+
+  .term__screen :global(p) {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+
+  /* Command output keeps its spacing (aligned columns, padded help) */
+  .term__screen :global(:is(.term__out, .term__echo)) {
+    white-space: pre-wrap;
+  }
+
+  .term__screen :global(a) {
+    color: var(--ds-accent);
+    text-decoration: underline;
+    text-underline-offset: var(--ds-s1);
+  }
+
+  /* :global — the script creates prompts at runtime, outside Astro's scope */
+  .term :global(.term__prompt) {
+    color: var(--ds-accent);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .term__screen :global(.term__echo) {
+    margin-top: var(--ds-s2);
+  }
+
+  .term__screen :global(.term__out) {
+    color: var(--ds-muted);
+  }
+
+  .term__screen :global(.term__out--error) {
+    color: var(--ds-ink);
+  }
+
+  /* fastfetch block */
+  .term__fetch,
+  .term__screen :global(.term__fetch--again) {
+    display: grid;
+    grid-template-columns: var(--term-logo) minmax(0, 1fr);
+    gap: var(--ds-s4);
+    margin-top: var(--ds-s3);
+  }
+
+  .term__fetch img {
+    width: 100%;
+    aspect-ratio: 1;
+    height: auto;
+    object-fit: cover;
+    border-radius: var(--ds-radius);
+    filter: grayscale(0.35) contrast(1.05);
+  }
+
+  .term__host {
+    font-weight: 600;
+  }
+
+  .term__key {
+    color: var(--ds-accent);
+    font-weight: 600;
+  }
+
+  .term__rule {
+    color: var(--ds-muted);
+  }
+
+  .term__info dl {
+    margin: 0;
+  }
+
+  .term__info dl > div {
+    display: grid;
+    grid-template-columns: var(--term-key-col) minmax(0, 1fr);
+  }
+
+  .term__info dd {
+    margin: 0;
+    color: var(--ds-ink);
+  }
+
+  /* fastfetch colour row, in our palette: neutral ramp ending on the accent */
+  .term__screen .term__swatches {
+    display: flex;
+    margin-top: var(--ds-s3);
+  }
+
+  .term__swatches span {
+    width: var(--ds-s4);
+    height: var(--ds-s3);
+    background: color-mix(in srgb, var(--ds-ink) calc(100% - var(--i) * 12%), transparent);
+  }
+
+  .term__swatches span:last-child {
+    background: var(--ds-accent);
+  }
+
+  .term__screen .term__hint {
+    margin-top: var(--ds-s4);
+    color: var(--ds-muted);
+  }
+
+  .term__hint kbd {
+    color: var(--ds-ink);
+    font-family: inherit;
+    font-weight: 600;
+  }
+
+  /* prompt */
+  .term__form {
+    display: flex;
+    align-items: center;
+    gap: var(--ds-s2);
+    padding: var(--ds-s3) var(--ds-s4);
+    border-top: var(--ds-hairline) solid var(--ds-rule);
+  }
+
+  .term__input {
+    flex: 1;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--ds-ink);
+    font: inherit;
+    caret-color: var(--ds-accent);
+    outline: none;
+  }
+
+  /* The form shows focus (accent rule above it); no second ring on the input */
+  .term__input:focus-visible {
+    box-shadow: none;
+  }
+
+  .term__input::placeholder {
+    color: var(--ds-muted);
+  }
+
+  /* Block caret only while idle; the native caret takes over when focused */
+  .term__form:focus-within .term__caret {
+    display: none;
+  }
+
+  .term__form:focus-within {
+    box-shadow: inset 0 var(--ds-hairline) 0 var(--ds-accent);
+  }
+
+  /* Phones: logo above the info, screen grows with content up to a cap */
+  @media (max-width: 767px) {
+    .term {
+      --term-logo: 4.5rem;
+      --term-key-col: 5rem;
+    }
+
+    .term__screen {
+      height: auto;
+      max-height: var(--term-height);
+      padding: var(--ds-s3);
+    }
+
+    .term__fetch,
+    .term__screen :global(.term__fetch--again) {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--ds-s3);
+    }
+
+    .term__fetch img {
+      width: var(--term-logo);
+    }
+  }
+
+  /* Intro: type the command, then reveal its output. CSS only. */
+  @media (prefers-reduced-motion: no-preference) {
+    .term__typed {
+      display: inline-block;
+      overflow: hidden;
+      vertical-align: bottom;
+      white-space: nowrap;
+      animation: term-type var(--ds-dur-slow) steps(9) both;
+    }
+
+    .term__fetch,
+    .term__hint {
+      animation: term-show var(--ds-dur) var(--ds-ease) both;
+      animation-delay: calc(var(--ds-dur-slow) + var(--ds-dur));
+    }
+
+    .term__hint {
+      animation-delay: calc(var(--ds-dur-slow) + var(--ds-dur) * 2);
+    }
+  }
+
+  @keyframes term-type {
+    from { width: 0; }
+    to { width: 9ch; }
+  }
+
+  @keyframes term-show {
+    from { opacity: 0; transform: translateY(var(--ds-s1)); }
+  }
+</style>

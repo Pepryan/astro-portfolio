@@ -130,8 +130,19 @@ export const componentConfig = {
     enabled: true,
     title: "Febryan Ramadhan",
     role: "System Administrator at Odoo",
-    headline: "Linux sysadmin. Tinkering with AI. Writing down everything I learn.",
+    headline: "Keeping Linux boring, making AI useful, writing down the rest.",
     lede: "I keep Linux systems running at Odoo and experiment with Claude and LLM APIs in Python. Years of cloud, DevOps and CI/CD work still shape how I approach both.",
+    // Interactive terminal in the hero (fastfetch-style). Visitors are "guest".
+    terminal: {
+      user: "guest",
+      owner: "febryan",
+      host: "bogor",
+      shell: "bash",
+      focus: "Linux, AI tooling",
+      stack: ["Linux", "Claude Code", "Python"],
+      timezone: "Asia/Jakarta",
+      utcOffset: "UTC+7"
+    },
     showSocialLinks: true,
     socialLinks: [
       { platform: 'github', url: 'https://github.com/Pepryan', enabled: true },

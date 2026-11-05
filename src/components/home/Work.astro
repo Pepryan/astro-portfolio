@@ -44,7 +44,7 @@ const linksFor = (project: Project) => {
 
     <ol class="ds-ledger">
       {items.map((project, i) => (
-        <li class="work__row">
+        <li class="ds-hover-row ds-spot ds-nudge work__row" data-spotlight>
           <span class="work__no" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
 
           <div class="work__body">

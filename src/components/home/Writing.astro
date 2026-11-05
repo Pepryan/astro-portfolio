@@ -31,7 +31,7 @@ const firstPart = (text = '') => text.split(' | ')[0].trim();
     <ol class="ds-ledger">
       {posts.map((post) => (
         <li>
-          <a class="ds-row writing__row" href={`/blog/${post.slug}`}>
+          <a class="ds-row ds-spot ds-nudge writing__row" data-spotlight href={`/blog/${post.slug}`}>
             <time class="ds-label writing__date" datetime={new Date(post.data.date).toISOString()}>
               {formatDate(post.data.date, 'short')}
             </time>
