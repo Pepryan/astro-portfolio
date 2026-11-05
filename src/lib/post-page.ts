@@ -7,26 +7,70 @@ function initTocHighlight(): void {
   const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]')];
   const ids = [...new Set(links.map((link) => link.dataset.tocLink!))];
   const headings = ids.map((id) => document.getElementById(id)).filter((el): el is HTMLElement => Boolean(el));
+  const sidebar = document.querySelector<HTMLElement>('.post__toc');
+  const article = document.querySelector<HTMLElement>('[data-article-content]');
   if (!headings.length) return;
 
+  let tops: number[] = [];
+  let active = '';
+  let frame = 0;
+
+  // Absolute heading positions; re-measured when the article reflows (lazy images, fonts)
+  const measure = () => {
+    tops = headings.map((h) => h.getBoundingClientRect().top + window.scrollY);
+  };
+
+  // Keep the active link inside the sidebar's own scroll area, like the old TOC did
+  const keepVisible = (id: string) => {
+    if (!sidebar || sidebar.scrollHeight <= sidebar.clientHeight) return;
+    const link = sidebar.querySelector<HTMLElement>(`[data-toc-link="${CSS.escape(id)}"]`);
+    if (!link) return;
+    const box = sidebar.getBoundingClientRect();
+    const item = link.getBoundingClientRect();
+    const pad = Math.min(48, box.height * 0.15);
+    if (item.top < box.top + pad) {
+      sidebar.scrollBy({ top: item.top - box.top - pad, behavior: 'smooth' });
+    } else if (item.bottom > box.bottom - pad) {
+      sidebar.scrollBy({ top: item.bottom - box.bottom + pad, behavior: 'smooth' });
+    }
+  };
+
   const setActive = (id: string) => {
+    if (id === active) return;
+    active = id;
     links.forEach((link) => {
       if (link.dataset.tocLink === id) link.setAttribute('aria-current', 'location');
       else link.removeAttribute('aria-current');
     });
+    if (id) keepVisible(id);
   };
 
-  // Active = the last heading that has crossed the upper third of the viewport
-  const visible = new Set<string>();
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => (entry.isIntersecting ? visible.add(entry.target.id) : visible.delete(entry.target.id)));
-      const current = headings.find((h) => visible.has(h.id));
-      if (current) setActive(current.id);
-    },
-    { rootMargin: '0px 0px -66% 0px' }
-  );
-  headings.forEach((heading) => observer.observe(heading));
+  // Active = the last heading above a line 30% down the viewport
+  const update = () => {
+    frame = 0;
+    const line = window.scrollY + window.innerHeight * 0.3;
+    let index = -1;
+    for (let i = 0; i < tops.length && tops[i] <= line; i += 1) index = i;
+    setActive(index >= 0 ? headings[index].id : '');
+  };
+
+  const schedule = () => {
+    if (!frame) frame = requestAnimationFrame(update);
+  };
+
+  measure();
+  update();
+  window.addEventListener('scroll', schedule, { passive: true });
+  window.addEventListener('resize', () => {
+    measure();
+    schedule();
+  });
+  if (article) {
+    new ResizeObserver(() => {
+      measure();
+      schedule();
+    }).observe(article);
+  }
 
   // Close the mobile TOC after jumping
   document.querySelectorAll<HTMLDetailsElement>('.post__toc-mobile').forEach((details) =>

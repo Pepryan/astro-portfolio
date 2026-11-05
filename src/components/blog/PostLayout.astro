@@ -10,8 +10,8 @@ import type { SeriesNavigationData } from '../../utils/series';
 import { formatDate, primaryText, secondaryText } from '../../lib/format';
 import { seoConfig } from '../../config/components';
 import { tagUrl } from '../../lib/posts';
-import GiscusComments from '../GiscusComments';
 import PostRow from './PostRow.astro';
+import { DISCUSSIONS_URL } from '../../lib/giscus';
 
 interface Props {
   post: Pick<BlogPost, 'slug' | 'data'>;
@@ -210,15 +210,24 @@ const shareLinks = [
     </section>
   )}
 
-  <section class="post__comments" aria-labelledby="comments-title">
-    <h2 class="ds-eyebrow post__comments-title" id="comments-title"><span>Comments</span></h2>
-    <GiscusComments client:visible />
-  </section>
+  {seoConfig.blog.enableComments && (
+    <section class="post__comments" aria-labelledby="comments-title">
+      <!-- Giscus renders its own "N comments" header; keep ours for screen readers only -->
+      <h2 class="sr-only" id="comments-title">Comments</h2>
+      <p class="ds-label post__comments-status" data-giscus-status>Comments load from GitHub Discussions as you get here.</p>
+      <div class="post__giscus" data-giscus></div>
+      <noscript>
+        <p class="ds-label">Comments need JavaScript. You can also join the discussion on <a class="ds-link" href={DISCUSSIONS_URL}>GitHub</a>.</p>
+      </noscript>
+    </section>
+  )}
 </main>
 
 <script>
   import { initPostPage } from '../../lib/post-page';
+  import { initGiscus } from '../../lib/giscus';
   initPostPage();
+  initGiscus();
 </script>
 
 <style>
@@ -516,8 +525,16 @@ const shareLinks = [
     color: var(--ds-accent);
   }
 
-  .post__comments-title {
-    font-size: var(--ds-fs-label);
+  .post__comments-status {
+    margin: 0;
+  }
+
+  .post__comments-status a {
+    color: var(--ds-accent);
+  }
+
+  .post__giscus {
+    min-height: var(--ds-s24);
   }
 
   .post__pager .ds-eyebrow a {
