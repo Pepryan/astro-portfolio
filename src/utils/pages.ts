@@ -13,14 +13,6 @@ export function isPageEnabled(pageName: keyof typeof componentConfig.pages): boo
 }
 
 /**
- * Check if about section should be shown
- * About section depends on about page being enabled
- */
-export function shouldShowAboutSection(): boolean {
-  return componentConfig.pages.about.enabled && componentConfig.about.enabled;
-}
-
-/**
  * Get all enabled static pages for sitemap generation
  */
 export function getEnabledStaticPages() {

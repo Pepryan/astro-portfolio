@@ -1,0 +1,99 @@
+---
+/**
+ * Closing contact band — the one inverted surface on the page.
+ * One primary action (email), one quiet secondary link.
+ */
+import { componentConfig } from '../../config/components';
+
+interface Props {
+  index: string;
+}
+
+const { index } = Astro.props;
+const { cta } = componentConfig;
+---
+
+<section class="contact" aria-labelledby="contact-title">
+  <p class="ds-eyebrow contact__eyebrow">
+    <span class="ds-index">{index}</span>
+    <span>Contact</span>
+  </p>
+
+  <div class="contact__grid">
+    <h2 class="ds-h2" id="contact-title">{cta.title}</h2>
+    <div class="contact__side">
+      <p class="contact__text">{cta.subtitle}</p>
+      <div class="contact__actions">
+        <a class="ds-button" href={cta.primaryAction.link}>
+          {cta.primaryAction.text} <span class="ds-arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="ds-link" href={cta.secondaryAction.link}>
+          {cta.secondaryAction.text} <span class="ds-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Swap the shared tokens for their band variants inside this surface */
+  .contact {
+    --ds-ink: var(--ds-band-ink);
+    --ds-muted: var(--ds-band-muted);
+    --ds-rule: var(--ds-band-rule);
+    --ds-accent: var(--ds-band-accent);
+    --ds-accent-strong: var(--ds-band-accent-strong);
+    --ds-on-accent: var(--ds-band-on-accent);
+
+    max-width: var(--ds-container);
+    margin: var(--ds-s16) auto 0;
+    padding: var(--ds-s12) var(--ds-s6);
+    border-radius: var(--ds-radius);
+    background: var(--ds-band-bg);
+    color: var(--ds-ink);
+  }
+
+  .contact__eyebrow {
+    margin-bottom: var(--ds-s8);
+  }
+
+  .contact__grid {
+    display: grid;
+    gap: var(--ds-s8);
+  }
+
+  .contact__text {
+    max-width: var(--ds-measure);
+    margin: 0;
+    color: var(--ds-muted);
+    font-size: var(--ds-fs-lede);
+    line-height: var(--ds-lh-lede);
+  }
+
+  .contact__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--ds-s4) var(--ds-s8);
+    margin-top: var(--ds-s8);
+  }
+
+  /* Focus ring offset must match the band, not the page */
+  .contact :focus-visible {
+    --tw-ring-offset-color: var(--ds-band-bg);
+  }
+
+  @media (min-width: 768px) {
+    .contact {
+      padding: var(--ds-s16) var(--ds-s12);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .contact__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: var(--ds-s16);
+      align-items: start;
+    }
+  }
+</style>

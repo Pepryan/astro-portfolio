@@ -2,20 +2,19 @@
  * Global Styles Entry Point
  * 
  * This file imports all modular CSS files for the application.
- * The monolithic 1507-line file has been split into organized modules:
  * 
+ * - tokens.css: Design tokens + shared ds-* primitives
  * - base.css: Tailwind directives, floating header, utilities
  * - prose.css: Blog typography and code block styling
- * - components.css: Buttons, cards, tabs, tags
- * - animations.css: Keyframes and animation utilities
+ * - components.css: Legacy buttons and project tabs (pages not yet redesigned)
  * 
+ * @see src/styles/tokens.css
  * @see src/styles/base.css
  * @see src/styles/prose.css
  * @see src/styles/components.css
- * @see src/styles/animations.css
  */
 
+@import './tokens.css';
 @import './base.css';
 @import './prose.css';
 @import './components.css';
-@import './animations.css';

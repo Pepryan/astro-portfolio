@@ -1,0 +1,174 @@
+---
+/**
+ * Tools as a spec table. "Now" = daily work, "Experience" = earlier roles
+ * that still hold. Two-column rhythm: sticky header left, table right.
+ */
+import SectionHeader from './SectionHeader.astro';
+
+interface Props {
+  index: string;
+}
+
+const { index } = Astro.props;
+
+const groups = [
+  { area: 'Linux & systems', status: 'now', tools: ['Linux', 'Ubuntu', 'CentOS / RHEL', 'Btrfs', 'KVM', 'Bash'] },
+  { area: 'AI', status: 'now', tools: ['Claude', 'Claude Code', 'Python + LLM APIs'] },
+  { area: 'Containers & cloud', status: 'experience', tools: ['Docker', 'Podman', 'OpenShift / OKD', 'OpenStack', 'Kubernetes'] },
+  { area: 'Observability', status: 'experience', tools: ['Grafana', 'Prometheus', 'Loki', 'VictoriaMetrics'] },
+  { area: 'Automation & CI/CD', status: 'experience', tools: ['Ansible', 'GitLab CI', 'Python'] },
+] as const;
+
+const statusLabel = { now: 'Now', experience: 'Experience' } as const;
+---
+
+<section class="ds-section stack" aria-labelledby="stack-title">
+  <div class="stack__head">
+    <SectionHeader
+      compact
+      index={index}
+      label="Stack"
+      id="stack-title"
+      title="What I work with"
+      lede="Linux and AI are the daily work. The cloud and DevOps tools come from earlier roles and are still in the toolbox."
+    />
+  </div>
+
+  <table class="stack__table">
+    <caption class="sr-only">Tools grouped by area, with whether they are current work or past experience</caption>
+    <thead>
+      <tr>
+        <th scope="col" class="ds-label">Area</th>
+        <th scope="col" class="ds-label">Tools</th>
+        <th scope="col" class="ds-label stack__status-col">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {groups.map(({ area, status, tools }) => (
+        <tr>
+          <th scope="row" class="ds-h3">{area}</th>
+          <td>
+            <ul class="stack__tools">
+              {tools.map((tool) => <li>{tool}</li>)}
+            </ul>
+          </td>
+          <td class="stack__status-col">
+            <span class:list={['ds-label', 'stack__status', { 'stack__status--now': status === 'now' }]}>
+              {status === 'now' && <span class="ds-marker" aria-hidden="true"></span>}
+              {statusLabel[status]}
+            </span>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</section>
+
+<style>
+  .stack__table {
+    width: 100%;
+    border-collapse: collapse;
+    border-top: var(--ds-hairline) solid var(--ds-ink);
+    text-align: left;
+  }
+
+  .stack__table thead {
+    /* Column labels only add value next to each other (desktop) */
+    display: none;
+  }
+
+  .stack__table tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: 'area status' 'tools tools';
+    gap: var(--ds-s3) var(--ds-s4);
+    padding-block: var(--ds-s6);
+    border-bottom: var(--ds-hairline) solid var(--ds-rule);
+  }
+
+  .stack__table th[scope='row'] {
+    grid-area: area;
+  }
+
+  .stack__table td:not(.stack__status-col) {
+    grid-area: tools;
+  }
+
+  .stack__status-col {
+    grid-area: status;
+  }
+
+  .stack__tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ds-s2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .stack__tools li {
+    padding: var(--ds-s1) var(--ds-s2);
+    border: var(--ds-hairline) solid var(--ds-rule);
+    border-radius: var(--ds-radius);
+    font-family: var(--ds-font-display);
+    font-size: var(--ds-fs-small);
+    white-space: nowrap;
+  }
+
+  .stack__status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ds-s2);
+    white-space: nowrap;
+  }
+
+  .stack__status--now {
+    color: var(--ds-ink);
+    font-weight: 600;
+  }
+
+  @media (min-width: 1024px) {
+    .stack {
+      display: grid;
+      grid-template-columns: var(--ds-side-col) minmax(0, 1fr);
+      gap: var(--ds-s16);
+      align-items: start;
+    }
+
+    /* Header stays in view while the table scrolls past */
+    .stack__head {
+      position: sticky;
+      top: var(--ds-s24);
+    }
+
+    .stack__table thead {
+      display: table-header-group;
+    }
+
+    .stack__table thead th {
+      padding-block: var(--ds-s3);
+      font-weight: 400;
+    }
+
+    .stack__table tr {
+      display: table-row;
+    }
+
+    .stack__table tbody th,
+    .stack__table tbody td {
+      padding-block: var(--ds-s6);
+      border-bottom: var(--ds-hairline) solid var(--ds-rule);
+      vertical-align: baseline;
+    }
+
+    .stack__table tbody th {
+      padding-right: var(--ds-s6);
+      white-space: nowrap;
+    }
+
+    .stack__status-col {
+      text-align: right;
+    }
+  }
+</style>

@@ -1,0 +1,34 @@
+---
+/**
+ * Shared section header: numbered eyebrow + hairline, left-aligned H2,
+ * optional trailing link and lede. Same pattern on every homepage section.
+ */
+interface Props {
+  index: string;
+  label: string;
+  title: string;
+  id: string;
+  lede?: string;
+  link?: { href: string; text: string };
+  /** Body-size lede for narrow side columns. */
+  compact?: boolean;
+}
+
+const { index, label, title, id, lede, link, compact = false } = Astro.props;
+---
+
+<header class:list={['ds-section-head', { 'ds-section-head--compact': compact }]}>
+  <p class="ds-eyebrow">
+    <span class="ds-index">{index}</span>
+    <span>{label}</span>
+  </p>
+  <div class="ds-section-head__row">
+    <h2 class="ds-h2" id={id}>{title}</h2>
+    {link && (
+      <a class="ds-link" href={link.href}>
+        {link.text} <span class="ds-arrow" aria-hidden="true">→</span>
+      </a>
+    )}
+  </div>
+  {lede && <p class="ds-lede">{lede}</p>}
+</header>

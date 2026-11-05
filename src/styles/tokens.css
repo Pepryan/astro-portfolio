@@ -1,0 +1,304 @@
+/**
+ * Design tokens + shared primitives — "datasheet" system
+ *
+ * Direction: calm and precise. Mono display type, hairline rules, uppercase
+ * mono labels, one flat accent. Every component reads its values from here so
+ * pages stay consistent; component CSS should not introduce raw values.
+ *
+ * Contrast (light, on #ffffff): ink 17.4:1 · muted 7.8:1 · accent 6.7:1
+ * Contrast (dark, on #171717):  ink 16.1:1 · muted 7.4:1 · accent 7.1:1
+ */
+
+:root {
+  /* ---- Color: 1 accent, 3 neutrals (+ an inverted band surface) ---- */
+  --ds-bg: #ffffff;
+  --ds-ink: #171717;
+  --ds-muted: #525252;
+  --ds-rule: #e5e5e5;
+  --ds-wash: #fafafa;
+  --ds-accent: #1d4ed8;
+  --ds-accent-strong: #1e3a8a;
+  --ds-on-accent: #ffffff;
+
+  --ds-band-bg: #171717;
+  --ds-band-ink: #fafafa;
+  --ds-band-muted: #a3a3a3;
+  --ds-band-rule: #404040;
+  --ds-band-accent: #60a5fa;
+  --ds-band-accent-strong: #93c5fd;
+  --ds-band-on-accent: #0a0a0a;
+
+  /* ---- Type: mono display + neutral text ---- */
+  --ds-font-display: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --ds-font-text: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+
+  /* scale 12 / 16 / 20 / 24 / 28→36 / 36→56 */
+  --ds-fs-label: 0.75rem;
+  --ds-fs-small: 0.875rem;
+  --ds-fs-body: 1rem;
+  --ds-fs-h3: 1.25rem;
+  --ds-fs-lede: 1.25rem;
+  --ds-fs-value: 1.5rem;
+  --ds-fs-h2: 1.75rem;
+  --ds-fs-display: 2.25rem;
+
+  --ds-lh-tight: 1.08;
+  --ds-lh-snug: 1.3;
+  --ds-lh-lede: 1.45;
+  --ds-lh-body: 1.6;
+  --ds-track-display: -0.035em;
+  --ds-track-label: 0.08em;
+
+  /* ---- Space: 4px grid ---- */
+  --ds-s1: 0.25rem;
+  --ds-s2: 0.5rem;
+  --ds-s3: 0.75rem;
+  --ds-s4: 1rem;
+  --ds-s6: 1.5rem;
+  --ds-s8: 2rem;
+  --ds-s12: 3rem;
+  --ds-s16: 4rem;
+  --ds-s24: 6rem;
+
+  /* ---- Shape, layout, motion ---- */
+  --ds-hairline: 1px;
+  --ds-radius: 0.25rem;
+  --ds-marker: 0.5rem;
+  --ds-measure: 34rem;
+  --ds-container: 72rem;
+  --ds-date-col: 7.5rem;
+  --ds-side-col: 16rem;
+  --ds-dur: 200ms;
+  --ds-ease: cubic-bezier(0.2, 0.6, 0.2, 1);
+}
+
+@media (min-width: 768px) {
+  :root {
+    --ds-fs-lede: 1.5rem;
+    --ds-fs-h2: 2.25rem;
+    --ds-fs-display: 3rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --ds-fs-display: 3.5rem;
+  }
+}
+
+.dark {
+  --ds-bg: #171717;
+  --ds-ink: #f5f5f5;
+  --ds-muted: #a3a3a3;
+  --ds-rule: #404040;
+  --ds-wash: #1f1f1f;
+  --ds-accent: #60a5fa;
+  --ds-accent-strong: #93c5fd;
+  --ds-on-accent: #0a0a0a;
+
+  --ds-band-bg: #262626;
+  --ds-band-ink: #f5f5f5;
+  --ds-band-muted: #a3a3a3;
+  --ds-band-rule: #525252;
+}
+
+/* =====================================================================
+ * Shared primitives (plain CSS so Astro and React components can share)
+ * ===================================================================== */
+
+/* Section shell: same width as the hero, generous vertical rhythm */
+.ds-section {
+  max-width: var(--ds-container);
+  margin-inline: auto;
+  padding-block: var(--ds-s16);
+  color: var(--ds-ink);
+}
+
+@media (min-width: 768px) {
+  .ds-section {
+    padding-block: var(--ds-s24);
+  }
+}
+
+/* Eyebrow: mono label followed by a hairline that runs to the edge */
+.ds-eyebrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ds-s2) var(--ds-s3);
+  margin: 0;
+  font-family: var(--ds-font-display);
+  font-size: var(--ds-fs-label);
+  font-weight: 600;
+  letter-spacing: var(--ds-track-label);
+  text-transform: uppercase;
+}
+
+.ds-eyebrow::after {
+  content: '';
+  flex: 1 1 var(--ds-s16);
+  height: var(--ds-hairline);
+  background: var(--ds-rule);
+}
+
+.ds-eyebrow__muted {
+  color: var(--ds-muted);
+  font-weight: 400;
+}
+
+.ds-marker {
+  width: var(--ds-marker);
+  height: var(--ds-marker);
+  flex-shrink: 0;
+  background: var(--ds-accent);
+}
+
+/* Small mono label (table headers, metadata) */
+.ds-label {
+  color: var(--ds-muted);
+  font-family: var(--ds-font-display);
+  font-size: var(--ds-fs-label);
+  letter-spacing: var(--ds-track-label);
+  text-transform: uppercase;
+}
+
+/* Headings */
+.ds-h2 {
+  margin: 0;
+  font-family: var(--ds-font-display);
+  font-size: var(--ds-fs-h2);
+  font-weight: 700;
+  line-height: var(--ds-lh-tight);
+  letter-spacing: var(--ds-track-display);
+  text-wrap: balance;
+}
+
+.ds-h3 {
+  margin: 0;
+  font-family: var(--ds-font-text);
+  font-size: var(--ds-fs-h3);
+  font-weight: 600;
+  line-height: var(--ds-lh-snug);
+  text-wrap: balance;
+}
+
+.ds-lede {
+  max-width: var(--ds-measure);
+  margin: 0;
+  color: var(--ds-muted);
+  font-size: var(--ds-fs-lede);
+  line-height: var(--ds-lh-lede);
+  text-wrap: pretty;
+}
+
+/* Section header: eyebrow / title row with an optional trailing link */
+.ds-section-head {
+  display: grid;
+  gap: var(--ds-s6);
+  margin-bottom: var(--ds-s12);
+}
+
+@media (min-width: 1024px) {
+  .ds-section-head--compact .ds-lede {
+    font-size: var(--ds-fs-body);
+    line-height: var(--ds-lh-body);
+  }
+}
+
+.ds-section-head__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--ds-s4) var(--ds-s8);
+}
+
+.ds-index {
+  color: var(--ds-accent);
+}
+
+/* Primary button: the one dominant action in a viewport */
+.ds-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-s3);
+  padding: var(--ds-s4) var(--ds-s6);
+  border-radius: var(--ds-radius);
+  background: var(--ds-accent);
+  color: var(--ds-on-accent);
+  font-family: var(--ds-font-display);
+  font-size: var(--ds-fs-body);
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  transition: background-color var(--ds-dur) var(--ds-ease);
+}
+
+.ds-button:hover,
+.ds-button:focus-visible {
+  background: var(--ds-accent-strong);
+}
+
+/* Secondary action: mono text link with an arrow */
+.ds-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-s2);
+  padding-block: var(--ds-s3);
+  color: var(--ds-muted);
+  font-family: var(--ds-font-display);
+  font-size: var(--ds-fs-label);
+  font-weight: 600;
+  letter-spacing: var(--ds-track-label);
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: var(--ds-hairline);
+  text-underline-offset: var(--ds-s1);
+  transition:
+    color var(--ds-dur) var(--ds-ease),
+    text-decoration-color var(--ds-dur) var(--ds-ease);
+}
+
+.ds-link:hover,
+.ds-link:focus-visible {
+  color: var(--ds-ink);
+  text-decoration-color: var(--ds-accent);
+}
+
+/* Arrow nudge shared by .ds-button and .ds-link */
+.ds-arrow {
+  transition: transform var(--ds-dur) var(--ds-ease);
+}
+
+:is(.ds-button, .ds-link, .ds-row):is(:hover, :focus-visible) .ds-arrow {
+  transform: translateX(var(--ds-s1));
+}
+
+/* Ledger: a list of rows separated by hairlines, heavy rule on top */
+.ds-ledger {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: var(--ds-hairline) solid var(--ds-ink);
+}
+
+.ds-ledger > li {
+  border-bottom: var(--ds-hairline) solid var(--ds-rule);
+}
+
+/* Clickable ledger row: title takes the accent on hover/focus */
+.ds-row {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.ds-row .ds-h3 {
+  transition: color var(--ds-dur) var(--ds-ease);
+}
+
+.ds-row:hover .ds-h3,
+.ds-row:focus-visible .ds-h3 {
+  color: var(--ds-accent);
+}

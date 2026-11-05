@@ -1,0 +1,112 @@
+---
+/**
+ * Career as a changelog, newest first. Everything is visible — no hover reveal.
+ * Two-column rhythm (sticky header left), mirroring the Stack section.
+ */
+import { componentConfig } from '../../config/components';
+import SectionHeader from './SectionHeader.astro';
+
+interface Props {
+  index: string;
+}
+
+const { index } = Astro.props;
+const { storyJourney } = componentConfig;
+const milestones = [...storyJourney.milestones].reverse();
+---
+
+<section class="ds-section journey" aria-labelledby="journey-title">
+  <div class="journey__head">
+    <SectionHeader
+      compact
+      index={index}
+      label="Journey"
+      id="journey-title"
+      title={storyJourney.title}
+      lede={storyJourney.subtitle}
+    />
+  </div>
+
+  <ol class="ds-ledger">
+    {milestones.map((milestone, i) => (
+      <li class:list={['journey__row', { 'journey__row--now': i === 0 }]}>
+        <p class="journey__year">
+          {milestone.year}
+          {i === 0 && (
+            <span class="ds-label journey__now">
+              <span class="ds-marker" aria-hidden="true"></span>Now
+            </span>
+          )}
+        </p>
+        <div>
+          <h3 class="ds-h3">{milestone.title}</h3>
+          <p class="journey__desc">{milestone.description}</p>
+        </div>
+      </li>
+    ))}
+  </ol>
+</section>
+
+<style>
+  .journey__row {
+    display: grid;
+    gap: var(--ds-s2);
+    padding-block: var(--ds-s6);
+  }
+
+  .journey__year {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--ds-s2) var(--ds-s4);
+    margin: 0;
+    color: var(--ds-muted);
+    font-family: var(--ds-font-display);
+    font-size: var(--ds-fs-body);
+    font-weight: 600;
+  }
+
+  .journey__row--now .journey__year {
+    color: var(--ds-ink);
+  }
+
+  .journey__now {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ds-s2);
+    color: var(--ds-ink);
+  }
+
+  .journey__desc {
+    max-width: var(--ds-measure);
+    margin: var(--ds-s1) 0 0;
+    color: var(--ds-muted);
+  }
+
+  @media (min-width: 768px) {
+    .journey__row {
+      grid-template-columns: var(--ds-date-col) minmax(0, 1fr);
+      gap: var(--ds-s8);
+      align-items: baseline;
+    }
+
+    .journey__year {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .journey {
+      display: grid;
+      grid-template-columns: var(--ds-side-col) minmax(0, 1fr);
+      gap: var(--ds-s16);
+      align-items: start;
+    }
+
+    .journey__head {
+      position: sticky;
+      top: var(--ds-s24);
+    }
+  }
+</style>

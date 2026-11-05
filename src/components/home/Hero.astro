@@ -1,0 +1,303 @@
+---
+/**
+ * Homepage hero — static HTML, no client JS.
+ * Asymmetric grid (statement left, captioned portrait right) and a spec strip
+ * of facts read from the config. Tokens live in src/styles/tokens.css.
+ */
+import { componentConfig, seoConfig } from '../../config/components';
+
+interface Props {
+  /** Number of published posts, shown in the spec strip. */
+  postCount: number;
+}
+
+const { postCount } = Astro.props;
+const { hero, experience } = componentConfig;
+
+const socialLabels: Record<string, string> = {
+  github: 'GitHub',
+  gitlab: 'GitLab',
+  linkedin: 'LinkedIn',
+  twitter: 'X',
+  email: 'Email',
+};
+
+const socialLinks = hero.showSocialLinks
+  ? hero.socialLinks
+      .filter((link) => link.enabled && socialLabels[link.platform])
+      .map((link) => ({
+        href: link.url,
+        label: socialLabels[link.platform],
+        external: !link.url.startsWith('mailto:'),
+      }))
+  : [];
+
+// Facts come from the config so the strip stays true when the config changes.
+const [city] = seoConfig.author.location.split(',');
+const [current, previous] = experience.items;
+const startYear = (period: string) => period.split('-')[0].trim();
+const years = (period: string) => period.split('-').map((p) => p.trim()).join('\u2060–\u2060');
+const shortCompany = (name: string) => name.replace(/^PT\.?\s*/, '');
+
+const spec = [
+  { label: 'Based in', value: `${city}, ID`, note: 'UTC+7' },
+  current && { label: 'Now', value: current.company, note: `${current.role} · since ${startYear(current.period)}` },
+  previous && { label: 'Before', value: shortCompany(previous.company), note: `${previous.role} · ${years(previous.period)}` },
+  { label: 'Writing', value: `${postCount} posts`, note: 'Mostly in Bahasa Indonesia' },
+].filter(Boolean) as { label: string; value: string; note: string }[];
+---
+
+<div class="hero">
+  <p class="ds-eyebrow hero__eyebrow">
+    <span class="ds-marker" aria-hidden="true"></span>
+    <span>{hero.title}</span>
+    <span class="ds-eyebrow__muted">{hero.role}</span>
+  </p>
+
+  <div class="hero__grid">
+    <figure class="hero__figure">
+      <img
+        src="/images/photo-web-febryan.webp"
+        alt={`Portrait of ${hero.title}`}
+        width="300"
+        height="300"
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+      />
+      <figcaption>
+        <span class="hero__fig-no">Fig. 1</span>
+        {hero.title}, {city}
+      </figcaption>
+    </figure>
+
+    <div class="hero__copy">
+      <h1 class="hero__title">{hero.headline}</h1>
+      <p class="ds-lede hero__lede">{hero.lede}</p>
+
+      <div class="hero__actions">
+        <a class="ds-button" href="/blog">
+          Read the blog <span class="ds-arrow" aria-hidden="true">→</span>
+        </a>
+
+        {socialLinks.length > 0 && (
+          <ul class="hero__social" aria-label="Elsewhere">
+            {socialLinks.map(({ href, label, external }) => (
+              <li>
+                <a class="ds-link" href={href} {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+                  {label}
+                  {external && <span class="sr-only"> (opens in a new tab)</span>}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  </div>
+
+  <dl class="hero__spec">
+    {spec.map(({ label, value, note }) => (
+      <div class="hero__spec-cell">
+        <dt class="ds-label">{label}</dt>
+        <dd>
+          <span class="hero__spec-value">{value}</span>
+          <span class="hero__spec-note">{note}</span>
+        </dd>
+      </div>
+    ))}
+  </dl>
+</div>
+
+<style>
+  .hero {
+    --hero-thumb: 7rem;
+    --hero-figure: 15rem;
+
+    color: var(--ds-ink);
+    font-family: var(--ds-font-text);
+    line-height: var(--ds-lh-body);
+  }
+
+  @media (min-width: 768px) {
+    .hero {
+      --hero-figure: 13rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hero {
+      --hero-figure: 17.5rem;
+    }
+  }
+
+  .hero__eyebrow {
+    margin-bottom: var(--ds-s8);
+  }
+
+  /* Grid: figure first on mobile, right-hand column from 768px */
+  .hero__grid {
+    display: grid;
+    gap: var(--ds-s8);
+    grid-template-areas: 'figure' 'copy';
+  }
+
+  .hero__copy {
+    grid-area: copy;
+    min-width: 0;
+  }
+
+  .hero__figure {
+    grid-area: figure;
+    display: flex;
+    align-items: flex-end;
+    gap: var(--ds-s4);
+    margin: 0;
+  }
+
+  .hero__figure img {
+    width: var(--hero-thumb);
+    aspect-ratio: 1;
+    height: auto;
+    object-fit: cover;
+    border: var(--ds-hairline) solid var(--ds-rule);
+    border-radius: var(--ds-radius);
+  }
+
+  .hero__figure figcaption {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-s1);
+    color: var(--ds-muted);
+    font-family: var(--ds-font-display);
+    font-size: var(--ds-fs-label);
+  }
+
+  .hero__fig-no {
+    flex-shrink: 0;
+    white-space: nowrap;
+    color: var(--ds-ink);
+    font-weight: 600;
+    letter-spacing: var(--ds-track-label);
+    text-transform: uppercase;
+  }
+
+  @media (min-width: 768px) {
+    .hero__grid {
+      grid-template-columns: minmax(0, 1fr) var(--hero-figure);
+      grid-template-areas: 'copy figure';
+      gap: var(--ds-s12);
+      align-items: start;
+    }
+
+    .hero__figure {
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--ds-s3);
+    }
+
+    .hero__figure img {
+      width: 100%;
+    }
+
+    .hero__figure figcaption {
+      flex-direction: row;
+      gap: var(--ds-s2);
+      padding-top: var(--ds-s3);
+      border-top: var(--ds-hairline) solid var(--ds-rule);
+    }
+  }
+
+  .hero__title {
+    margin: 0;
+    font-family: var(--ds-font-display);
+    font-size: var(--ds-fs-display);
+    font-weight: 700;
+    line-height: var(--ds-lh-tight);
+    letter-spacing: var(--ds-track-display);
+    text-wrap: balance;
+  }
+
+  .hero__lede {
+    margin-top: var(--ds-s6);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--ds-s4) var(--ds-s8);
+    margin-top: var(--ds-s8);
+  }
+
+  .hero__social {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--ds-s4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .hero__social .ds-link {
+    font-weight: 400;
+  }
+
+  /* Spec strip: the datasheet footer */
+  .hero__spec {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: var(--ds-s16) 0 0;
+    border-top: var(--ds-hairline) solid var(--ds-ink);
+  }
+
+  .hero__spec-cell {
+    min-width: 0;
+    padding: var(--ds-s4) var(--ds-s4) var(--ds-s4) 0;
+    border-bottom: var(--ds-hairline) solid var(--ds-rule);
+  }
+
+  .hero__spec-cell:nth-child(even) {
+    padding-left: var(--ds-s4);
+    border-left: var(--ds-hairline) solid var(--ds-rule);
+  }
+
+  .hero__spec dd {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-s1);
+    margin: var(--ds-s2) 0 0;
+  }
+
+  .hero__spec-value {
+    font-family: var(--ds-font-display);
+    font-size: var(--ds-fs-value);
+    font-weight: 600;
+    line-height: var(--ds-lh-tight);
+    letter-spacing: var(--ds-track-display);
+    overflow-wrap: anywhere;
+  }
+
+  .hero__spec-note {
+    color: var(--ds-muted);
+    font-size: var(--ds-fs-label);
+  }
+
+  @media (min-width: 1024px) {
+    .hero__spec {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .hero__spec-cell,
+    .hero__spec-cell:nth-child(even) {
+      padding: var(--ds-s6) var(--ds-s6) 0;
+      border-bottom: 0;
+      border-left: var(--ds-hairline) solid var(--ds-rule);
+    }
+
+    .hero__spec-cell:first-child {
+      padding-left: 0;
+      border-left: 0;
+    }
+  }
+</style>

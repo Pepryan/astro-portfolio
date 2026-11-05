@@ -1,26 +1,28 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Hero from '../components/Hero.astro';
-import TechStack from '../components/TechStack';
-import StoryJourney from '../components/StoryJourney';
-import BentoGrid from '../components/BentoGrid';
-import FeaturedWork from '../components/FeaturedWork';
-import LatestPosts from '../components/LatestPosts';
-import CTASection from '../components/CTASection';
+import Hero from '../components/home/Hero.astro';
+import Writing from '../components/home/Writing.astro';
+import Stack from '../components/home/Stack.astro';
+import Work from '../components/home/Work.astro';
+import Journey from '../components/home/Journey.astro';
+import Contact from '../components/home/Contact.astro';
 import { generateSEO } from '../utils/seo';
 import { componentConfig } from '../config/components';
-import { shouldShowAboutSection } from '../utils/pages';
 import { getBlogPosts } from '../lib/posts';
 
 const { sections } = componentConfig.homepage;
 
 const allPosts = await getBlogPosts();
-const latestPosts = allPosts.slice(0, 3);
+const latestPosts = allPosts.slice(0, sections.writing.count);
+
+// Number the sections that are actually rendered: 01, 02, …
+const order = (['writing', 'stack', 'work', 'journey', 'contact'] as const).filter((key) => sections[key].enabled);
+const indexOf = (key: (typeof order)[number]) => String(order.indexOf(key) + 1).padStart(2, '0');
 
 const seo = generateSEO({
   type: 'website',
   canonical: '/',
-  keywords: ['portfolio', 'cloud engineer', 'devops specialist', 'personal website']
+  keywords: ['portfolio', 'linux sysadmin', 'system administrator', 'ai', 'devops', 'personal website'],
 });
 ---
 
@@ -31,135 +33,17 @@ const seo = generateSEO({
   type={seo.type}
   keywords={seo.keywords}
 >
-
-      <main class="mx-auto mb-10 max-w-7xl px-4 pb-4 pt-20">
-        <section id="home" class="-mt-20 flex min-h-screen items-center pb-16 pt-28 sm:px-4">
-          <div class="mx-auto w-full max-w-6xl">
-            <Hero postCount={allPosts.length} />
-          </div>
-        </section>
-
-        <section id="tech" class="relative">
-          <TechStack client:visible />
-        </section>
-
-        {sections.story.enabled && (
-          <section id="story" class="relative">
-            <StoryJourney client:visible />
-          </section>
-        )}
-
-        {sections.bentoGrid.enabled && shouldShowAboutSection() && (
-          <section id="about" class="relative">
-            <BentoGrid client:visible />
-          </section>
-        )}
-
-        {sections.featuredWork.enabled && (
-          <section id="work" class="relative">
-            <FeaturedWork client:visible />
-          </section>
-        )}
-
-        <section id="latest-posts" class="relative">
-          <LatestPosts client:visible posts={latestPosts} />
-        </section>
-
-        {sections.cta.enabled && (
-          <section id="contact" class="relative">
-            <CTASection client:visible />
-          </section>
-        )}
-      </main>
-
-      <!-- Interactive 3D Cube - Floating Easter Egg (hidden on mobile) -->
-      <div class="cube-wrapper" title="Click to jump to a random section" aria-hidden="true">
-        <div class="cube-container">
-          <div class="cube">
-            <div style="--x:-1; --y:0;">
-              <span style="--i:3;" class="cube-cell"></span>
-              <span style="--i:2;" class="cube-cell"></span>
-              <span style="--i:1;" class="cube-cell"></span>
-            </div>
-            <div style="--x:0; --y:0;">
-              <span style="--i:3;" class="cube-cell"></span>
-              <span style="--i:2;" class="cube-cell"></span>
-              <span style="--i:1;" class="cube-cell"></span>
-            </div>
-            <div style="--x:1; --y:0;">
-              <span style="--i:3;" class="cube-cell"></span>
-              <span style="--i:2;" class="cube-cell"></span>
-              <span style="--i:1;" class="cube-cell"></span>
-            </div>
-          </div>
-          <div class="cube">
-            <div style="--x:-1; --y:0;">
-              <span style="--i:3;" class="cube-cell"></span>
-              <span style="--i:2;" class="cube-cell"></span>
-              <span style="--i:1;" class="cube-cell"></span>
-            </div>
-            <div style="--x:0; --y:0;">
-              <span style="--i:3;" class="cube-cell"></span>
-              <span style="--i:2;" class="cube-cell"></span>
-              <span style="--i:1;" class="cube-cell"></span>
-            </div>
-            <div style="--x:1; --y:0;">
-              <span style="--i:3;" class="cube-cell"></span>
-              <span style="--i:2;" class="cube-cell"></span>
-              <span style="--i:1;" class="cube-cell"></span>
-            </div>
-          </div>
-          <div class="cube">
-            <div style="--x:-1; --y:0;">
-              <span style="--i:3;" class="cube-cell"></span>
-              <span style="--i:2;" class="cube-cell"></span>
-              <span style="--i:1;" class="cube-cell"></span>
-            </div>
-            <div style="--x:0; --y:0;">
-              <span style="--i:3;" class="cube-cell"></span>
-              <span style="--i:2;" class="cube-cell"></span>
-              <span style="--i:1;" class="cube-cell"></span>
-            </div>
-            <div style="--x:1; --y:0;">
-              <span style="--i:3;" class="cube-cell"></span>
-              <span style="--i:2;" class="cube-cell"></span>
-              <span style="--i:1;" class="cube-cell"></span>
-            </div>
-          </div>
-        </div>
+  <main class="mx-auto max-w-7xl px-4 pb-16 sm:px-8">
+    <section id="home" class="flex min-h-[100svh] items-center pb-16 pt-28">
+      <div class="mx-auto w-full max-w-6xl">
+        <Hero postCount={allPosts.length} />
       </div>
+    </section>
+
+    {sections.writing.enabled && <div id="writing"><Writing posts={latestPosts} index={indexOf('writing')} /></div>}
+    {sections.stack.enabled && <div id="stack"><Stack index={indexOf('stack')} /></div>}
+    {sections.work.enabled && <div id="work"><Work index={indexOf('work')} /></div>}
+    {sections.journey.enabled && <div id="journey"><Journey index={indexOf('journey')} /></div>}
+    {sections.contact.enabled && <div id="contact"><Contact index={indexOf('contact')} /></div>}
+  </main>
 </Layout>
-
-<script>
-  // Random Section Jump - Easter Egg Feature
-  {
-    const sections = ['home', 'tech', 'story', 'about', 'work', 'latest-posts', 'contact'];
-    let lastSection = '';
-
-    const cubeCells = document.querySelectorAll('.cube-cell');
-    
-    cubeCells.forEach(cell => {
-      cell.addEventListener('click', (e) => {
-        e.stopPropagation();
-        
-        // Filter out sections that don't exist and the last visited one
-        const availableSections = sections.filter(id => {
-          const el = document.getElementById(id);
-          return el && id !== lastSection;
-        });
-        
-        if (availableSections.length === 0) return;
-        
-        // Pick random section
-        const randomIndex = Math.floor(Math.random() * availableSections.length);
-        const targetId = availableSections[randomIndex];
-        const targetEl = document.getElementById(targetId);
-        
-        if (targetEl) {
-          lastSection = targetId;
-          targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      });
-    });
-  }
-</script>

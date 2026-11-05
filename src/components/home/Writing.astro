@@ -1,0 +1,95 @@
+---
+/**
+ * Latest posts as a ledger: date │ title + summary │ category + reading time.
+ * Placed right under the hero — the writing is the strongest proof of focus.
+ */
+import type { BlogPost } from '../../types';
+import { formatDate } from '../../lib/format';
+import SectionHeader from './SectionHeader.astro';
+
+interface Props {
+  posts: BlogPost[];
+  index: string;
+}
+
+const { posts, index } = Astro.props;
+
+// Many titles/summaries are "English | Bahasa Indonesia"; the list shows the first half.
+const firstPart = (text = '') => text.split(' | ')[0].trim();
+---
+
+{posts.length > 0 && (
+  <section class="ds-section" aria-labelledby="writing-title">
+    <SectionHeader
+      index={index}
+      label="Writing"
+      id="writing-title"
+      title="Latest notes from the terminal"
+      link={{ href: '/blog', text: 'All posts' }}
+    />
+
+    <ol class="ds-ledger">
+      {posts.map((post) => (
+        <li>
+          <a class="ds-row writing__row" href={`/blog/${post.slug}`}>
+            <time class="ds-label writing__date" datetime={new Date(post.data.date).toISOString()}>
+              {formatDate(post.data.date, 'short')}
+            </time>
+            <div class="writing__body">
+              <h3 class="ds-h3">{firstPart(post.data.title)}</h3>
+              {post.data.summary && <p class="writing__summary">{firstPart(post.data.summary)}</p>}
+            </div>
+            <p class="ds-label writing__meta">
+              {post.data.category && <span>{post.data.category}</span>}
+              <span>{post.readingTime} min read</span>
+            </p>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </section>
+)}
+
+<style>
+  .writing__row {
+    display: grid;
+    gap: var(--ds-s2);
+    padding-block: var(--ds-s6);
+  }
+
+  .writing__body {
+    min-width: 0;
+  }
+
+  .writing__summary {
+    display: -webkit-box;
+    margin: var(--ds-s2) 0 0;
+    overflow: hidden;
+    color: var(--ds-muted);
+    line-height: var(--ds-lh-body);
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+
+  .writing__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--ds-s4);
+    margin: 0;
+  }
+
+  @media (min-width: 768px) {
+    .writing__row {
+      grid-template-columns: var(--ds-date-col) minmax(0, 1fr) var(--ds-side-col);
+      gap: var(--ds-s8);
+      align-items: baseline;
+    }
+
+    .writing__meta {
+      flex-direction: column;
+      align-items: flex-end;
+      text-align: right;
+    }
+  }
+</style>

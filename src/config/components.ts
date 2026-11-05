@@ -3,8 +3,8 @@ export const seoConfig = {
   // Site Information
   site: {
     name: "Febryan Portfolio",
-    title: "Febryan Web - Cloud, DevOps, WebDev | Tinkering with AI & Automation",
-    description: "Personal portfolio and technical blog by Febryan Ramadhan. Cloud, DevOps, WebDev specialist tinkering with AI & Automation. Sharing tutorials and insights about modern technology.",
+    title: "Febryan Web - Linux Sysadmin | Tinkering with AI",
+    description: "Personal site and technical blog of Febryan Ramadhan, system administrator at Odoo. Notes on Linux, AI tooling, and the cloud and DevOps work behind them, mostly in Bahasa Indonesia.",
     url: "https://febryan.web.id",
     language: "id",
     locale: "id_ID",
@@ -16,9 +16,9 @@ export const seoConfig = {
     name: "Febryan Ramadhan",
     email: "febryanramadhan@gmail.com",
     url: "https://febryan.web.id",
-    jobTitle: "Cloud, DevOps, WebDev | Tinkering with AI & Automation",
+    jobTitle: "System Administrator at Odoo",
     location: "Bogor, Indonesia",
-    bio: "Cloud, DevOps, WebDev | Tinkering with AI & Automation",
+    bio: "Linux sysadmin at Odoo, tinkering with AI. Background in cloud, DevOps and CI/CD.",
     image: "https://febryan.web.id/images/photo-web-febryan.webp"
   },
 
@@ -43,21 +43,21 @@ export const seoConfig = {
 
   // Default Keywords
   keywords: [
-    "Cloud Engineer",
+    "Linux",
+    "System Administrator",
+    "Sysadmin",
+    "AI",
+    "Claude",
+    "Python",
+    "Bash",
     "DevOps",
-    "Infrastructure",
-    "Automation",
-    "AWS",
+    "CI/CD",
+    "Cloud",
     "Docker",
     "Kubernetes",
-    "CI/CD",
-    "Portfolio",
-    "Blog",
-    "DevSecOps",
-    "Terraform",
     "Ansible",
-    "Python",
-    "Bash"
+    "Portfolio",
+    "Blog"
   ],
 
   // Theme and Branding
@@ -113,52 +113,26 @@ export const seoConfig = {
 };
 
 export const componentConfig = {
-  // Animation Configuration
-  animations: {
-    enabled: true,
-    reducedMotion: true, // Respect user's motion preferences by default
-    performanceMode: true, // Enable performance optimizations
-    staggerDelay: 0.1,
-    duration: {
-      fast: 0.2, // Reduced for better performance
-      medium: 0.4, // Reduced for better performance
-      slow: 0.6 // Reduced for better performance
-    },
-    easing: {
-      smooth: [0.25, 0.1, 0.25, 1],
-      bounce: [0.68, -0.55, 0.265, 1.55],
-      elastic: [0.175, 0.885, 0.32, 1.275]
-    }
-  },
-
-  // Homepage Configuration (2025 Design)
+  // Homepage sections (order is fixed in src/pages/index.astro)
   homepage: {
     enabled: true,
-    layout: '2025', // 'traditional' or '2025'
     sections: {
-      hero: { enabled: true },
-      story: { enabled: true },
-      bentoGrid: { enabled: true },
-      featuredWork: { enabled: true },
-      cta: { enabled: true }
+      writing: { enabled: true, count: 5 },
+      stack: { enabled: true },
+      work: { enabled: true },
+      journey: { enabled: true },
+      contact: { enabled: true }
     }
   },
 
-  // Hero Section Configuration (2025 Storytelling)
+  // Hero
   hero: {
     enabled: true,
     title: "Febryan Ramadhan",
-    subtitle: "Cloud, DevOps, WebDev | Tinkering with AI & Automation",
-    tagline: "Building the future, one line of code at a time",
-    story: {
-      intro: "From tinkering with PCs in junior high to architecting cloud solutions",
-      journey: "A passionate technologist crafting scalable digital experiences"
-    },
+    role: "System Administrator at Odoo",
+    headline: "Linux sysadmin. Tinkering with AI. Writing down everything I learn.",
+    lede: "I keep Linux systems running at Odoo and experiment with Claude and LLM APIs in Python. Years of cloud, DevOps and CI/CD work still shape how I approach both.",
     showSocialLinks: true,
-    showScrollIndicator: true,
-    backgroundAnimation: false, // Disabled for better performance
-    titleAnimation: true,
-    storytellingMotion: false, // Disabled for better performance - this was causing heavy animations
     socialLinks: [
       { platform: 'github', url: 'https://github.com/Pepryan', enabled: true },
       { platform: 'gitlab', url: 'https://gitlab.com/Pepryan', enabled: true },
@@ -168,228 +142,39 @@ export const componentConfig = {
     ]
   },
 
-  // Story Journey Section (2025)
+  // Journey (homepage changelog)
   storyJourney: {
     enabled: true,
-    title: "My Journey",
-    subtitle: "From curiosity to expertise",
+    title: "How I got here",
+    subtitle: "From overclocking PCs in junior high to running Linux systems at Odoo.",
+    // Oldest first; the homepage renders newest first.
     milestones: [
-      {
-        year: "2011",
-        title: "The Beginning",
-        description: "Started with PC building and hardware optimization",
-        icon: "🔧",
-        color: "blue"
-      },
-      {
-        year: "2012-2013",
-        title: "Networking Foundation",
-        description: "SMK period learning networking fundamentals at Cisco Academy",
-        icon: "🌐",
-        color: "indigo"
-      },
-      {
-        year: "2014",
-        title: "Linux & Development",
-        description: "Diving into Linux systems, PHP development, and troubleshooting",
-        icon: "🐧",
-        color: "green"
-      },
-      {
-        year: "2014-2017",
-        title: "University Learning",
-        description: "Studying SDLC, algorithms, and business IT at university",
-        icon: "🎓",
-        color: "purple"
-      },
-      {
-        year: "2017-2020",
-        title: "Skill Development",
-        description: "Expanding technical expertise and preparing for professional career",
-        icon: "📚",
-        color: "orange"
-      },
-      {
-        year: "2020",
-        title: "Web Development",
-        description: "Dove into web development and CRM solutions",
-        icon: "💻",
-        color: "green"
-      },
-      {
-        year: "2022",
-        title: "Cloud Engineer",
-        description: "Specialized in cloud infrastructure and DevOps",
-        icon: "☁️",
-        color: "purple"
-      },
-      {
-        year: "2025",
-        title: "Innovation",
-        description: "Building scalable solutions for the future",
-        icon: "🚀",
-        color: "orange"
-      }
-    ],
-    animationType: "progressive", // "progressive", "timeline", "floating"
-    showConnectors: true
+      { year: "2011", title: "Building PCs", description: "Started with PC building, overclocking and hardware optimization." },
+      { year: "2012–2014", title: "Networking at SMK", description: "Computer and network engineering at SMKN 3 Bogor, with networking fundamentals from Cisco Academy." },
+      { year: "2014", title: "Linux & PHP", description: "First serious time on Linux systems, PHP development and troubleshooting." },
+      { year: "2014–2021", title: "Information Systems degree", description: "SDLC, algorithms and business IT at Gunadarma University." },
+      { year: "2020", title: "Web developer", description: "CRM solutions in PHP, Docker containerization and client support at PT. Ciptadra Softindo." },
+      { year: "2022", title: "Cloud engineer", description: "OpenStack and Kubernetes infrastructure, Grafana and Prometheus monitoring, Python and Bash automation at PT. Boer Technology." },
+      { year: "2026", title: "Sysadmin at Odoo", description: "Linux systems day to day, with AI tooling on the side." }
+    ]
   },
 
-  // Bento Grid Section (2025)
-  bentoGrid: {
-    enabled: true,
-    title: "What I Do",
-    subtitle: "Crafting digital experiences with modern technology",
-    cards: [
-      {
-        id: "cloud-architecture",
-        title: "Cloud Architecture",
-        description: "Designing scalable cloud solutions",
-        icon: "☁️",
-        size: "large", // large, medium, small
-        color: "blue",
-        interactive: true,
-        link: "/projects#cloud",
-        stats: { label: "Projects", value: "15+" }
-      },
-      {
-        id: "devops",
-        title: "DevOps",
-        description: "Automation & CI/CD",
-        icon: "⚙️",
-        size: "medium",
-        color: "green",
-        interactive: true,
-        link: "/projects#devops",
-        stats: { label: "Deployments", value: "100+" }
-      },
-      {
-        id: "web-dev",
-        title: "Web Development",
-        description: "Modern web applications",
-        icon: "🌐",
-        size: "medium",
-        color: "purple",
-        interactive: true,
-        link: "/projects#web",
-        stats: { label: "Apps Built", value: "20+" }
-      },
-      {
-        id: "location",
-        title: "Based in Bogor",
-        description: "Indonesia 🇮🇩",
-        icon: "📍",
-        size: "small",
-        color: "orange",
-        interactive: false
-      },
-      {
-        id: "experience",
-        title: "4+ Years",
-        description: "Professional Experience",
-        icon: "⏱️",
-        size: "small",
-        color: "red",
-        interactive: false
-      },
-      {
-        id: "blog",
-        title: "Tech Blog",
-        description: "Sharing knowledge",
-        icon: "✍️",
-        size: "medium",
-        color: "indigo",
-        interactive: true,
-        link: "/blog"
-      }
-    ],
-    layout: "masonry", // "masonry", "grid"
-    animationType: "stagger" // "stagger", "wave", "cascade"
-  },
-
-  // Featured Work Section (2025)
+  // Featured work (homepage)
   featuredWork: {
     enabled: true,
-    title: "Featured Work",
-    subtitle: "Showcasing my best projects and achievements",
-    items: [
-      {
-        id: "astro-portfolio",
-        title: "Astro Portfolio 2025",
-        description: "Modern portfolio with storytelling motion design and 2025 web standards",
-        image: null, // No image, will show default icon
-        tags: ["Astro", "React", "TailwindCSS", "Framer Motion"],
-        link: "https://github.com/Pepryan/astro-portfolio",
-        github: "https://github.com/Pepryan/astro-portfolio",
-        demo: "https://febryan.web.id",
-        featured: true,
-        category: "Web"
-      },
-      {
-        id: "openstack-resource",
-        title: "OpenStack Resource Manager",
-        description: "Resource management tools and automation scripts for OpenStack cloud infrastructure",
-        image: null,
-        tags: ["OpenStack", "Python", "Cloud", "Automation"],
-        link: "https://github.com/Pepryan/openstack-resource",
-        github: "https://github.com/Pepryan/openstack-resource",
-        featured: true,
-        category: "Cloud"
-      },
-      {
-        id: "gitops-lab",
-        title: "GitOps Laboratory",
-        description: "GitOps practices and CI/CD pipeline implementations for modern DevOps workflows",
-        image: null,
-        tags: ["GitOps", "CI/CD", "Kubernetes", "DevOps"],
-        link: "https://github.com/Pepryan/gitops-lab",
-        github: "https://github.com/Pepryan/gitops-lab",
-        featured: true,
-        category: "DevOps"
-      }
-    ],
-    layout: "grid", // "carousel", "grid", "masonry"
-    showViewAll: true,
+    title: "Things I've built",
+    // Project ids from `projects.items`, in display order.
+    projectIds: ["openstack-resource", "n8n-finance-tracker", "gitops-lab"],
     viewAllLink: "/projects"
   },
 
-  // CTA Section (2025)
+  // Contact band (homepage)
   cta: {
     enabled: true,
-    title: "Let's Build Something Amazing",
-    subtitle: "Ready to bring your ideas to life? Let's connect and create something extraordinary together.",
-    primaryAction: {
-      text: "Get In Touch",
-      link: "/contact",
-      style: "primary"
-    },
-    secondaryAction: {
-      text: "View My Work",
-      link: "/projects",
-      style: "secondary"
-    },
-    backgroundStyle: "minimal", // "gradient", "pattern", "minimal"
-    showSocialLinks: true
-  },
-
-  // Blog CTA Section (2025)
-  blogCta: {
-    enabled: true,
-    title: "Explore My Thoughts & Insights",
-    subtitle: "Discover articles about cloud engineering, DevOps practices, and modern web development. Join me on this journey of continuous learning and sharing knowledge.",
-    primaryAction: {
-      text: "Read My Blog",
-      link: "/blog",
-      style: "primary"
-    },
-    secondaryAction: {
-      text: "Latest Articles",
-      link: "/blog",
-      style: "secondary"
-    },
-    backgroundStyle: "gradient", // "gradient", "pattern", "minimal"
-    showSocialLinks: false,
-    placement: "hero" // "hero", "between-sections", "before-cta"
+    title: "Questions about Linux, AI or something I wrote?",
+    subtitle: "Email is the best way to reach me. Every post also has a comment section if you'd rather ask in public.",
+    primaryAction: { text: "Send an email", link: "mailto:febryanramadhan@gmail.com" },
+    secondaryAction: { text: "Contact page", link: "/contact" }
   },
 
   // Page Configurations (Separate Pages)
@@ -522,13 +307,24 @@ export const componentConfig = {
     animateOnScroll: true,
     items: [
       {
+        id: 'odoo',
+        role: 'System Administrator',
+        company: 'Odoo',
+        period: '2026 - Present',
+        location: 'Indonesia',
+        type: 'Full-time',
+        current: true,
+        responsibilities: [],
+        technologies: ['Linux']
+      },
+      {
         id: 'boer-tech',
         role: 'Cloud Engineer',
         company: 'PT. Boer Technology',
-        period: '2022 - Present',
+        period: '2022 - 2026',
         location: 'Jakarta',
         type: 'Full-time',
-        current: true,
+        current: false,
         responsibilities: [
           'Managed OpenStack and Kubernetes infrastructure',
           'Implemented monitoring solutions with Grafana & Prometheus',
