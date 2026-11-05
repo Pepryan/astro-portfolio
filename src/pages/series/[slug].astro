@@ -1,8 +1,11 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import SeriesDetailClient from '../../components/SeriesDetailClient';
+import PageHeader from '../../components/blog/PageHeader.astro';
+import PostLedger from '../../components/blog/PostLedger.astro';
+import SeriesProgress from '../../components/blog/SeriesProgress.astro';
 import { getAllSeries, type SeriesWithPosts } from '../../utils/series';
 import { generateSeriesSEO, generateSeriesStructuredData } from '../../utils/seo';
+import { formatDate } from '../../lib/format';
 
 export async function getStaticPaths() {
   const allSeries = await getAllSeries();
@@ -19,6 +22,8 @@ interface Props {
 const { series } = Astro.props;
 const seo = generateSeriesSEO(series);
 const structuredData = generateSeriesStructuredData(series, series.posts);
+const remaining = Math.max(series.totalParts - series.completedParts, 0);
+const first = series.posts[0];
 ---
 
 <Layout
@@ -30,5 +35,76 @@ const structuredData = generateSeriesStructuredData(series, series.posts);
   image={seo.image}
 >
   <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
-  <SeriesDetailClient series={series} client:load />
+
+  <main class="ds-page">
+    <PageHeader
+      eyebrow="Series"
+      eyebrowNote={series.status}
+      title={series.name}
+      lede={series.description}
+      links={[{ href: '/series', text: 'All series' }]}
+    >
+      <div class="series-meta">
+        <SeriesProgress done={series.completedParts} total={series.totalParts} />
+        <dl>
+          {series.difficulty && <div><dt class="ds-label">Level</dt><dd>{series.difficulty}</dd></div>}
+          {series.startDate && <div><dt class="ds-label">Started</dt><dd>{formatDate(series.startDate, 'short')}</dd></div>}
+          {series.category && <div><dt class="ds-label">Category</dt><dd>{series.category}</dd></div>}
+        </dl>
+        {first && (
+          <a class="ds-button" href={`/blog/${first.slug}`}>
+            Start with part 1 <span class="ds-arrow" aria-hidden="true">→</span>
+          </a>
+        )}
+      </div>
+    </PageHeader>
+
+    {series.posts.length > 0 ? (
+      <PostLedger posts={series.posts} ordered partOnly />
+    ) : (
+      <p class="ds-label">No parts published yet.</p>
+    )}
+
+    {remaining > 0 && (
+      <p class="series-next ds-label">
+        {remaining} more {remaining === 1 ? 'part' : 'parts'} planned. Follow along via <a class="ds-link" href="/rss.xml">RSS</a>.
+      </p>
+    )}
+  </main>
 </Layout>
+
+<style>
+  .series-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--ds-s6) var(--ds-s12);
+    padding-block: var(--ds-s6);
+    border-block: var(--ds-hairline) solid var(--ds-rule);
+  }
+
+  .series-meta dl {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ds-s4) var(--ds-s8);
+    margin: 0;
+  }
+
+  .series-meta dd {
+    margin: var(--ds-s1) 0 0;
+    font-family: var(--ds-font-display);
+    font-weight: 600;
+  }
+
+  .series-meta .ds-button {
+    margin-left: auto;
+  }
+
+  .series-next {
+    margin-top: var(--ds-s8);
+  }
+
+  .series-next .ds-link {
+    padding: 0;
+  }
+</style>

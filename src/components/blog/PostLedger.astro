@@ -1,0 +1,65 @@
+---
+/**
+ * A list of posts as ledger rows, optionally grouped by year.
+ * Group headers hide themselves when the grep filter empties their list.
+ */
+import type { BlogPost } from '../../types';
+import { getYear } from '../../lib/format';
+import PostRow from './PostRow.astro';
+
+interface Props {
+  posts: BlogPost[];
+  groupByYear?: boolean;
+  partOnly?: boolean;
+  /** Ordered list semantics (series parts) */
+  ordered?: boolean;
+}
+
+const { posts, groupByYear = false, partOnly = false, ordered = false } = Astro.props;
+
+const groups = groupByYear
+  ? [...posts.reduce((map, post) => {
+      const year = getYear(post.data.date);
+      map.set(year, [...(map.get(year) ?? []), post]);
+      return map;
+    }, new Map<number, BlogPost[]>())]
+  : [[null, posts] as const];
+
+const List = ordered ? 'ol' : 'ul';
+---
+
+<div class="ledger" data-post-list>
+  {groups.map(([year, items]) => (
+    <section class="ledger__group" data-post-group aria-label={year ? `Posts from ${year}` : undefined}>
+      {year && (
+        <h2 class="ledger__year">
+          <span>{year}</span>
+        </h2>
+      )}
+      <List class="ds-ledger">
+        {items.map((post) => (
+          <PostRow post={post} dateStyle={year ? 'monthDay' : 'short'} partOnly={partOnly} />
+        ))}
+      </List>
+    </section>
+  ))}
+</div>
+
+<style>
+  .ledger {
+    display: grid;
+    gap: var(--ds-s12);
+  }
+
+  .ledger__group[hidden] {
+    display: none;
+  }
+
+  .ledger__year {
+    margin: 0 0 var(--ds-s4);
+    font-family: var(--ds-font-display);
+    font-size: var(--ds-fs-value);
+    font-weight: 700;
+    letter-spacing: var(--ds-track-display);
+  }
+</style>

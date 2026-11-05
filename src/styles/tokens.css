@@ -16,6 +16,7 @@
   --ds-muted: #525252;
   --ds-rule: #e5e5e5;
   --ds-wash: #fafafa;
+  --ds-prose: #262626;
   --ds-accent: #1d4ed8;
   --ds-accent-strong: #1e3a8a;
   --ds-on-accent: #ffffff;
@@ -106,6 +107,7 @@
   --ds-muted: #a3a3a3;
   --ds-rule: #404040;
   --ds-wash: #1f1f1f;
+  --ds-prose: #d4d4d4;
   --ds-accent: #60a5fa;
   --ds-accent-strong: #93c5fd;
   --ds-on-accent: #0a0a0a;
@@ -135,6 +137,20 @@
 @media (min-width: 768px) {
   .ds-section {
     padding-block: var(--ds-s24);
+  }
+}
+
+/* Page shell for every non-home page: clears the fixed header */
+.ds-page {
+  max-width: var(--ds-container);
+  margin-inline: auto;
+  padding: calc(var(--ds-s24) + var(--ds-s4)) var(--ds-s4) var(--ds-s16);
+  color: var(--ds-ink);
+}
+
+@media (min-width: 640px) {
+  .ds-page {
+    padding-inline: var(--ds-s8);
   }
 }
 

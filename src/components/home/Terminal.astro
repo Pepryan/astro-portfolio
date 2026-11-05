@@ -6,6 +6,7 @@
  */
 import { componentConfig, seoConfig } from '../../config/components';
 import type { BlogPost } from '../../types';
+import { primaryText } from '../../lib/format';
 
 interface Props {
   posts: BlogPost[];
@@ -32,7 +33,6 @@ const fetchRows = [
   ['Stack', term.stack.join(' · ')],
 ].filter(Boolean) as [string, string][];
 
-const firstPart = (text = '') => text.split(' | ')[0].trim();
 const socialLabels: Record<string, string> = { github: 'GitHub', gitlab: 'GitLab', linkedin: 'LinkedIn', twitter: 'X' };
 
 const data = {
@@ -46,7 +46,7 @@ const data = {
   email: seoConfig.author.email,
   about: hero.lede,
   posts: posts.map((post) => ({
-    title: firstPart(post.data.title),
+    title: primaryText(post.data.title),
     href: `/blog/${post.slug}`,
     date: new Date(post.data.date).toISOString().slice(0, 10),
   })),

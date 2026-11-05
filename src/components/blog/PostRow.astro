@@ -1,0 +1,91 @@
+---
+/**
+ * One post as a ledger row: date │ title + summary (+ series) │ category + time.
+ * data-* attributes feed the client-side grep filter (src/lib/post-filter.ts).
+ */
+import type { BlogPost } from '../../types';
+import { formatDate, primaryText } from '../../lib/format';
+
+interface Props {
+  post: BlogPost;
+  /** 'short' = "Nov 12, 2025"; 'monthDay' = "Nov 12" (lists already grouped by year) */
+  dateStyle?: 'short' | 'monthDay';
+  /** Show "Part n" instead of the series name (series pages). */
+  partOnly?: boolean;
+}
+
+const { post, dateStyle = 'short', partOnly = false } = Astro.props;
+const { data } = post;
+const title = primaryText(data.title);
+const summary = primaryText(data.summary ?? data.description ?? '');
+const tags = (data.tags ?? []).map((tag) => tag.toLowerCase());
+const haystack = [data.title, data.summary, data.category, data.series?.name, ...tags].filter(Boolean).join(' ').toLowerCase();
+---
+
+<li data-post data-text={haystack} data-tags={tags.join('|')} data-series={data.series ? `${data.series.slug}|${data.series.name.toLowerCase()}` : ''}>
+  <a class="ds-row ds-spot ds-nudge post-row" data-spotlight href={`/blog/${post.slug}`}>
+    <time class="ds-label post-row__date" datetime={new Date(data.date).toISOString()}>
+      {formatDate(data.date, dateStyle)}
+    </time>
+    <div class="post-row__body">
+      {data.series && (
+        <p class="ds-label post-row__series">
+          {partOnly ? `Part ${data.series.part}` : `${data.series.name} · Part ${data.series.part}`}
+        </p>
+      )}
+      <h3 class="ds-h3">{title}</h3>
+      {summary && <p class="post-row__summary">{summary}</p>}
+    </div>
+    <p class="ds-label post-row__meta">
+      {data.category && <span>{data.category}</span>}
+      <span>{post.readingTime} min read</span>
+    </p>
+  </a>
+</li>
+
+<style>
+  .post-row {
+    display: grid;
+    gap: var(--ds-s2);
+    padding-block: var(--ds-s6);
+  }
+
+  .post-row__body {
+    min-width: 0;
+  }
+
+  .post-row__series {
+    margin: 0 0 var(--ds-s1);
+  }
+
+  .post-row__summary {
+    display: -webkit-box;
+    margin: var(--ds-s2) 0 0;
+    overflow: hidden;
+    color: var(--ds-muted);
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+
+  .post-row__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--ds-s4);
+    margin: 0;
+  }
+
+  @media (min-width: 768px) {
+    .post-row {
+      grid-template-columns: var(--ds-date-col) minmax(0, 1fr) var(--ds-side-col);
+      gap: var(--ds-s8);
+      align-items: baseline;
+    }
+
+    .post-row__meta {
+      flex-direction: column;
+      align-items: flex-end;
+      text-align: right;
+    }
+  }
+</style>

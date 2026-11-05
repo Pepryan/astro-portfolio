@@ -1,0 +1,177 @@
+---
+/**
+ * Terminal-style filter for a PostLedger on the same page: free text ("grep")
+ * plus tag chips. Works with ?search=, ?tag=, ?series= and ?focus=search.
+ * Without JS the bar is hidden and the full list stays readable.
+ */
+interface Props {
+  /** [tag, count] pairs, most used first */
+  tags?: [string, number][];
+  maxTags?: number;
+}
+
+const { tags = [], maxTags = 10 } = Astro.props;
+const shownTags = tags.slice(0, maxTags);
+---
+
+<div class="grep" data-post-filter hidden>
+  <label class="grep__bar">
+    <span class="grep__prompt" aria-hidden="true">$ grep -i</span>
+    <input
+      class="grep__input"
+      data-filter-input
+      type="search"
+      autocomplete="off"
+      spellcheck="false"
+      placeholder="strace, tcp, ansible…"
+      aria-label="Filter posts by title, summary or tag"
+    />
+  </label>
+
+  {shownTags.length > 0 && (
+    <div class="grep__tags" role="group" aria-label="Filter by tag">
+      <button type="button" class="grep__tag" data-filter-tag="" aria-pressed="true">all</button>
+      {shownTags.map(([tag, count]) => (
+        <button type="button" class="grep__tag" data-filter-tag={tag.toLowerCase()} aria-pressed="false">
+          #{tag}<span class="grep__count">{count}</span>
+        </button>
+      ))}
+      <a class="ds-link grep__more" href="/blog/tags">All tags <span class="ds-arrow" aria-hidden="true">→</span></a>
+    </div>
+  )}
+
+  <div class="grep__status">
+    <p class="ds-label" data-filter-status aria-live="polite"></p>
+    <button type="button" class="ds-link" data-filter-reset hidden>Clear filters</button>
+  </div>
+</div>
+
+<p class="grep__empty" data-filter-empty hidden>
+  grep: no posts match <span data-filter-query></span>. Try a shorter word, or press <kbd>/</kbd> to search inside every post.
+</p>
+
+<script>
+  import { initPostFilter } from '../../lib/post-filter';
+  document.querySelectorAll<HTMLElement>('[data-post-filter]').forEach(initPostFilter);
+</script>
+
+<style>
+  .grep {
+    display: grid;
+    gap: var(--ds-s4);
+    margin-bottom: var(--ds-s12);
+  }
+
+  .grep[hidden] {
+    display: none;
+  }
+
+  .grep__bar {
+    display: flex;
+    align-items: center;
+    gap: var(--ds-s3);
+    padding: var(--ds-s3) var(--ds-s4);
+    border: var(--ds-hairline) solid var(--ds-rule);
+    border-radius: var(--ds-radius);
+    background: var(--ds-wash);
+    font-family: var(--ds-font-display);
+    transition: border-color var(--ds-dur) var(--ds-ease);
+  }
+
+  .grep__bar:focus-within {
+    border-color: var(--ds-accent);
+  }
+
+  .grep__prompt {
+    color: var(--ds-accent);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .grep__input {
+    flex: 1;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--ds-ink);
+    font: inherit;
+    outline: none;
+  }
+
+  .grep__input:focus-visible {
+    box-shadow: none;
+  }
+
+  .grep__input::placeholder {
+    color: var(--ds-muted);
+  }
+
+  .grep__tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--ds-s2);
+  }
+
+  .grep__tag {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--ds-s2);
+    padding: var(--ds-s1) var(--ds-s3);
+    border: var(--ds-hairline) solid var(--ds-rule);
+    border-radius: var(--ds-radius);
+    background: transparent;
+    color: var(--ds-muted);
+    font-family: var(--ds-font-display);
+    font-size: var(--ds-fs-small);
+    cursor: pointer;
+    transition:
+      color var(--ds-dur) var(--ds-ease),
+      border-color var(--ds-dur) var(--ds-ease);
+  }
+
+  .grep__tag:hover {
+    border-color: var(--ds-ink);
+    color: var(--ds-ink);
+  }
+
+  .grep__tag[aria-pressed='true'] {
+    border-color: var(--ds-accent);
+    background: var(--ds-accent);
+    color: var(--ds-on-accent);
+  }
+
+  .grep__count {
+    font-size: var(--ds-fs-label);
+    opacity: 0.75;
+  }
+
+  .grep__more {
+    margin-left: var(--ds-s2);
+  }
+
+  .grep__status {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 var(--ds-s6);
+    min-height: var(--ds-s8);
+  }
+
+  .grep__status p {
+    margin: 0;
+  }
+
+  .grep__empty {
+    padding: var(--ds-s8) 0;
+    border-top: var(--ds-hairline) solid var(--ds-ink);
+    color: var(--ds-muted);
+    font-family: var(--ds-font-display);
+  }
+
+  .grep__empty kbd {
+    color: var(--ds-ink);
+    font-family: inherit;
+  }
+</style>

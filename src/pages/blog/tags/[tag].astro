@@ -1,6 +1,7 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
-import BlogList from '../../../components/BlogList';
+import PageHeader from '../../../components/blog/PageHeader.astro';
+import PostLedger from '../../../components/blog/PostLedger.astro';
 import { getBlogPosts } from '../../../lib/posts';
 import { generateTagPageSEO } from '../../../utils/seo';
 
@@ -15,7 +16,6 @@ export async function getStaticPaths() {
 
 const { tag, posts } = Astro.props;
 const seo = generateTagPageSEO(tag, posts);
-const description = `Explore ${posts.length} blog posts tagged with "${tag}". Discover articles about ${tag} and related topics by Febryan Ramadhan.`;
 ---
 
 <Layout
@@ -25,64 +25,16 @@ const description = `Explore ${posts.length} blog posts tagged with "${tag}". Di
   type={seo.type}
   keywords={seo.keywords}
 >
-
-        <main class="max-w-7xl mx-auto px-4 pt-24 pb-16">
-          {/* Tag Header */}
-          <div class="text-center mb-12">
-            <div class="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 
-              text-blue-800 dark:text-blue-300 rounded-full text-sm font-medium mb-4">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                  d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-              </svg>
-              Tag: {tag}
-            </div>
-            
-            <h1 class="text-4xl md:text-5xl font-bold text-neutral-900 dark:text-neutral-100 mb-4">
-              Posts tagged "{tag}"
-            </h1>
-            
-            <p class="text-lg text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto mb-6">
-              {description}
-            </p>
-
-            {/* Navigation Links */}
-            <div class="flex flex-wrap justify-center gap-4">
-              <a 
-                href="/blog" 
-                class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium
-                  text-neutral-600 dark:text-neutral-400 hover:text-blue-600 dark:hover:text-blue-400
-                  bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700
-                  rounded-lg transition-colors"
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                </svg>
-                All Posts
-              </a>
-              
-              <a 
-                href="/blog/tags" 
-                class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium
-                  text-neutral-600 dark:text-neutral-400 hover:text-blue-600 dark:hover:text-blue-400
-                  bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700
-                  rounded-lg transition-colors"
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                    d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-                </svg>
-                Browse All Tags
-              </a>
-            </div>
-          </div>
-
-          {/* Posts List */}
-          <BlogList
-            posts={posts}
-            selectedTag={tag}
-            postsPerPage={9}
-            client:load
-          />
-        </main>
+  <main class="ds-page">
+    <PageHeader
+      eyebrow="Tag"
+      eyebrowNote={`${posts.length} ${posts.length === 1 ? 'post' : 'posts'}`}
+      title={`#${tag}`}
+      links={[
+        { href: '/blog/tags', text: 'All tags' },
+        { href: '/blog', text: 'All posts' },
+      ]}
+    />
+    <PostLedger posts={posts} />
+  </main>
 </Layout>

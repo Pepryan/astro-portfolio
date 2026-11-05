@@ -1,10 +1,13 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import BlogPageClient from '../../components/BlogPageClient';
-import { getBlogPosts } from '../../lib/posts';
+import PageHeader from '../../components/blog/PageHeader.astro';
+import GrepFilter from '../../components/blog/GrepFilter.astro';
+import PostLedger from '../../components/blog/PostLedger.astro';
+import { getBlogPosts, getTagCounts } from '../../lib/posts';
 import { generateBlogListingSEO } from '../../utils/seo';
 
 const posts = await getBlogPosts();
+const tags = getTagCounts(posts);
 const seo = generateBlogListingSEO(posts);
 ---
 
@@ -15,5 +18,20 @@ const seo = generateBlogListingSEO(posts);
   type={seo.type}
   keywords={seo.keywords}
 >
-  <BlogPageClient posts={posts} client:load />
+  <main class="ds-page">
+    <PageHeader
+      eyebrow="Blog"
+      title="Notes from the terminal"
+      lede="Long-form notes on Linux, networking, AI tooling and the infrastructure around them, written while figuring things out."
+      links={[
+        { href: '/blog/tags', text: 'Tags' },
+        { href: '/series', text: 'Series' },
+        { href: '/archive', text: 'Archive' },
+        { href: '/rss.xml', text: 'RSS' },
+      ]}
+    />
+
+    <GrepFilter tags={tags} />
+    <PostLedger posts={posts} groupByYear />
+  </main>
 </Layout>

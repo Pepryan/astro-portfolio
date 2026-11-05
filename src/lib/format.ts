@@ -19,3 +19,15 @@ export function formatDate(date: Date | string, style: keyof typeof formats = 'l
 export function getYear(date: Date | string): number {
   return new Date(date).getUTCFullYear();
 }
+
+/**
+ * Many titles and summaries are written "English | Bahasa Indonesia".
+ * Lists show the first half; `secondaryText` returns the rest (or '').
+ */
+export function primaryText(text = ''): string {
+  return text.split(' | ')[0].trim();
+}
+
+export function secondaryText(text = ''): string {
+  return text.split(' | ').slice(1).join(' | ').trim();
+}

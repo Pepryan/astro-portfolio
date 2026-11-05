@@ -1,553 +1,429 @@
 /**
- * Blog Prose Typography
- * 
- * Optimized styling for blog content readability.
- * Based on Tailwind Typography plugin with custom enhancements.
+ * Blog prose — long-form reading on the datasheet tokens (src/styles/tokens.css).
+ *
+ * Text face for reading, mono for headings and code, one accent for links and
+ * highlights. Overrides @tailwindcss/typography's defaults on .prose.
  */
 
-/* ===== BASE PROSE TYPOGRAPHY ===== */
-/* Optimized for comfortable long-form reading */
+/* ===== BASE ===== */
 
 .prose {
-    max-width: 100% !important;
-    overflow-x: hidden;
-    /* Improved base typography for readability */
-    font-size: 1.125rem !important;
-    /* 18px base for comfortable reading */
-    line-height: 1.8 !important;
-    /* Generous line-height for easy reading */
-    letter-spacing: -0.01em;
-    /* Slightly tighter for better word recognition */
-    color: #374151;
-    /* gray-700 - softer than pure black */
+  --prose-fs: 1.0625rem;
+  --prose-lh: 1.75;
+  --prose-gap: 1.25em;
+
+  max-width: 100%;
+  overflow-x: hidden;
+  color: var(--ds-prose);
+  font-family: var(--ds-font-text);
+  font-size: var(--prose-fs);
+  line-height: var(--prose-lh);
 }
 
-.dark .prose {
-    color: #d1d5db;
-    /* gray-300 - comfortable contrast in dark mode */
+@media (min-width: 768px) {
+  .prose {
+    --prose-fs: 1.125rem;
+  }
 }
 
-/* Responsive styling untuk semua elemen dalam prose */
 .prose * {
-    max-width: 100%;
-    box-sizing: border-box;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
-/* ===== HEADING HIERARCHY ===== */
-/* Clear visual hierarchy with comfortable spacing */
-
-.prose h1,
-.prose h2,
-.prose h3,
-.prose h4,
-.prose h5,
-.prose h6 {
-    color: #111827;
-    /* gray-900 - strong contrast for headings */
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    /* Tight tracking for headings */
-    line-height: 1.3 !important;
+.prose :where(p, ul, ol, blockquote, table, figure, pre, details) {
+  margin-block: var(--prose-gap);
 }
 
-.dark .prose h1,
-.dark .prose h2,
-.dark .prose h3,
-.dark .prose h4,
-.dark .prose h5,
-.dark .prose h6 {
-    color: #f9fafb;
-    /* gray-50 */
+.prose > :first-child {
+  margin-top: 0;
 }
 
-.prose h1:first-child,
-.prose h2:first-child,
-.prose h3:first-child,
-.prose h4:first-child,
-.prose h5:first-child,
-.prose h6:first-child {
-    margin-top: 0 !important;
+.prose strong {
+  color: var(--ds-ink);
+  font-weight: 600;
 }
 
-/* Heading margins - generous top spacing for visual breathing room */
+/* ===== HEADINGS ===== */
+
+.prose :where(h1, h2, h3, h4, h5, h6) {
+  margin: 2.25em 0 0.75em;
+  color: var(--ds-ink);
+  font-family: var(--ds-font-display);
+  font-weight: 700;
+  letter-spacing: var(--ds-track-display);
+  line-height: var(--ds-lh-snug);
+  text-wrap: balance;
+  scroll-margin-top: var(--ds-s24);
+}
+
+.prose h1 {
+  font-size: 1.75em;
+}
+
 .prose h2 {
-    margin-top: 2.5rem !important;
-    margin-bottom: 1rem !important;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-.dark .prose h2 {
-    border-bottom-color: rgba(255, 255, 255, 0.1);
+  padding-top: var(--ds-s4);
+  border-top: var(--ds-hairline) solid var(--ds-rule);
+  font-size: 1.5em;
 }
 
 .prose h3 {
-    margin-top: 2rem !important;
-    margin-bottom: 0.75rem !important;
+  font-size: 1.2em;
 }
 
-.prose h4 {
-    margin-top: 1.5rem !important;
-    margin-bottom: 0.5rem !important;
+.prose :where(h4, h5, h6) {
+  font-size: 1em;
 }
 
-/* Consecutive headings - reduced gap when stacking */
-.prose h1+h2,
-.prose h2+h3,
-.prose h3+h4 {
-    margin-top: 1rem !important;
+.prose :where(h2, h3, h4) + * {
+  margin-top: 0.5em;
 }
 
-/* ===== PARAGRAPH SPACING ===== */
-/* Comfortable spacing for reading flow */
+/* ===== LINKS ===== */
 
-.prose p {
-    margin-top: 1.25em !important;
-    margin-bottom: 1.25em !important;
+.prose a {
+  color: var(--ds-accent);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-thickness: var(--ds-hairline);
+  text-underline-offset: 0.2em;
+  transition: text-decoration-thickness var(--ds-dur) var(--ds-ease);
 }
 
-.prose p:first-child {
-    margin-top: 0 !important;
+.prose a:hover {
+  text-decoration-thickness: 2px;
 }
 
-.prose p:last-child {
-    margin-bottom: 0 !important;
-}
+/* ===== LISTS ===== */
 
-/* Paragraphs following headings */
-.prose h2+p,
-.prose h3+p,
-.prose h4+p {
-    margin-top: 0.75rem !important;
-}
-
-/* ===== LIST STYLING ===== */
-/* Comfortable list spacing for easy scanning */
-
-.prose ul,
-.prose ol {
-    margin-top: 1.25rem !important;
-    margin-bottom: 1.25rem !important;
-    padding-left: 1.5rem !important;
+.prose :where(ul, ol) {
+  padding-left: 1.5em;
 }
 
 .prose li {
-    margin-top: 0.5rem !important;
-    margin-bottom: 0.5rem !important;
-    padding-left: 0.25rem !important;
+  margin-block: 0.4em;
+  padding-left: 0.25em;
 }
 
-/* Reduce spacing between consecutive list items for tight grouping */
-.prose li+li {
-    margin-top: 0.375rem !important;
+.prose li > :where(ul, ol, p) {
+  margin-block: 0.4em;
 }
 
-/* Nested lists - tighter spacing */
-.prose ul ul,
-.prose ol ol,
-.prose ul ol,
-.prose ol ul {
-    margin-top: 0.5rem !important;
-    margin-bottom: 0.5rem !important;
+.prose ul > li::marker {
+  color: var(--ds-muted);
 }
 
-/* List item markers - better visual alignment */
-.prose ul>li::marker {
-    color: #6366f1;
-    /* indigo-500 for visual interest */
+.prose ol > li::marker {
+  color: var(--ds-accent);
+  font-family: var(--ds-font-display);
+  font-size: 0.875em;
+  font-weight: 600;
 }
 
-.prose ol>li::marker {
-    color: #6366f1;
-    font-weight: 600;
-}
+/* ===== MEDIA ===== */
 
-.dark .prose ul>li::marker,
-.dark .prose ol>li::marker {
-    color: #818cf8;
-    /* indigo-400 */
-}
-
-/* Paragraphs adjacent to lists */
-.prose p+ul,
-.prose p+ol {
-    margin-top: 0.75rem !important;
-}
-
-.prose ul+p,
-.prose ol+p {
-    margin-top: 1.25rem !important;
-}
-
-/* ===== IMAGES ===== */
-/* Proper spacing around images */
-
-.prose p+img,
-.prose img+p,
-.prose p+figure,
-.prose figure+p {
-    margin-top: 1.5rem !important;
-}
-
-/* Responsive images */
 .prose img {
-    max-width: 100%;
-    height: auto;
-    margin-top: 1.5rem !important;
-    margin-bottom: 1.5rem !important;
-    border-radius: 0.75rem;
+  margin-block: var(--prose-gap);
+  border: var(--ds-hairline) solid var(--ds-rule);
+  border-radius: var(--ds-radius);
+}
+
+.prose figcaption {
+  margin-top: var(--ds-s2);
+  color: var(--ds-muted);
+  font-family: var(--ds-font-display);
+  font-size: var(--ds-fs-label);
+}
+
+.prose hr {
+  margin-block: 3em;
+  border: 0;
+  border-top: var(--ds-hairline) solid var(--ds-rule);
 }
 
 /* ===== BLOCKQUOTES ===== */
-/* Distinctive styling for quotes */
 
 .prose blockquote {
-    margin-top: 1.5rem !important;
-    margin-bottom: 1.5rem !important;
-    padding: 1rem 1.25rem !important;
-    border-left: 4px solid #6366f1 !important;
-    /* indigo-500 */
-    background: rgba(99, 102, 241, 0.05);
-    border-radius: 0 0.5rem 0.5rem 0;
-    font-style: italic;
-    color: #4b5563;
-    /* gray-600 */
+  padding: 0 0 0 var(--ds-s6);
+  border-left: 2px solid var(--ds-accent);
+  color: var(--ds-muted);
+  font-style: normal;
+  quotes: none;
 }
 
-.dark .prose blockquote {
-    background: rgba(99, 102, 241, 0.1);
-    border-left-color: #818cf8 !important;
-    /* indigo-400 */
-    color: #9ca3af;
-    /* gray-400 */
-}
-
-.prose blockquote p {
-    margin: 0 !important;
-}
-
-.prose p+blockquote,
-.prose blockquote+p {
-    margin-top: 1.5rem !important;
+.prose blockquote p::before,
+.prose blockquote p::after {
+  content: none;
 }
 
 /* ===== TABLES ===== */
-/* Modern styling for responsive tables */
 
 .prose table {
-    width: 100% !important;
-    max-width: 100%;
-    margin-top: 1.5rem !important;
-    margin-bottom: 1.5rem !important;
-    border-radius: 0.75rem;
-    border-collapse: separate;
-    border-spacing: 0;
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    overflow: hidden;
-    background: rgba(255, 255, 255, 0.5);
-}
-
-.dark .prose table {
-    border-color: rgba(255, 255, 255, 0.15);
-    background: rgba(30, 30, 30, 0.5);
-}
-
-/* Table wrapper for horizontal scroll on mobile */
-.prose .table-wrapper {
-    overflow-x: auto;
-    margin: 1.5rem 0;
-    border-radius: 0.75rem;
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  border-top: var(--ds-hairline) solid var(--ds-ink);
+  font-size: 0.9em;
 }
 
 .prose th,
 .prose td {
-    padding: 0.875rem 1rem !important;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-    border-right: 1px solid rgba(0, 0, 0, 0.06);
-    text-align: left;
-    vertical-align: top;
-}
-
-.prose th:last-child,
-.prose td:last-child {
-    border-right: none;
-}
-
-.prose tr:last-child td {
-    border-bottom: none;
-}
-
-.dark .prose th,
-.dark .prose td {
-    border-bottom-color: rgba(255, 255, 255, 0.1);
-    border-right-color: rgba(255, 255, 255, 0.06);
+  padding: var(--ds-s2) var(--ds-s4) var(--ds-s2) 0;
+  border-bottom: var(--ds-hairline) solid var(--ds-rule);
+  text-align: left;
+  vertical-align: top;
 }
 
 .prose th {
-    background: rgba(59, 130, 246, 0.08);
-    font-weight: 600;
-    color: #1e40af;
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    letter-spacing: 0.05em;
+  color: var(--ds-muted);
+  font-family: var(--ds-font-display);
+  font-size: var(--ds-fs-label);
+  font-weight: 600;
+  letter-spacing: var(--ds-track-label);
+  text-transform: uppercase;
 }
 
-.dark .prose th {
-    background: rgba(59, 130, 246, 0.15);
-    color: #93c5fd;
+/* ===== DETAILS ===== */
+
+.prose details {
+  padding: var(--ds-s3) var(--ds-s4);
+  border: var(--ds-hairline) solid var(--ds-rule);
+  border-radius: var(--ds-radius);
 }
 
-/* Zebra striping for better readability */
-.prose tbody tr:nth-child(even) {
-    background: rgba(0, 0, 0, 0.02);
-}
-
-.dark .prose tbody tr:nth-child(even) {
-    background: rgba(255, 255, 255, 0.03);
-}
-
-/* Hover effect on rows */
-.prose tbody tr:hover {
-    background: rgba(59, 130, 246, 0.05);
-}
-
-.dark .prose tbody tr:hover {
-    background: rgba(59, 130, 246, 0.1);
+.prose summary {
+  color: var(--ds-ink);
+  font-weight: 600;
+  cursor: pointer;
 }
 
 /* ===== CODE BLOCKS ===== */
 /*
  * rehype-pretty-code emits both themes as CSS variables on every token:
  *   --shiki-light / --shiki-dark (+ -bg, -font-style)
- * We pick one set based on the `dark` class on <html>, so code blocks
- * follow the site theme without re-rendering.
+ * We pick one set from the `dark` class on <html>, so code follows the site
+ * theme without re-rendering.
  */
 
-.prose pre {
-    margin-top: 1.5rem !important;
-    margin-bottom: 1.5rem !important;
-}
-
-.prose li>pre {
-    margin-top: 0.75rem !important;
-    margin-bottom: 0.75rem !important;
-}
-
 figure[data-rehype-pretty-code-figure] {
-    margin: 1.5rem 0;
+  margin-block: var(--prose-gap);
 }
 
 pre[data-theme] {
-    --code-bg: #f6f8fa;
-    --code-border: rgba(0, 0, 0, 0.08);
-    --code-header: rgba(0, 0, 0, 0.04);
-    --code-muted: #6b7280;
-    position: relative;
-    max-width: 100%;
-    overflow-x: auto;
-    padding: 0 0 0.875rem;
-    border: 1px solid var(--code-border);
-    border-radius: 0.75rem;
-    background-color: var(--code-bg) !important;
-    color: var(--shiki-light);
-    font-size: 0.9375rem;
-    line-height: 1.6;
+  --code-bg: var(--ds-wash);
+  --code-bar: var(--ds-bg);
+
+  position: relative;
+  max-width: 100%;
+  margin: 0;
+  overflow-x: auto;
+  padding: 0 0 var(--ds-s3);
+  border: var(--ds-hairline) solid var(--ds-rule);
+  border-radius: var(--ds-radius);
+  background-color: var(--code-bg) !important;
+  color: var(--shiki-light);
+  font-size: 0.875rem;
+  line-height: 1.65;
 }
 
 .dark pre[data-theme] {
-    --code-bg: var(--shiki-dark-bg, #011627);
-    --code-border: rgba(255, 255, 255, 0.08);
-    --code-header: rgba(255, 255, 255, 0.04);
-    --code-muted: #8b949e;
-    color: var(--shiki-dark);
+  --code-bg: var(--shiki-dark-bg, #0f0f0f);
+  color: var(--shiki-dark);
 }
 
-/* Token colors */
 pre[data-theme] span {
-    color: var(--shiki-light);
-    font-style: var(--shiki-light-font-style);
+  color: var(--shiki-light);
+  font-style: var(--shiki-light-font-style);
 }
 
 .dark pre[data-theme] span {
-    color: var(--shiki-dark);
-    font-style: var(--shiki-dark-font-style);
+  color: var(--shiki-dark);
+  font-style: var(--shiki-dark-font-style);
 }
 
-/* Header bar with language label (copy button sits on the right) */
+/* Terminal-style bar with the language as a prompt-ish label */
 pre[data-language]::before {
-    content: attr(data-language);
-    position: sticky;
-    left: 0;
-    display: block;
-    height: 2.5rem;
-    margin-bottom: 0.75rem;
-    padding: 0 1.25rem;
-    line-height: 2.5rem;
-    border-bottom: 1px solid var(--code-border);
-    background: var(--code-header);
-    color: var(--code-muted);
-    @apply font-mono;
-    font-size: 0.7rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+  content: '$ ' attr(data-language);
+  position: sticky;
+  left: 0;
+  display: block;
+  margin-bottom: var(--ds-s3);
+  padding: var(--ds-s2) var(--ds-s4);
+  border-bottom: var(--ds-hairline) solid var(--ds-rule);
+  background: var(--code-bar);
+  color: var(--ds-muted);
+  font-family: var(--ds-font-display);
+  font-size: var(--ds-fs-label);
+  letter-spacing: var(--ds-track-label);
+  text-transform: uppercase;
 }
 
-pre[data-language="plaintext"]::before,
-pre[data-language="text"]::before,
-pre[data-language="txt"]::before {
-    content: "text";
+pre:is([data-language='plaintext'], [data-language='text'], [data-language='txt'])::before {
+  content: '$ text';
 }
 
 /* Optional ```lang title="file.ts" header */
 [data-rehype-pretty-code-title] {
-    @apply rounded-t-xl border border-b-0 border-neutral-200 bg-neutral-100 px-5 py-2 font-mono text-xs text-neutral-600 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300;
+  padding: var(--ds-s2) var(--ds-s4);
+  border: var(--ds-hairline) solid var(--ds-rule);
+  border-bottom: 0;
+  border-radius: var(--ds-radius) var(--ds-radius) 0 0;
+  background: var(--ds-bg);
+  color: var(--ds-ink);
+  font-family: var(--ds-font-display);
+  font-size: var(--ds-fs-label);
 }
 
-[data-rehype-pretty-code-title]+pre {
-    margin-top: 0 !important;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
+[data-rehype-pretty-code-title] + pre {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }
 
-pre>code {
-    display: grid;
-    min-width: 100%;
-    white-space: pre;
-    word-wrap: normal;
-    background: transparent;
-    border: 0;
-    padding: 0;
-    counter-reset: line;
-    @apply font-mono;
+pre > code {
+  display: grid;
+  min-width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-family: var(--ds-font-display);
+  white-space: pre;
+  word-wrap: normal;
+  counter-reset: line;
 }
 
-pre>code>[data-line] {
-    padding: 0 1.25rem;
-    border-left: 3px solid transparent;
+pre > code > [data-line] {
+  padding: 0 var(--ds-s4);
+  border-left: 2px solid transparent;
 }
 
 /* Line numbers: ```bash showLineNumbers */
-code[data-line-numbers]>[data-line]::before {
-    counter-increment: line;
-    content: counter(line);
-    display: inline-block;
-    width: 0.75rem;
-    margin-right: 1.5rem;
-    text-align: right;
-    color: var(--code-muted);
-    opacity: 0.6;
+code[data-line-numbers] > [data-line]::before {
+  counter-increment: line;
+  content: counter(line);
+  display: inline-block;
+  width: 1ch;
+  margin-right: var(--ds-s6);
+  color: var(--ds-muted);
+  text-align: right;
 }
 
-code[data-line-numbers-max-digits="2"]>[data-line]::before {
-    width: 1.25rem;
+code[data-line-numbers-max-digits='2'] > [data-line]::before {
+  width: 2ch;
 }
 
-code[data-line-numbers-max-digits="3"]>[data-line]::before {
-    width: 1.75rem;
+code[data-line-numbers-max-digits='3'] > [data-line]::before {
+  width: 3ch;
 }
 
-code[data-line-numbers-max-digits="4"]>[data-line]::before {
-    width: 2.25rem;
+code[data-line-numbers-max-digits='4'] > [data-line]::before {
+  width: 4ch;
 }
 
-/* Highlighted lines: ```bash {2-4} */
+/* Highlighted lines and words: ```bash {2-4} /word/ */
 [data-line].highlighted {
-    border-left-color: #3b82f6;
-    background: rgba(59, 130, 246, 0.1);
+  border-left-color: var(--ds-accent);
+  background: var(--ds-spot);
 }
 
-.dark [data-line].highlighted {
-    background: rgba(96, 165, 250, 0.12);
-}
-
-/* Highlighted words: ```bash /word/ */
 .word,
 [data-highlighted-chars] {
-    border-radius: 0.25rem;
-    padding: 0.125rem 0.25rem;
-    background: rgba(59, 130, 246, 0.15);
-    box-decoration-break: clone;
+  padding: 0.1em 0.25em;
+  border-radius: var(--ds-radius);
+  background: var(--ds-spot);
+  box-decoration-break: clone;
 }
 
-/* Inline code */
-:not(pre)>code {
-    @apply rounded-md bg-neutral-100 px-1.5 py-0.5 text-[0.875em] dark:bg-neutral-800;
-    word-break: break-word;
-    overflow-wrap: break-word;
-    color: #be185d;
-    @apply font-mono;
+/* Inline code: neutral, so links stay the only accent in running text */
+:not(pre) > code {
+  padding: 0.1em 0.35em;
+  border: var(--ds-hairline) solid var(--ds-rule);
+  border-radius: var(--ds-radius);
+  background: var(--ds-wash);
+  color: var(--ds-ink);
+  font-family: var(--ds-font-display);
+  font-size: 0.875em;
+  overflow-wrap: break-word;
 }
 
-.dark :not(pre)>code {
-    color: #f472b6;
+.prose :not(pre) > code::before,
+.prose :not(pre) > code::after {
+  content: none;
 }
 
-/* ===== COPY BUTTON ===== */
+/* ===== COPY BUTTON (src/components/CopyCodeScript.astro) ===== */
 
 .copy-code-btn {
-    @apply absolute right-2 top-1.5 flex h-7 w-7 items-center justify-center rounded-md;
-    @apply text-neutral-500 transition-all duration-200 dark:text-neutral-400;
-    @apply hover:bg-black/5 hover:text-neutral-800 dark:hover:bg-white/10 dark:hover:text-neutral-100;
-    @apply focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500;
-    opacity: 0;
+  position: absolute;
+  top: var(--ds-s1);
+  right: var(--ds-s2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ds-s8);
+  height: var(--ds-s8);
+  border: 0;
+  border-radius: var(--ds-radius);
+  background: transparent;
+  color: var(--ds-muted);
+  cursor: pointer;
+  opacity: 0;
+  transition:
+    opacity var(--ds-dur) var(--ds-ease),
+    color var(--ds-dur) var(--ds-ease);
+}
+
+.copy-code-btn svg {
+  width: var(--ds-s4);
+  height: var(--ds-s4);
 }
 
 pre:hover .copy-code-btn,
+.copy-code-btn:focus-visible,
 .copy-code-btn.copied {
-    opacity: 1;
+  opacity: 1;
 }
 
-/* Touch devices have no hover: always show the button */
+.copy-code-btn:hover {
+  color: var(--ds-ink);
+}
+
 @media (hover: none) {
-    .copy-code-btn {
-        opacity: 1;
-    }
+  .copy-code-btn {
+    opacity: 1;
+  }
 }
 
 .copy-code-btn.copied {
-    @apply text-green-600 dark:text-green-400;
+  color: var(--ds-accent);
 }
 
 .copy-code-btn .check-icon,
 .copy-code-btn.copied .copy-icon {
-    display: none;
+  display: none;
 }
 
 .copy-code-btn.copied .check-icon {
-    display: block;
+  display: block;
 }
 
-/* ===== MOBILE RESPONSIVE ADJUSTMENTS ===== */
+/* ===== LIGHTBOX (src/lib/post-page.ts) ===== */
 
-@media (max-width: 768px) {
-    .prose {
-        font-size: 17px !important;
-        /* Comfortable mobile reading size */
-        line-height: 1.75 !important;
-    }
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--ds-s4);
+  background: rgb(0 0 0 / 0.88);
+  cursor: zoom-out;
+}
 
-    /* Slightly reduced heading sizes on mobile */
-    .prose h2 {
-        font-size: 1.5rem !important;
-    }
-
-    .prose h3 {
-        font-size: 1.25rem !important;
-    }
-
-    /* Mobile code blocks */
-    pre[data-theme] {
-        border-radius: 0.5rem;
-        font-size: 0.8125rem;
-    }
-
-    pre>code>[data-line] {
-        padding: 0 1rem;
-    }
-
-    /* Comfortable list spacing on mobile */
-    .prose li {
-        margin-top: 0.375rem !important;
-        margin-bottom: 0.375rem !important;
-    }
+.lightbox img {
+  max-width: 92vw;
+  max-height: 92vh;
+  border-radius: var(--ds-radius);
+  object-fit: contain;
 }

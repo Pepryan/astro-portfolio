@@ -4,7 +4,7 @@
  * Placed right under the hero — the writing is the strongest proof of focus.
  */
 import type { BlogPost } from '../../types';
-import { formatDate } from '../../lib/format';
+import { formatDate, primaryText } from '../../lib/format';
 import SectionHeader from './SectionHeader.astro';
 
 interface Props {
@@ -14,8 +14,6 @@ interface Props {
 
 const { posts, index } = Astro.props;
 
-// Many titles/summaries are "English | Bahasa Indonesia"; the list shows the first half.
-const firstPart = (text = '') => text.split(' | ')[0].trim();
 ---
 
 {posts.length > 0 && (
@@ -36,8 +34,8 @@ const firstPart = (text = '') => text.split(' | ')[0].trim();
               {formatDate(post.data.date, 'short')}
             </time>
             <div class="writing__body">
-              <h3 class="ds-h3">{firstPart(post.data.title)}</h3>
-              {post.data.summary && <p class="writing__summary">{firstPart(post.data.summary)}</p>}
+              <h3 class="ds-h3">{primaryText(post.data.title)}</h3>
+              {post.data.summary && <p class="writing__summary">{primaryText(post.data.summary)}</p>}
             </div>
             <p class="ds-label writing__meta">
               {post.data.category && <span>{post.data.category}</span>}

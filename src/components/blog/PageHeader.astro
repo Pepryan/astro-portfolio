@@ -1,0 +1,64 @@
+---
+/**
+ * Header for index-style pages (blog, tags, series, archive, projects…):
+ * eyebrow with marker, display H1, lede, optional row of section links.
+ */
+interface Props {
+  eyebrow: string;
+  eyebrowNote?: string;
+  title: string;
+  lede?: string;
+  links?: { href: string; text: string; current?: boolean }[];
+}
+
+const { eyebrow, eyebrowNote, title, lede, links = [] } = Astro.props;
+---
+
+<header class="page-head">
+  <p class="ds-eyebrow">
+    <span class="ds-marker" aria-hidden="true"></span>
+    <span>{eyebrow}</span>
+    {eyebrowNote && <span class="ds-eyebrow__muted">{eyebrowNote}</span>}
+  </p>
+  <h1 class="page-head__title">{title}</h1>
+  {lede && <p class="ds-lede">{lede}</p>}
+  {links.length > 0 && (
+    <nav class="page-head__links" aria-label="Sections">
+      {links.map(({ href, text, current }) => (
+        <a class="ds-link" href={href} aria-current={current ? 'page' : undefined}>
+          {text} <span class="ds-arrow" aria-hidden="true">→</span>
+        </a>
+      ))}
+    </nav>
+  )}
+  <slot />
+</header>
+
+<style>
+  .page-head {
+    display: grid;
+    gap: var(--ds-s6);
+    margin-bottom: var(--ds-s12);
+  }
+
+  .page-head__title {
+    margin: 0;
+    font-family: var(--ds-font-display);
+    font-size: var(--ds-fs-display);
+    font-weight: 700;
+    line-height: var(--ds-lh-tight);
+    letter-spacing: var(--ds-track-display);
+    text-wrap: balance;
+  }
+
+  .page-head__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--ds-s6);
+  }
+
+  .page-head__links [aria-current='page'] {
+    color: var(--ds-ink);
+    text-decoration-color: var(--ds-accent);
+  }
+</style>

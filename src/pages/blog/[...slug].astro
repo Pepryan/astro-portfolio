@@ -1,6 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import BlogPostLayout from '../../components/BlogPostLayout';
+import PostLayout from '../../components/blog/PostLayout.astro';
 import { getCollection } from 'astro:content';
 import { getPublishedPosts, getReadingStats, toBlogPost, type PostEntry } from '../../lib/posts';
 import { generateBlogPostSEO } from '../../utils/seo';
@@ -22,7 +22,7 @@ interface Props {
 }
 
 const { post, allPosts } = Astro.props;
-const { Content } = await post.render();
+const { Content, headings } = await post.render();
 const { minutes: readingTime, words } = getReadingStats(post);
 const seriesNavigation = await getSeriesNavigation(post);
 
@@ -41,14 +41,14 @@ const seo = generateBlogPostSEO({ ...post.data, slug: post.slug });
   tags={seo.tags}
   section={seo.section}
 >
-  <BlogPostLayout
+  <PostLayout
     post={{ slug: post.slug, data: post.data }}
+    headings={headings}
     readingTime={readingTime}
     wordCount={words}
     allPosts={allPosts}
     seriesNavigation={seriesNavigation}
-    client:load
   >
     <Content />
-  </BlogPostLayout>
+  </PostLayout>
 </Layout>

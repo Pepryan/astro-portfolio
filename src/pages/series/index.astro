@@ -1,12 +1,14 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import SeriesPageClient from '../../components/SeriesPageClient';
+import PageHeader from '../../components/blog/PageHeader.astro';
+import SeriesProgress from '../../components/blog/SeriesProgress.astro';
 import { getAllSeries } from '../../utils/series';
 import { generateSeriesListingSEO } from '../../utils/seo';
 
-// The listing only needs series metadata, not each series' posts
-const allSeries = (await getAllSeries()).map(({ posts, ...series }) => series);
-const seo = generateSeriesListingSEO(allSeries);
+const allSeries = await getAllSeries();
+// Featured first, then the configured order
+const ordered = [...allSeries].sort((a, b) => Number(b.featured) - Number(a.featured));
+const seo = generateSeriesListingSEO(allSeries.map(({ posts, ...series }) => series));
 ---
 
 <Layout
@@ -16,5 +18,73 @@ const seo = generateSeriesListingSEO(allSeries);
   type={seo.type}
   keywords={seo.keywords}
 >
-  <SeriesPageClient series={allSeries} client:load />
+  <main class="ds-page">
+    <PageHeader
+      eyebrow="Blog"
+      eyebrowNote="Series"
+      title="Long runs on one topic"
+      lede="Multi-part series, written in order. Start at part one, or jump to wherever you are."
+      links={[
+        { href: '/blog', text: 'All posts' },
+        { href: '/blog/tags', text: 'Tags' },
+        { href: '/archive', text: 'Archive' },
+      ]}
+    />
+
+    <ul class="ds-ledger">
+      {ordered.map((series) => (
+        <li>
+          <a class="ds-row ds-spot ds-nudge series-row" data-spotlight href={`/series/${series.slug}`}>
+            <div class="series-row__body">
+              <p class="ds-label series-row__meta">
+                <span class="series-row__status" data-status={series.status}>{series.status}</span>
+                {series.difficulty && <span>{series.difficulty}</span>}
+                {series.featured && <span>Featured</span>}
+              </p>
+              <h2 class="ds-h3">{series.name}</h2>
+              <p class="series-row__desc">{series.description}</p>
+            </div>
+            <SeriesProgress done={series.completedParts} total={series.totalParts} />
+          </a>
+        </li>
+      ))}
+    </ul>
+  </main>
 </Layout>
+
+<style>
+  .series-row {
+    display: grid;
+    gap: var(--ds-s4);
+    padding-block: var(--ds-s6);
+  }
+
+  .series-row__body {
+    min-width: 0;
+  }
+
+  .series-row__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--ds-s4);
+    margin: 0 0 var(--ds-s2);
+  }
+
+  .series-row__status[data-status='ongoing'] {
+    color: var(--ds-accent);
+  }
+
+  .series-row__desc {
+    max-width: var(--ds-measure);
+    margin: var(--ds-s2) 0 0;
+    color: var(--ds-muted);
+  }
+
+  @media (min-width: 768px) {
+    .series-row {
+      grid-template-columns: minmax(0, 1fr) var(--ds-side-col);
+      gap: var(--ds-s8);
+      align-items: center;
+    }
+  }
+</style>

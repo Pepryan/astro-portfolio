@@ -63,11 +63,6 @@ export default function GiscusComments() {
   }, []);
 
   return (
-    <section className="mt-16 border-t border-neutral-200 pt-8 dark:border-neutral-700" aria-labelledby="comments-title">
-      <h2 id="comments-title" className="mb-6 text-xl font-semibold text-neutral-900 dark:text-neutral-100">
-        Comments
-      </h2>
-      <div ref={ref} className="giscus-container min-h-[200px]" />
-    </section>
+    <div ref={ref} className="giscus-container min-h-[200px]" />
   );
 }

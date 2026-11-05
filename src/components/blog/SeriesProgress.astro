@@ -1,0 +1,42 @@
+---
+/** "4 / 10 parts" with a hairline progress bar. */
+interface Props {
+  done: number;
+  total: number;
+}
+
+const { done, total } = Astro.props;
+const safeTotal = Math.max(total, done, 1);
+---
+
+<span class="progress">
+  <span class="progress__text">{done} / {safeTotal} parts</span>
+  <span
+    class="progress__bar"
+    role="progressbar"
+    aria-valuemin="0"
+    aria-valuemax={safeTotal}
+    aria-valuenow={done}
+    aria-label={`${done} of ${safeTotal} parts published`}
+    style={`--progress: ${(done / safeTotal) * 100}%`}
+  ></span>
+</span>
+
+<style>
+  .progress {
+    display: grid;
+    gap: var(--ds-s2);
+    min-width: var(--ds-date-col);
+  }
+
+  .progress__text {
+    font-family: var(--ds-font-display);
+    font-size: var(--ds-fs-small);
+    font-weight: 600;
+  }
+
+  .progress__bar {
+    height: var(--ds-s1);
+    background: linear-gradient(90deg, var(--ds-accent) var(--progress), var(--ds-rule) var(--progress));
+  }
+</style>

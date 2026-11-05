@@ -1,0 +1,550 @@
+---
+/**
+ * Single post page. Static HTML; the only islands are Giscus (on visible) and
+ * a small script for the TOC highlight, lightbox and copy-link
+ * (src/lib/post-page.ts). Reading progress is a CSS scroll-driven bar.
+ */
+import type { MarkdownHeading } from 'astro';
+import type { BlogPost } from '../../types';
+import type { SeriesNavigationData } from '../../utils/series';
+import { formatDate, primaryText, secondaryText } from '../../lib/format';
+import { seoConfig } from '../../config/components';
+import { tagUrl } from '../../lib/posts';
+import GiscusComments from '../GiscusComments';
+import PostRow from './PostRow.astro';
+
+interface Props {
+  post: Pick<BlogPost, 'slug' | 'data'>;
+  headings: MarkdownHeading[];
+  readingTime: number;
+  wordCount: number;
+  allPosts: BlogPost[];
+  seriesNavigation: SeriesNavigationData | null;
+}
+
+const { post, headings, readingTime, wordCount, allPosts, seriesNavigation } = Astro.props;
+const { data } = post;
+
+const title = primaryText(data.title);
+const subtitle = secondaryText(data.title);
+const summary = primaryText(data.summary ?? data.description ?? '');
+
+// TOC: the two shallowest heading levels the post actually uses
+const minDepth = Math.min(...headings.map((h) => h.depth), 6);
+const toc = headings.filter((h) => h.depth <= minDepth + 1).map((h) => ({ ...h, nested: h.depth > minDepth }));
+
+// Newest first; "older" = previous (← key), "newer" = next (→ key)
+const sorted = [...allPosts].sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+const index = sorted.findIndex((p) => p.slug === post.slug);
+const older = index >= 0 ? sorted[index + 1] : undefined;
+const newer = index > 0 ? sorted[index - 1] : undefined;
+
+// Related: most shared tags, then newest; fall back to latest posts
+const tags = data.tags ?? [];
+const scored = allPosts
+  .filter((p) => p.slug !== post.slug)
+  .map((p) => ({ post: p, score: (p.data.tags ?? []).filter((t) => tags.includes(t)).length }));
+const related = (scored.some((s) => s.score > 0) ? scored.filter((s) => s.score > 0) : scored)
+  .sort((a, b) => b.score - a.score || new Date(b.post.data.date).getTime() - new Date(a.post.data.date).getTime())
+  .slice(0, 3)
+  .map((s) => s.post);
+
+const series = seriesNavigation?.series;
+const seriesPrev = seriesNavigation?.previousPost ?? null;
+const seriesNext = seriesNavigation?.nextPost ?? null;
+const pagerRepeats = Boolean(series) && seriesPrev?.slug === older?.slug && seriesNext?.slug === newer?.slug;
+const seriesTotal = series ? Math.max(series.totalParts, seriesNavigation!.currentPart) : 0;
+const seriesPart = data.series?.part ?? seriesNavigation?.currentPart ?? 0;
+
+const url = `${seoConfig.site.url}/blog/${post.slug}`;
+const enc = encodeURIComponent;
+const shareLinks = [
+  { label: 'X', href: `https://twitter.com/intent/tweet?text=${enc(data.title)}&url=${enc(url)}` },
+  { label: 'LinkedIn', href: `https://www.linkedin.com/sharing/share-offsite/?url=${enc(url)}` },
+  { label: 'WhatsApp', href: `https://wa.me/?text=${enc(`${data.title} ${url}`)}` },
+  { label: 'Telegram', href: `https://t.me/share/url?url=${enc(url)}&text=${enc(data.title)}` },
+  { label: 'Reddit', href: `https://www.reddit.com/submit?url=${enc(url)}&title=${enc(data.title)}` },
+  { label: 'Email', href: `mailto:?subject=${enc(data.title)}&body=${enc(`${data.title}\n\n${url}`)}` },
+];
+---
+
+<div class="post-progress" aria-hidden="true"></div>
+
+<main class="ds-page post" data-post-page>
+  <a class="ds-link post__back" href="/blog"><span aria-hidden="true">←</span> All posts</a>
+
+  <div class="post__grid">
+    <article class="post__article" data-pagefind-body={data.hidden ? undefined : true}>
+      <header class="post__head">
+        <p class="ds-eyebrow">
+          <span class="ds-marker" aria-hidden="true"></span>
+          <span>{data.category ?? 'Post'}</span>
+          <time class="ds-eyebrow__muted" datetime={data.date.toISOString()}>{formatDate(data.date)}</time>
+        </p>
+
+        <h1 class="post__title" data-pagefind-meta={`title:${data.title}`}>{title}</h1>
+        {subtitle && <p class="post__subtitle" lang="id">{subtitle}</p>}
+        {summary && <p class="ds-lede">{summary}</p>}
+
+        <dl class="post__meta">
+          <div><dt class="ds-label">Published</dt><dd>{formatDate(data.date, 'short')}</dd></div>
+          {data.updated && <div><dt class="ds-label">Updated</dt><dd>{formatDate(data.updated, 'short')}</dd></div>}
+          <div><dt class="ds-label">Reading</dt><dd>{readingTime} min</dd></div>
+          <div><dt class="ds-label">Words</dt><dd>{wordCount.toLocaleString('en-US')}</dd></div>
+        </dl>
+
+        {series && (
+          <a class="post__series ds-spot" data-spotlight href={`/series/${series.slug}`}>
+            <span class="ds-label">Series · Part {seriesPart} of {seriesTotal}</span>
+            <span class="post__series-name">{series.name}</span>
+            <span class="post__series-bar" style={`--progress: ${(seriesPart / seriesTotal) * 100}%`} aria-hidden="true"></span>
+          </a>
+        )}
+
+        {tags.length > 0 && (
+          <ul class="post__tags" aria-label="Tags">
+            {tags.map((tag) => (
+              <li><a href={tagUrl(tag)}>#{tag}</a></li>
+            ))}
+          </ul>
+        )}
+
+        {data.thumbnail && (
+          <figure class="post__cover">
+            <img src={data.thumbnail} alt="" loading="eager" decoding="async" />
+          </figure>
+        )}
+
+        {toc.length > 1 && (
+          <details class="post__toc-mobile" data-pagefind-ignore>
+            <summary class="ds-label">On this page</summary>
+            <ol class="toc">
+              {toc.map((h) => (
+                <li class:list={{ 'toc__nested': h.nested }}><a href={`#${h.slug}`} data-toc-link={h.slug}>{h.text}</a></li>
+              ))}
+            </ol>
+          </details>
+        )}
+      </header>
+
+      <div class="prose dark:prose-invert post__body" data-article-content>
+        <slot />
+      </div>
+
+      <footer class="post__foot">
+        <div class="post__share">
+          <span class="ds-label">Share</span>
+          <button type="button" class="ds-link" data-copy-link={url}>
+            <span data-copy-label>Copy link</span>
+          </button>
+          {shareLinks.map(({ label, href }) => (
+            <a class="ds-link" href={href} target="_blank" rel="noopener noreferrer">
+              {label}<span class="sr-only"> (opens in a new tab)</span>
+            </a>
+          ))}
+        </div>
+        <p class="ds-label post__byline">
+          Written by {data.author ?? seoConfig.author.name} · <a class="ds-link" href="#main-content">Back to top ↑</a>
+        </p>
+      </footer>
+    </article>
+
+    {toc.length > 1 && (
+      <aside class="post__toc" aria-label="On this page" data-pagefind-ignore>
+        <p class="ds-label">On this page</p>
+        <ol class="toc">
+          {toc.map((h) => (
+            <li class:list={{ 'toc__nested': h.nested }}><a href={`#${h.slug}`} data-toc-link={h.slug}>{h.text}</a></li>
+          ))}
+        </ol>
+      </aside>
+    )}
+  </div>
+
+  {seriesNavigation && (seriesNavigation.previousPost || seriesNavigation.nextPost) && (
+    <nav class="post__pager" aria-label="Series navigation">
+      <p class="ds-eyebrow"><span>In this series</span><a class="ds-eyebrow__muted" href={`/series/${series!.slug}`}>{series!.name}</a></p>
+      <div class="pager">
+        {seriesNavigation.previousPost ? (
+          <a class="pager__cell ds-spot" data-spotlight data-prev-post={pagerRepeats ? '' : undefined} href={`/blog/${seriesNavigation.previousPost.slug}`}>
+            <span class="ds-label">← Part {seriesNavigation.currentPart - 1}</span>
+            <span class="ds-h3">{primaryText(seriesNavigation.previousPost.data.title)}</span>
+          </a>
+        ) : <span />}
+        {seriesNavigation.nextPost && (
+          <a class="pager__cell pager__cell--next ds-spot" data-spotlight data-next-post={pagerRepeats ? '' : undefined} href={`/blog/${seriesNavigation.nextPost.slug}`}>
+            <span class="ds-label">Part {seriesNavigation.currentPart + 1} →</span>
+            <span class="ds-h3">{primaryText(seriesNavigation.nextPost.data.title)}</span>
+          </a>
+        )}
+      </div>
+    </nav>
+  )}
+
+  {(older || newer) && !pagerRepeats && (
+    <nav class="post__pager" aria-label="More posts">
+      <p class="ds-eyebrow"><span>Keep reading</span></p>
+      <div class="pager">
+        {older ? (
+          <a class="pager__cell ds-spot" data-spotlight data-prev-post href={`/blog/${older.slug}`}>
+            <span class="ds-label">← Older</span>
+            <span class="ds-h3">{primaryText(older.data.title)}</span>
+          </a>
+        ) : <span />}
+        {newer && (
+          <a class="pager__cell pager__cell--next ds-spot" data-spotlight data-next-post href={`/blog/${newer.slug}`}>
+            <span class="ds-label">Newer →</span>
+            <span class="ds-h3">{primaryText(newer.data.title)}</span>
+          </a>
+        )}
+      </div>
+    </nav>
+  )}
+
+  {related.length > 0 && (
+    <section class="post__related" aria-labelledby="related-title">
+      <p class="ds-eyebrow"><span id="related-title">Related notes</span></p>
+      <ul class="ds-ledger">
+        {related.map((p) => <PostRow post={p} />)}
+      </ul>
+    </section>
+  )}
+
+  <section class="post__comments" aria-labelledby="comments-title">
+    <h2 class="ds-eyebrow post__comments-title" id="comments-title"><span>Comments</span></h2>
+    <GiscusComments client:visible />
+  </section>
+</main>
+
+<script>
+  import { initPostPage } from '../../lib/post-page';
+  initPostPage();
+</script>
+
+<style>
+  .post {
+    --post-measure: 70ch;
+    --post-toc: 15rem;
+  }
+
+  .post__back {
+    margin-bottom: var(--ds-s8);
+  }
+
+  .post__grid {
+    display: grid;
+    gap: var(--ds-s16);
+  }
+
+  .post__article {
+    min-width: 0;
+    max-width: var(--post-measure);
+  }
+
+  @media (min-width: 1024px) {
+    .post__grid {
+      grid-template-columns: minmax(0, var(--post-measure)) var(--post-toc);
+      justify-content: space-between;
+    }
+  }
+
+  /* ---------- header ---------- */
+  .post__head {
+    display: grid;
+    gap: var(--ds-s6);
+    margin-bottom: var(--ds-s12);
+  }
+
+  .post__title {
+    margin: 0;
+    font-family: var(--ds-font-display);
+    font-size: var(--ds-fs-h2);
+    font-weight: 700;
+    line-height: var(--ds-lh-tight);
+    letter-spacing: var(--ds-track-display);
+    text-wrap: balance;
+  }
+
+  @media (min-width: 1024px) {
+    .post__title {
+      font-size: var(--ds-fs-display);
+    }
+  }
+
+  .post__subtitle {
+    margin: calc(var(--ds-s3) * -1) 0 0;
+    color: var(--ds-muted);
+    font-family: var(--ds-font-display);
+    font-size: var(--ds-fs-body);
+    text-wrap: balance;
+  }
+
+  .post__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ds-s4) var(--ds-s8);
+    margin: 0;
+    padding-block: var(--ds-s4);
+    border-block: var(--ds-hairline) solid var(--ds-rule);
+  }
+
+  .post__meta dd {
+    margin: var(--ds-s1) 0 0;
+    font-family: var(--ds-font-display);
+    font-weight: 600;
+  }
+
+  .post__series {
+    display: grid;
+    gap: var(--ds-s2);
+    padding: var(--ds-s4);
+    border: var(--ds-hairline) solid var(--ds-rule);
+    border-radius: var(--ds-radius);
+    color: inherit;
+    text-decoration: none;
+    transition: border-color var(--ds-dur) var(--ds-ease);
+  }
+
+  .post__series:hover,
+  .post__series:focus-visible {
+    border-color: var(--ds-accent);
+  }
+
+  .post__series .ds-label {
+    color: var(--ds-accent);
+  }
+
+  .post__series-name {
+    font-weight: 600;
+  }
+
+  .post__series-bar {
+    height: var(--ds-hairline);
+    background: linear-gradient(90deg, var(--ds-accent) var(--progress), var(--ds-rule) var(--progress));
+  }
+
+  .post__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ds-s2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .post__tags a {
+    display: inline-block;
+    padding: var(--ds-s1) var(--ds-s3);
+    border: var(--ds-hairline) solid var(--ds-rule);
+    border-radius: var(--ds-radius);
+    color: var(--ds-muted);
+    font-family: var(--ds-font-display);
+    font-size: var(--ds-fs-small);
+    text-decoration: none;
+    transition:
+      color var(--ds-dur) var(--ds-ease),
+      border-color var(--ds-dur) var(--ds-ease);
+  }
+
+  .post__tags a:hover,
+  .post__tags a:focus-visible {
+    border-color: var(--ds-ink);
+    color: var(--ds-ink);
+  }
+
+  .post__cover {
+    margin: 0;
+    overflow: hidden;
+    border: var(--ds-hairline) solid var(--ds-rule);
+    border-radius: var(--ds-radius);
+    background: var(--ds-wash);
+  }
+
+  .post__cover img {
+    display: block;
+    width: 100%;
+    max-height: 26rem;
+    object-fit: contain;
+  }
+
+  /* ---------- TOC ---------- */
+  .toc {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--ds-fs-small);
+  }
+
+  .toc li + li {
+    margin-top: var(--ds-s1);
+  }
+
+  .toc a {
+    display: block;
+    padding: var(--ds-s1) 0 var(--ds-s1) var(--ds-s3);
+    border-left: var(--ds-hairline) solid var(--ds-rule);
+    color: var(--ds-muted);
+    line-height: var(--ds-lh-snug);
+    text-decoration: none;
+    transition:
+      color var(--ds-dur) var(--ds-ease),
+      border-color var(--ds-dur) var(--ds-ease);
+  }
+
+  .toc .toc__nested a {
+    padding-left: var(--ds-s6);
+  }
+
+  .toc a:hover,
+  .toc a:focus-visible {
+    color: var(--ds-ink);
+  }
+
+  .toc a[aria-current='location'] {
+    border-left-color: var(--ds-accent);
+    color: var(--ds-ink);
+    font-weight: 600;
+  }
+
+  .post__toc {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .post__toc {
+      position: sticky;
+      top: var(--ds-s24);
+      display: grid;
+      gap: var(--ds-s4);
+      align-self: start;
+      max-height: calc(100vh - var(--ds-s24) - var(--ds-s8));
+      overflow-y: auto;
+      scrollbar-width: thin;
+    }
+
+    .post__toc-mobile {
+      display: none;
+    }
+  }
+
+  .post__toc-mobile {
+    padding: var(--ds-s3) var(--ds-s4);
+    border: var(--ds-hairline) solid var(--ds-rule);
+    border-radius: var(--ds-radius);
+  }
+
+  .post__toc-mobile summary {
+    cursor: pointer;
+  }
+
+  .post__toc-mobile .toc {
+    margin-top: var(--ds-s3);
+  }
+
+  /* ---------- footer ---------- */
+  .post__foot {
+    display: grid;
+    gap: var(--ds-s4);
+    margin-top: var(--ds-s16);
+    padding-top: var(--ds-s6);
+    border-top: var(--ds-hairline) solid var(--ds-ink);
+  }
+
+  .post__share {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 var(--ds-s4);
+  }
+
+  .post__share button {
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+
+  .post__byline {
+    margin: 0;
+  }
+
+  .post__byline .ds-link {
+    padding: 0;
+  }
+
+  /* ---------- after the article ---------- */
+  .post__pager,
+  .post__related,
+  .post__comments {
+    display: grid;
+    gap: var(--ds-s6);
+    margin-top: var(--ds-s16);
+  }
+
+  .pager {
+    display: grid;
+    gap: var(--ds-s4);
+  }
+
+  @media (min-width: 768px) {
+    .pager {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .pager__cell {
+    display: grid;
+    gap: var(--ds-s2);
+    padding: var(--ds-s6);
+    border: var(--ds-hairline) solid var(--ds-rule);
+    border-radius: var(--ds-radius);
+    color: inherit;
+    text-decoration: none;
+    transition: border-color var(--ds-dur) var(--ds-ease);
+  }
+
+  .pager__cell--next {
+    text-align: right;
+  }
+
+  .pager__cell:hover,
+  .pager__cell:focus-visible {
+    border-color: var(--ds-accent);
+  }
+
+  .pager__cell:hover .ds-h3,
+  .pager__cell:focus-visible .ds-h3 {
+    color: var(--ds-accent);
+  }
+
+  .post__comments-title {
+    font-size: var(--ds-fs-label);
+  }
+
+  .post__pager .ds-eyebrow a {
+    text-decoration: none;
+  }
+
+  /* ---------- reading progress: scroll-driven, no JS ---------- */
+  .post-progress {
+    display: none;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    .post-progress {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 60;
+      display: block;
+      height: var(--ds-s1);
+      background: var(--ds-accent);
+      transform-origin: left;
+      animation: post-progress linear both;
+      animation-timeline: scroll(root);
+    }
+  }
+
+  @keyframes post-progress {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+</style>

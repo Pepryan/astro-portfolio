@@ -1,124 +1,122 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
+import PageHeader from '../../../components/blog/PageHeader.astro';
 import { getBlogPosts, getTagCounts, tagUrl } from '../../../lib/posts';
 import { generateSEO } from '../../../utils/seo';
 
 const posts = await getBlogPosts();
-const sortedTags = getTagCounts(posts);
-const totalTags = sortedTags.length;
-const totalPosts = posts.length;
-const description = `Browse all ${totalTags} tags used across ${totalPosts} blog posts. Find articles by topic and discover content that interests you.`;
-const seo = generateSEO({ title: 'All Tags', description, canonical: '/blog/tags' });
+const tags = getTagCounts(posts);
+const max = Math.max(...tags.map(([, count]) => count), 1);
+
+const seo = generateSEO({
+  title: 'All Tags',
+  description: `Browse ${tags.length} tags across the blog: Linux, networking, AI tooling, Kubernetes and more.`,
+  canonical: '/blog/tags',
+});
 ---
 
 <Layout title={seo.title} description={seo.description} canonical={seo.canonical}>
+  <main class="ds-page">
+    <PageHeader
+      eyebrow="Blog"
+      eyebrowNote="Tags"
+      title="Browse by tag"
+      lede="Every topic I've written about, most used first."
+      links={[
+        { href: '/blog', text: 'All posts' },
+        { href: '/series', text: 'Series' },
+        { href: '/archive', text: 'Archive' },
+      ]}
+    />
 
-        <main class="max-w-7xl mx-auto px-4 pt-24 pb-16">
-          {/* Header */}
-          <div class="text-center mb-12">
-            <h1 class="text-4xl md:text-5xl font-bold text-neutral-900 dark:text-neutral-100 mb-4">
-              Browse by Tags
-            </h1>
-            <p class="text-lg text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto mb-6">
-              {description}
-            </p>
-
-            {/* Navigation */}
-            <a 
-              href="/blog" 
-              class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium
-                text-neutral-600 dark:text-neutral-400 hover:text-blue-600 dark:hover:text-blue-400
-                bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700
-                rounded-lg transition-colors"
-            >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-              </svg>
-              Back to All Posts
-            </a>
-          </div>
-
-          {/* Stats */}
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            <div class="bg-neutral-50 dark:bg-neutral-800/50 rounded-lg p-6 text-center">
-              <div class="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-2">
-                {totalTags}
-              </div>
-              <div class="text-sm text-neutral-600 dark:text-neutral-400">Total Tags</div>
-            </div>
-            <div class="bg-neutral-50 dark:bg-neutral-800/50 rounded-lg p-6 text-center">
-              <div class="text-2xl font-bold text-green-600 dark:text-green-400 mb-2">
-                {totalPosts}
-              </div>
-              <div class="text-sm text-neutral-600 dark:text-neutral-400">Total Posts</div>
-            </div>
-            <div class="bg-neutral-50 dark:bg-neutral-800/50 rounded-lg p-6 text-center">
-              <div class="text-2xl font-bold text-purple-600 dark:text-purple-400 mb-2">
-                {Math.round(totalPosts / totalTags * 10) / 10}
-              </div>
-              <div class="text-sm text-neutral-600 dark:text-neutral-400">Avg Posts per Tag</div>
-            </div>
-          </div>
-
-          {/* Tags Cloud */}
-          <div class="mb-12">
-            <h2 class="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-6 text-center">
-              Popular Tags
-            </h2>
-            <div class="flex flex-wrap justify-center gap-3">
-              {sortedTags.slice(0, 10).map(([tag, count]) => (
-                <a
-                  href={tagUrl(tag)}
-                  class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 
-                    hover:from-blue-600 hover:to-blue-700 text-white rounded-full text-sm font-medium
-                    shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
-                >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                      d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-                  </svg>
-                  {tag}
-                  <span class="bg-white/20 px-2 py-0.5 rounded-full text-xs">
-                    {count}
-                  </span>
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* All Tags Grid */}
-          <div>
-            <h2 class="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-6">
-              All Tags ({totalTags})
-            </h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-              {sortedTags.map(([tag, count]) => (
-                <a
-                  href={tagUrl(tag)}
-                  class="group block p-4 bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 
-                    dark:border-neutral-700 hover:border-blue-300 dark:hover:border-blue-600
-                    hover:shadow-lg transition-all duration-200"
-                >
-                  <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                      <svg class="w-4 h-4 text-neutral-400 group-hover:text-blue-500 transition-colors" 
-                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                          d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-                      </svg>
-                      <span class="font-medium text-neutral-900 dark:text-neutral-100 group-hover:text-blue-600 
-                        dark:group-hover:text-blue-400 transition-colors truncate">
-                        {tag}
-                      </span>
-                    </div>
-                    <span class="text-sm text-neutral-500 dark:text-neutral-400 bg-neutral-100 
-                      dark:bg-neutral-700 px-2 py-1 rounded-full">
-                      {count}
-                    </span>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </div>
-        </main>
+    <table class="tags">
+      <caption class="sr-only">Tags and how many posts use each one</caption>
+      <thead>
+        <tr>
+          <th scope="col" class="ds-label">Tag</th>
+          <th scope="col" class="ds-label tags__num">Posts</th>
+          <th scope="col" class="tags__bar-col"><span class="sr-only">Share of posts</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {tags.map(([tag, count]) => (
+          <tr class="ds-spot" data-spotlight>
+            <th scope="row">
+              <a class="tags__link" href={tagUrl(tag)}>#{tag}</a>
+            </th>
+            <td class="tags__num">{count}</td>
+            <td class="tags__bar-col" aria-hidden="true">
+              <span class="tags__bar" style={`--share: ${(count / max) * 100}%`}></span>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </main>
 </Layout>
+
+<style>
+  .tags {
+    width: 100%;
+    border-collapse: collapse;
+    border-top: var(--ds-hairline) solid var(--ds-ink);
+    font-family: var(--ds-font-display);
+    text-align: left;
+  }
+
+  .tags thead th {
+    padding-block: var(--ds-s3);
+    font-weight: 400;
+  }
+
+  .tags tbody :is(th, td) {
+    padding: var(--ds-s3) var(--ds-s4) var(--ds-s3) 0;
+    border-bottom: var(--ds-hairline) solid var(--ds-rule);
+  }
+
+  .tags__link {
+    color: var(--ds-ink);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color var(--ds-dur) var(--ds-ease);
+  }
+
+  .tags__link:hover,
+  .tags__link:focus-visible {
+    color: var(--ds-accent);
+  }
+
+  /* Make the whole row clickable without nesting links */
+  .tags tbody tr {
+    position: relative;
+  }
+
+  .tags__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .tags__num {
+    width: var(--ds-s16);
+    color: var(--ds-muted);
+    text-align: right;
+  }
+
+  .tags__bar-col {
+    width: 50%;
+  }
+
+  .tags__bar {
+    display: block;
+    width: var(--share);
+    height: var(--ds-s1);
+    background: var(--ds-accent);
+  }
+
+  @media (max-width: 639px) {
+    .tags__bar-col {
+      width: 30%;
+    }
+  }
+</style>

@@ -80,22 +80,10 @@ export const seoConfig = {
   // Blog Configuration
   blog: {
     title: "Febryan Blog",
-    description: "Technical blog about cloud engineering, DevOps, infrastructure, automation, and modern web development",
-    postsPerPage: 6,
+    description: "Long-form notes on Linux, networking, AI tooling and the infrastructure around them",
     showReadingTime: true,
     showWordCount: true,
     enableComments: true,
-    // Blog Page Layout Settings
-    layout: {
-      showStats: false, // Show post count and topics count - set to false to hide
-      showPaginationInfo: false, // Show "Showing 1-6 of 14" and "14 blog posts" info
-      compactLayout: true, // Use compact spacing and seamless design
-      terminology: "posts", // "posts" or "articles" - affects all labels
-      statsLabels: {
-        posts: "posts", // Can be changed to "articles", "writings", etc.
-        topics: "topics" // Can be changed to "categories", "tags", etc.
-      }
-    }
   },
 
   // Organization Schema (for structured data)
@@ -649,14 +637,6 @@ export const componentConfig = {
       showLogo: true,
       showThemeToggle: true
     }
-  },
-
-  // Reading Progress Configuration
-  readingProgress: {
-    enabled: true,
-    showAfter: 200, // Show after scrolling this many pixels
-    height: 5, // Height of progress bar in pixels
-    showBackToTop: true, // Show back to top button when progress is visible
   },
 
   // Layout Configuration

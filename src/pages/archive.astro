@@ -1,17 +1,26 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import ArchiveClient from '../components/ArchiveClient';
+import PageHeader from '../components/blog/PageHeader.astro';
+import GrepFilter from '../components/blog/GrepFilter.astro';
 import { getBlogPosts } from '../lib/posts';
+import { getYear, primaryText } from '../lib/format';
 import { generateSEO } from '../utils/seo';
 
 const posts = await getBlogPosts();
+const byYear = [...posts.reduce((map, post) => {
+  const year = getYear(post.data.date);
+  map.set(year, [...(map.get(year) ?? []), post]);
+  return map;
+}, new Map<number, typeof posts>())];
+
+const isoDay = (date: Date) => new Date(date).toISOString().slice(5, 10);
 
 const seo = generateSEO({
   title: 'Blog Archive',
-  description: `Browse all ${posts.length} blog posts organized by year and category. Find technical articles about cloud engineering, DevOps, infrastructure, and automation.`,
+  description: 'Every post on the blog, one line each, grouped by year: Linux, networking, AI tooling and infrastructure.',
   canonical: '/archive',
   type: 'website',
-  keywords: ['archive', 'blog posts', 'articles', 'technical writing', 'history']
+  keywords: ['archive', 'blog posts', 'linux', 'sysadmin', 'technical writing'],
 });
 ---
 
@@ -22,5 +31,105 @@ const seo = generateSEO({
   type={seo.type}
   keywords={seo.keywords}
 >
-  <ArchiveClient posts={posts} client:load />
+  <main class="ds-page">
+    <PageHeader
+      eyebrow="Blog"
+      eyebrowNote="git log --oneline"
+      title="Archive"
+      lede="Every post, one line each, newest first."
+      links={[
+        { href: '/blog', text: 'All posts' },
+        { href: '/blog/tags', text: 'Tags' },
+        { href: '/series', text: 'Series' },
+      ]}
+    />
+
+    <GrepFilter />
+
+    <div class="log">
+      {byYear.map(([year, items]) => (
+        <section class="log__year" data-post-group aria-labelledby={`y${year}`}>
+          <h2 id={`y${year}`} class="log__heading">
+            {year}<span class="ds-label">{items.length} {items.length === 1 ? 'post' : 'posts'}</span>
+          </h2>
+          <ol class="ds-ledger">
+            {items.map((post) => {
+              const tags = (post.data.tags ?? []).map((t) => t.toLowerCase());
+              const text = [post.data.title, post.data.summary, post.data.category, post.data.series?.name, ...tags]
+                .filter(Boolean).join(' ').toLowerCase();
+              return (
+                <li data-post data-text={text} data-tags={tags.join('|')} data-series={post.data.series ? `${post.data.series.slug}|${post.data.series.name.toLowerCase()}` : ''}>
+                  <a class="ds-row ds-spot log__row" data-spotlight href={`/blog/${post.slug}`}>
+                    <time class="log__date" datetime={new Date(post.data.date).toISOString()}>{isoDay(post.data.date)}</time>
+                    <span class="log__title">{primaryText(post.data.title)}</span>
+                    {post.data.category && <span class="ds-label log__cat">{post.data.category}</span>}
+                  </a>
+                </li>
+              );
+            })}
+          </ol>
+        </section>
+      ))}
+    </div>
+  </main>
 </Layout>
+
+<style>
+  .log {
+    display: grid;
+    gap: var(--ds-s12);
+  }
+
+  .log__year[hidden] {
+    display: none;
+  }
+
+  .log__heading {
+    display: flex;
+    align-items: baseline;
+    gap: var(--ds-s4);
+    margin: 0 0 var(--ds-s4);
+    font-family: var(--ds-font-display);
+    font-size: var(--ds-fs-value);
+    font-weight: 700;
+    letter-spacing: var(--ds-track-display);
+  }
+
+  .log__row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--ds-s1) var(--ds-s4);
+    padding-block: var(--ds-s3);
+    font-family: var(--ds-font-display);
+    font-size: var(--ds-fs-small);
+  }
+
+  .log__date {
+    color: var(--ds-accent);
+    font-weight: 600;
+  }
+
+  .log__title {
+    color: var(--ds-ink);
+    transition: color var(--ds-dur) var(--ds-ease);
+  }
+
+  .log__row:hover .log__title,
+  .log__row:focus-visible .log__title {
+    color: var(--ds-accent);
+  }
+
+  .log__cat {
+    grid-column: 2;
+  }
+
+  @media (min-width: 768px) {
+    .log__row {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+    }
+
+    .log__cat {
+      grid-column: auto;
+    }
+  }
+</style>
