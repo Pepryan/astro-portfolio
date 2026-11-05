@@ -33,6 +33,12 @@
   }
 }
 
+@media (min-width: 1440px) {
+  .prose {
+    --prose-fs: 1.25rem;
+  }
+}
+
 .prose * {
   max-width: 100%;
   box-sizing: border-box;

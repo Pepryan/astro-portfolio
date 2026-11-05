@@ -129,7 +129,7 @@ const shareLinks = [
           ))}
         </div>
         <p class="ds-label post__byline">
-          Written by {data.author ?? seoConfig.author.name} · <a class="ds-link" href="#main-content">Back to top ↑</a>
+          Written by {data.author ?? seoConfig.author.name}
         </p>
       </footer>
     </article>
@@ -218,8 +218,8 @@ const shareLinks = [
 <style>
   .post {
     --post-measure: 46rem;
-    --post-toc: 16rem;
-    --post-rail: 12rem;
+    --post-toc: 17rem;
+    --post-rail: 13rem;
   }
 
   .post__back {
@@ -252,15 +252,10 @@ const shareLinks = [
     }
   }
 
-  /* Wide: facts rail │ wider article │ TOC — uses the space instead of margins */
+  /* Wide: facts rail │ article (takes all remaining width) │ TOC */
   @media (min-width: 1280px) {
-    .post {
-      --post-measure: 52rem;
-    }
-
     .post__grid {
-      grid-template-columns: var(--post-rail) minmax(0, var(--post-measure)) var(--post-toc);
-      justify-content: space-between;
+      grid-template-columns: var(--post-rail) minmax(0, 1fr) var(--post-toc);
       gap: var(--ds-s12);
     }
 
@@ -297,6 +292,10 @@ const shareLinks = [
     .post__title {
       font-size: var(--ds-fs-display);
     }
+  }
+
+  .post__head .ds-lede {
+    max-width: none;
   }
 
   .post__subtitle {
@@ -422,9 +421,6 @@ const shareLinks = [
     margin: 0;
   }
 
-  .post__byline .ds-link {
-    padding: 0;
-  }
 
   /* ---------- after the article ---------- */
   .post__pager,

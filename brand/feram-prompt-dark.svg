@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 98 32" width="784" height="256" role="img" aria-label="feram">
+  <title>feram</title>
+  <path d="M3 10.5 8.5 16 3 21.5" stroke="#60a5fa" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M21 22.5V11C21 8.6 22.6 7.5 25.5 7.5M18 13.5H25M31.0 18H40.0A4.5 4.5 0 1 0 38.68 21.18M45.5 22.5V13.5M45.5 17.5C45.5 15 47.5 13.5 50.0 13.5H52.5M67.0 18A4.5 4.5 0 1 0 58.0 18A4.5 4.5 0 1 0 67.0 18M67.0 13.5V22.5M72.5 22.5V13.5M72.5 16.5A3 3 0 0 1 78.5 16.5V22.5M78.5 16.5A3 3 0 0 1 84.5 16.5V22.5" stroke="#fafafa" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="89.0" y="19.5" width="7.5" height="3" rx="1" fill="#60a5fa"/>
+</svg>

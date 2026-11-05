@@ -1,0 +1,109 @@
+---
+/**
+ * Floating "back to top" with a live scroll percentage (↑ 42%).
+ * Appears after the first ~60% of a screen; hidden from keyboard and screen
+ * readers until then. One rAF-throttled scroll listener, no layout reads
+ * beyond scroll metrics.
+ */
+---
+
+<button type="button" class="to-top" data-to-top aria-label="Back to top" title="Back to top">
+  <span class="to-top__arrow" aria-hidden="true">↑</span>
+  <span class="to-top__pct" data-to-top-pct aria-hidden="true">0%</span>
+</button>
+
+<script>
+  const button = document.querySelector<HTMLButtonElement>('[data-to-top]');
+  const pct = document.querySelector<HTMLElement>('[data-to-top-pct]');
+
+  if (button) {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = max > 0 ? Math.min(100, Math.round((window.scrollY / max) * 100)) : 0;
+      if (pct) pct.textContent = `${progress}%`;
+      button.toggleAttribute('data-visible', window.scrollY > window.innerHeight * 0.6);
+    };
+
+    window.addEventListener('scroll', () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    }, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+
+    button.addEventListener('click', () => {
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
+    });
+  }
+</script>
+
+<style>
+  .to-top {
+    position: fixed;
+    right: var(--ds-s4);
+    bottom: var(--ds-s4);
+    z-index: 50;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ds-s2);
+    height: var(--ds-s12);
+    padding: 0 var(--ds-s4);
+    border: var(--ds-hairline) solid var(--ds-rule);
+    border-radius: var(--ds-radius);
+    background: color-mix(in srgb, var(--ds-bg) 94%, transparent);
+    box-shadow: var(--ds-shadow);
+    color: var(--ds-muted);
+    font-family: var(--ds-font-display);
+    font-size: var(--ds-fs-label);
+    font-weight: 600;
+    letter-spacing: var(--ds-track-label);
+    cursor: pointer;
+    /* hidden state: not focusable, not announced */
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(var(--ds-s2));
+    transition:
+      opacity var(--ds-dur) var(--ds-ease),
+      transform var(--ds-dur) var(--ds-ease),
+      visibility 0s linear var(--ds-dur),
+      color var(--ds-dur) var(--ds-ease),
+      border-color var(--ds-dur) var(--ds-ease);
+  }
+
+  .to-top[data-visible] {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    transition-delay: 0s;
+  }
+
+  .to-top:hover,
+  .to-top:focus-visible {
+    border-color: var(--ds-accent);
+    color: var(--ds-ink);
+  }
+
+  .to-top__arrow {
+    color: var(--ds-accent);
+    font-size: var(--ds-fs-body);
+    transition: transform var(--ds-dur) var(--ds-ease);
+  }
+
+  .to-top:hover .to-top__arrow {
+    transform: translateY(calc(var(--ds-s1) * -1));
+  }
+
+  .to-top__pct {
+    min-width: 4ch;
+    text-align: right;
+  }
+
+  @media (min-width: 640px) {
+    .to-top {
+      right: var(--ds-s8);
+      bottom: var(--ds-s8);
+    }
+  }
+</style>

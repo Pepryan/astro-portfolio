@@ -8,6 +8,7 @@ import StructuredData from '../components/StructuredData.astro';
 import CopyCodeScript from '../components/CopyCodeScript.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import BackToTop from '../components/BackToTop.astro';
 import KeyboardShortcuts from '../components/KeyboardShortcuts';
 import SearchDialog from '../components/SearchDialog';
 import { seoConfig } from '../config/components';
@@ -134,6 +135,7 @@ const seoData = generateSEO({
       <slot />
     </div>
     <Footer />
+    <BackToTop />
 
     <KeyboardShortcuts client:idle />
     <SearchDialog client:idle />
