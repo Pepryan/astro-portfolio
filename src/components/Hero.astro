@@ -1,0 +1,458 @@
+---
+/**
+ * Homepage hero — static HTML, no client JS.
+ *
+ * Direction: calm and precise, like the datasheet on a rack server.
+ * Asymmetric grid (statement left, captioned portrait right), hairline rules
+ * and monospace labels as the one visual device, a single flat accent that is
+ * reserved for the primary CTA and the eyebrow marker.
+ */
+import { componentConfig, seoConfig } from '../config/components';
+
+interface Props {
+  /** Number of published posts, shown in the spec strip. */
+  postCount: number;
+}
+
+const { postCount } = Astro.props;
+const { hero, storyJourney } = componentConfig;
+
+const socialLabels: Record<string, string> = {
+  github: 'GitHub',
+  gitlab: 'GitLab',
+  linkedin: 'LinkedIn',
+  twitter: 'X',
+  email: 'Email',
+};
+
+const socialLinks = hero.showSocialLinks
+  ? hero.socialLinks
+      .filter((link) => link.enabled && socialLabels[link.platform])
+      .map((link) => ({
+        href: link.url,
+        label: socialLabels[link.platform],
+        external: !link.url.startsWith('mailto:'),
+      }))
+  : [];
+
+// Facts come from the config so the strip stays true when the config changes.
+const milestones = storyJourney.milestones;
+const firstYear = milestones[0]?.year;
+const cloudYear = milestones.find((m) => /cloud/i.test(m.title))?.year;
+const [city] = seoConfig.author.location.split(',');
+
+const spec = [
+  { label: 'Based in', value: `${city}, ID`, note: 'UTC+7' },
+  cloudYear && { label: 'Cloud & DevOps since', value: cloudYear, note: 'Infra, CI/CD, automation' },
+  firstYear && { label: 'Tinkering since', value: firstYear, note: 'Started by building PCs' },
+  { label: 'Writing', value: `${postCount} posts`, note: 'Mostly in Bahasa Indonesia' },
+].filter(Boolean) as { label: string; value: string; note: string }[];
+---
+
+<div class="hero">
+  <p class="hero__eyebrow">
+    <span class="hero__marker" aria-hidden="true"></span>
+    <span>{hero.title}</span>
+    <span class="hero__eyebrow-role">Cloud &amp; DevOps Engineer</span>
+  </p>
+
+  <div class="hero__grid">
+    <figure class="hero__figure">
+      <img
+        src="/images/photo-web-febryan.webp"
+        alt={`Portrait of ${hero.title}`}
+        width="300"
+        height="300"
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+      />
+      <figcaption>
+        <span class="hero__fig-no">Fig. 1</span>
+        {hero.title}, {city}
+      </figcaption>
+    </figure>
+
+    <div class="hero__copy">
+      <h1 class="hero__title">I build cloud infrastructure and write down what I learn.</h1>
+
+      <p class="hero__lede">
+        Field notes on cloud, DevOps and web development, from someone who started out overclocking PCs
+        in junior high and now tinkers with AI and automation.
+      </p>
+
+      <div class="hero__actions">
+        <a class="hero__cta" href="/blog">
+          Read the blog
+          <span class="hero__cta-arrow" aria-hidden="true">→</span>
+        </a>
+
+        {socialLinks.length > 0 && (
+          <ul class="hero__social" aria-label="Elsewhere">
+            {socialLinks.map(({ href, label, external }) => (
+              <li>
+                <a
+                  href={href}
+                  {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                >
+                  {label}
+                  {external && <span class="sr-only"> (opens in a new tab)</span>}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  </div>
+
+  <dl class="hero__spec">
+    {spec.map(({ label, value, note }) => (
+      <div class="hero__spec-cell">
+        <dt>{label}</dt>
+        <dd>
+          <span class="hero__spec-value">{value}</span>
+          <span class="hero__spec-note">{note}</span>
+        </dd>
+      </div>
+    ))}
+  </dl>
+</div>
+
+<style>
+  /* ---------- Tokens ---------- */
+  .hero {
+    /* Color: 1 accent, 3 neutrals. Contrast on white: ink 17:1, muted 7.8:1, accent 6.7:1 */
+    --hero-ink: #171717;
+    --hero-muted: #525252;
+    --hero-rule: #e5e5e5;
+    --hero-accent: #1d4ed8;
+    --hero-accent-strong: #1e3a8a;
+    --hero-on-accent: #ffffff;
+
+    /* Type: mono display + neutral text, scale 12 / 16 / 24 / 56 */
+    --hero-font-display: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --hero-font-text: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+    --hero-fs-label: 0.75rem;
+    --hero-fs-body: 1rem;
+    --hero-fs-lede: 1.25rem;
+    --hero-fs-value: 1.5rem;
+    --hero-fs-display: 2.25rem;
+    --hero-lh-tight: 1.08;
+    --hero-lh-body: 1.6;
+    --hero-lh-lede: 1.45;
+    --hero-track-display: -0.035em;
+    --hero-track-label: 0.08em;
+
+    /* Space: 4px grid */
+    --hero-s1: 0.25rem;
+    --hero-s2: 0.5rem;
+    --hero-s3: 0.75rem;
+    --hero-s4: 1rem;
+    --hero-s6: 1.5rem;
+    --hero-s8: 2rem;
+    --hero-s12: 3rem;
+    --hero-s16: 4rem;
+
+    /* Shape & motion */
+    --hero-hairline: 1px;
+    --hero-radius: 0.25rem;
+    --hero-marker: 0.5rem;
+    --hero-thumb: 7rem;
+    --hero-figure: 15rem;
+    --hero-measure: 34rem;
+    --hero-dur: 200ms;
+    --hero-ease: cubic-bezier(0.2, 0.6, 0.2, 1);
+
+    color: var(--hero-ink);
+    font-family: var(--hero-font-text);
+    font-size: var(--hero-fs-body);
+    line-height: var(--hero-lh-body);
+  }
+
+  /* Dark: muted 7.4:1, accent 7.1:1 on #171717 */
+  :global(.dark) .hero {
+    --hero-ink: #f5f5f5;
+    --hero-muted: #a3a3a3;
+    --hero-rule: #404040;
+    --hero-accent: #60a5fa;
+    --hero-accent-strong: #93c5fd;
+    --hero-on-accent: #0a0a0a;
+  }
+
+  @media (min-width: 768px) {
+    .hero {
+      --hero-fs-lede: 1.5rem;
+      --hero-fs-display: 3rem;
+      --hero-figure: 13rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hero {
+      --hero-fs-display: 3.5rem;
+      --hero-figure: 17.5rem;
+    }
+  }
+
+  /* ---------- Eyebrow: label + hairline that runs to the edge ---------- */
+  .hero__eyebrow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--hero-s2) var(--hero-s3);
+    margin: 0 0 var(--hero-s8);
+    font-family: var(--hero-font-display);
+    font-size: var(--hero-fs-label);
+    font-weight: 600;
+    letter-spacing: var(--hero-track-label);
+    text-transform: uppercase;
+  }
+
+  .hero__eyebrow::after {
+    content: '';
+    flex: 1 1 var(--hero-s16);
+    height: var(--hero-hairline);
+    background: var(--hero-rule);
+  }
+
+  .hero__marker {
+    width: var(--hero-marker);
+    height: var(--hero-marker);
+    background: var(--hero-accent);
+  }
+
+  .hero__eyebrow-role {
+    color: var(--hero-muted);
+    font-weight: 400;
+  }
+
+  /* ---------- Grid: figure first on mobile, right-hand column from 768px ---------- */
+  .hero__grid {
+    display: grid;
+    gap: var(--hero-s8);
+    grid-template-areas: 'figure' 'copy';
+  }
+
+  .hero__copy {
+    grid-area: copy;
+    min-width: 0;
+  }
+
+  .hero__figure {
+    grid-area: figure;
+    display: flex;
+    align-items: flex-end;
+    gap: var(--hero-s4);
+    margin: 0;
+  }
+
+  .hero__figure img {
+    width: var(--hero-thumb);
+    aspect-ratio: 1;
+    height: auto;
+    object-fit: cover;
+    border: var(--hero-hairline) solid var(--hero-rule);
+    border-radius: var(--hero-radius);
+  }
+
+  .hero__figure figcaption {
+    display: flex;
+    flex-direction: column;
+    gap: var(--hero-s1);
+    color: var(--hero-muted);
+    font-family: var(--hero-font-display);
+    font-size: var(--hero-fs-label);
+    line-height: var(--hero-lh-body);
+  }
+
+  .hero__fig-no {
+    flex-shrink: 0;
+    white-space: nowrap;
+    color: var(--hero-ink);
+    font-weight: 600;
+    letter-spacing: var(--hero-track-label);
+    text-transform: uppercase;
+  }
+
+  @media (min-width: 768px) {
+    .hero__grid {
+      grid-template-columns: minmax(0, 1fr) var(--hero-figure);
+      grid-template-areas: 'copy figure';
+      gap: var(--hero-s12);
+      align-items: start;
+    }
+
+    .hero__figure {
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--hero-s3);
+    }
+
+    .hero__figure img {
+      width: 100%;
+    }
+
+    .hero__figure figcaption {
+      flex-direction: row;
+      gap: var(--hero-s2);
+      padding-top: var(--hero-s3);
+      border-top: var(--hero-hairline) solid var(--hero-rule);
+    }
+  }
+
+  /* ---------- Statement ---------- */
+  .hero__title {
+    margin: 0;
+    font-family: var(--hero-font-display);
+    font-size: var(--hero-fs-display);
+    font-weight: 700;
+    line-height: var(--hero-lh-tight);
+    letter-spacing: var(--hero-track-display);
+    text-wrap: balance;
+  }
+
+  .hero__lede {
+    max-width: var(--hero-measure);
+    margin: var(--hero-s6) 0 0;
+    color: var(--hero-muted);
+    font-size: var(--hero-fs-lede);
+    line-height: var(--hero-lh-lede);
+    text-wrap: pretty;
+  }
+
+  /* ---------- Actions: one dominant CTA, quiet text links ---------- */
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--hero-s4) var(--hero-s8);
+    margin-top: var(--hero-s8);
+  }
+
+  .hero__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--hero-s3);
+    padding: var(--hero-s4) var(--hero-s6);
+    border-radius: var(--hero-radius);
+    background: var(--hero-accent);
+    color: var(--hero-on-accent);
+    font-family: var(--hero-font-display);
+    font-size: var(--hero-fs-body);
+    font-weight: 600;
+    line-height: 1;
+    text-decoration: none;
+    transition: background-color var(--hero-dur) var(--hero-ease);
+  }
+
+  .hero__cta-arrow {
+    transition: transform var(--hero-dur) var(--hero-ease);
+  }
+
+  .hero__cta:hover,
+  .hero__cta:focus-visible {
+    background: var(--hero-accent-strong);
+  }
+
+  .hero__cta:hover .hero__cta-arrow,
+  .hero__cta:focus-visible .hero__cta-arrow {
+    transform: translateX(var(--hero-s1));
+  }
+
+  .hero__social {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--hero-s4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .hero__social a {
+    display: inline-block;
+    padding-block: var(--hero-s3);
+    color: var(--hero-muted);
+    font-family: var(--hero-font-display);
+    font-size: var(--hero-fs-label);
+    letter-spacing: var(--hero-track-label);
+    text-transform: uppercase;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: var(--hero-hairline);
+    text-underline-offset: var(--hero-s1);
+    transition:
+      color var(--hero-dur) var(--hero-ease),
+      text-decoration-color var(--hero-dur) var(--hero-ease);
+  }
+
+  .hero__social a:hover,
+  .hero__social a:focus-visible {
+    color: var(--hero-ink);
+    text-decoration-color: var(--hero-accent);
+  }
+
+  /* ---------- Spec strip: the datasheet footer ---------- */
+  .hero__spec {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: var(--hero-s16) 0 0;
+    border-top: var(--hero-hairline) solid var(--hero-ink);
+  }
+
+  .hero__spec-cell {
+    padding: var(--hero-s4) var(--hero-s4) var(--hero-s4) 0;
+    border-bottom: var(--hero-hairline) solid var(--hero-rule);
+  }
+
+  .hero__spec-cell:nth-child(even) {
+    padding-left: var(--hero-s4);
+    border-left: var(--hero-hairline) solid var(--hero-rule);
+  }
+
+  .hero__spec dt {
+    color: var(--hero-muted);
+    font-family: var(--hero-font-display);
+    font-size: var(--hero-fs-label);
+    letter-spacing: var(--hero-track-label);
+    text-transform: uppercase;
+  }
+
+  .hero__spec dd {
+    display: flex;
+    flex-direction: column;
+    gap: var(--hero-s1);
+    margin: var(--hero-s2) 0 0;
+  }
+
+  .hero__spec-value {
+    font-family: var(--hero-font-display);
+    font-size: var(--hero-fs-value);
+    font-weight: 600;
+    line-height: var(--hero-lh-tight);
+    letter-spacing: var(--hero-track-display);
+  }
+
+  .hero__spec-note {
+    color: var(--hero-muted);
+    font-size: var(--hero-fs-label);
+  }
+
+  @media (min-width: 1024px) {
+    .hero__spec {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .hero__spec-cell,
+    .hero__spec-cell:nth-child(even) {
+      padding: var(--hero-s6) var(--hero-s6) 0;
+      border-bottom: 0;
+      border-left: var(--hero-hairline) solid var(--hero-rule);
+    }
+
+    .hero__spec-cell:first-child {
+      padding-left: 0;
+      border-left: 0;
+    }
+  }
+</style>

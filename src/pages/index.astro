@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Hero from '../components/Hero';
+import Hero from '../components/Hero.astro';
 import TechStack from '../components/TechStack';
 import StoryJourney from '../components/StoryJourney';
 import BentoGrid from '../components/BentoGrid';
@@ -14,7 +14,8 @@ import { getBlogPosts } from '../lib/posts';
 
 const { sections } = componentConfig.homepage;
 
-const latestPosts = (await getBlogPosts()).slice(0, 3);
+const allPosts = await getBlogPosts();
+const latestPosts = allPosts.slice(0, 3);
 
 const seo = generateSEO({
   type: 'website',
@@ -32,9 +33,9 @@ const seo = generateSEO({
 >
 
       <main class="mx-auto mb-10 max-w-7xl px-4 pb-4 pt-20">
-        <section id="home" data-pause-offscreen class="-mt-20 flex min-h-screen items-center justify-center px-4">
+        <section id="home" class="-mt-20 flex min-h-screen items-center pb-16 pt-28 sm:px-4">
           <div class="mx-auto w-full max-w-6xl">
-            <Hero client:load />
+            <Hero postCount={allPosts.length} />
           </div>
         </section>
 
