@@ -182,4 +182,4 @@ A copy button is added to every block.
 ## Author
 
 **Febryan Ramadhan**, Cloud Engineer based in Bogor, Indonesia
-[Website](https://febryan.web.id) · [GitHub](https://github.com/Pepryan) · [LinkedIn](https://linkedin.com/in/febryanramadhan) · [X](https://x.com/pepryan) · [Email](mailto:febryanramadhan@gmail.com)
+[Website](https://febryan.web.id) · [GitHub](https://github.com/Pepryan) · [LinkedIn](https://linkedin.com/in/febryanramadhan) · [X](https://x.com/pepryan) · [Email](mailto:hi@febryan.web.id)

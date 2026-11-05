@@ -14,7 +14,8 @@ export const seoConfig = {
   // Author Information
   author: {
     name: "Febryan Ramadhan",
-    email: "febryanramadhan@gmail.com",
+    // Public contact alias (Cloudflare Email Routing → personal inbox)
+    email: "hi@febryan.web.id",
     url: "https://febryan.web.id",
     jobTitle: "System Administrator at Odoo",
     location: "Indonesia",
