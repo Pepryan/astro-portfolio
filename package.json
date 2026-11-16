@@ -14,7 +14,8 @@
     "build:validate": "npm run build && npm run validate-sitemap",
     "compress-images": "node scripts/compress-images.js",
     "favicons": "node scripts/generate-favicons.js",
-    "check": "astro check"
+    "check": "astro check",
+    "trek:add": "node scripts/add-trek.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.0.0",

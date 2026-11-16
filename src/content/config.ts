@@ -1,4 +1,39 @@
 import { defineCollection, z } from 'astro:content';
+import { file } from 'astro/loaders';
+import { parseStravaEmbed } from '../lib/strava';
+
+/**
+ * Hikes for /trekking, one entry per key in src/data/treks.yaml.
+ * `strava` is the embed code exactly as Strava gives it (Share → Embed).
+ */
+const treks = defineCollection({
+  loader: file('src/data/treks.yaml'),
+  schema: z.object({
+    title: z.string(),
+    date: z.coerce.date(),
+    distance: z.number().nonnegative().optional(), // km
+    elevation: z.number().nonnegative().optional(), // elevation gain, m
+    time: z.string().optional(), // as Strava shows it, e.g. "2h 16m"
+    summit: z.number().positive().optional(), // highest point, m above sea level
+    note: z.string().optional(),
+    tags: z.array(z.string()).optional().default([]),
+    strava: z
+      .string()
+      .optional()
+      .transform((code, ctx) => {
+        if (!code) return undefined;
+        const embed = parseStravaEmbed(code);
+        if (!embed) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Paste the whole Strava embed code (it needs data-embed-id and data-token).',
+          });
+          return z.NEVER;
+        }
+        return embed;
+      }),
+  }),
+});
 
 const series = defineCollection({
   type: 'data',
@@ -79,4 +114,5 @@ const posts = defineCollection({
 export const collections = {
   posts,
   series,
+  treks,
 };

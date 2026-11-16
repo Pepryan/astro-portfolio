@@ -1,0 +1,130 @@
+# Treks shown on /trekking. Order doesn't matter: the page sorts by date.
+#
+# Quickest way to add one:  npm run trek:add  → paste the Strava embed code,
+# press Ctrl+D. It reads title, date and stats from the embed and appends an
+# entry here; add note/summit/tags by hand if you like.
+#
+# By hand: the key becomes the link anchor (/trekking#<key>), so keep it
+# lowercase-with-dashes and unique.
+#
+# <key>:
+#   title: Gunung Something via Somewhere   # required
+#   date: 2026-11-07                        # required
+#   distance: 5.0                           # km
+#   elevation: 552                          # elevation gain, m
+#   time: 2h 16m                            # as Strava shows it
+#   summit: 1929                            # optional, highest point (mdpl)
+#   note: Short line about the hike.        # optional
+#   tags: [Jawa Barat]                      # optional, used by the filter
+#   strava: >-                              # Strava → Share → Embed, pasted as is
+#     <div class="strava-embed-placeholder" ...></div><script ...></script>
+
+gunung-halimun-ciputri:
+  title: Gunung Halimun Ciputri
+  date: 2026-11-07
+  distance: 5.0
+  elevation: 552
+  time: 2h 16m
+  summit: 1688
+  tags: [Sukamakmur]
+  strava: >-
+    <div class="strava-embed-placeholder" data-embed-type="activity" data-embed-id="20890038454" data-style="standard" data-from-embed="false" data-token="l27Lr7BFl_Nr8s1_ozoSddmnYeiiCeU6cD1f7T5mfb8"></div><script src="https://strava-embeds.com/embed.js"></script>
+
+gunung-lumut:
+  title: Gunung Lumut
+  date: 2026-10-31
+  distance: 8.9
+  elevation: 872
+  time: 2h 37m
+  summit: 1688
+  tags: [Sukamakmur]
+  strava: >-
+    <div class="strava-embed-placeholder" data-embed-type="activity" data-embed-id="20799186580" data-style="standard" data-from-embed="false" data-token="a9dTGlol3DYlQucRhgEadWe271tNOXmlwOsn7t9l6DU"></div><script src="https://strava-embeds.com/embed.js"></script>
+
+gunung-kencana-ii-2:
+  title: Gunung Kencana II
+  date: 2026-10-17
+  distance: 8.9
+  elevation: 919
+  time: 3h 40m
+  summit: 1798
+  tags: [Sukamakmur]
+  strava: >-
+    <div class="strava-embed-placeholder" data-embed-type="activity" data-embed-id="20616993883" data-style="standard" data-from-embed="false" data-token="n1y7Vbpz_Aeqp0eQolvA4zvfmzy3_lNMSfb2Nel0298"></div><script src="https://strava-embeds.com/embed.js"></script>
+
+cisadon3:
+  title: Cisadon
+  date: 2026-08-16
+  distance: 14.5
+  elevation: 543
+  time: 3h 37m
+  summit: 1193
+  tags: [Sentul]
+  strava: >-
+    <div class="strava-embed-placeholder" data-embed-type="activity" data-embed-id="19760981520" data-style="standard" data-from-embed="false" data-token="37clZt6CtEWZGk68OEly3n_ecClY9mhDDb4UIYs4P3Q"></div><script src="https://strava-embeds.com/embed.js"></script>
+
+bukit-pangaburan-bukit-gajah-curug-cimenteng:
+  title: Bukit Pangaburan - Bukit Gajah - Curug Cimenteng
+  date: 2026-07-04
+  distance: 3.8
+  elevation: 407
+  time: 1h 14m
+  summit: 893
+  tags: [Sukamakmur]
+  strava: >-
+    <div class="strava-embed-placeholder" data-embed-type="activity" data-embed-id="19170710642" data-style="standard" data-from-embed="false" data-token="ijC_p8Dy5c8FRgrntAe4P9hVW3yCUt2BXfUQ5EkdbwY"></div><script src="https://strava-embeds.com/embed.js"></script>
+
+3-summit-gn-kencana-ii-curug-kencana:
+  title: "Gunung Kencana II"
+  date: 2025-12-15
+  distance: 9.9
+  elevation: 816
+  time: 3h 59m
+  summit: 1798
+  tags: [Sukamakmur]
+  strava: >-
+    <div class="strava-embed-placeholder" data-embed-type="activity" data-embed-id="16746810181" data-style="standard" data-from-embed="false" data-token="bbGdeuVbWN9Ho61LHeSWOJZqqHydGXbD_HxgAWd-Bs0"></div><script src="https://strava-embeds.com/embed.js"></script>
+
+gunung-butik-1250mdpl:
+  title: Gunung Butik - Gunung Sanggar
+  date: 2025-12-10
+  distance: 7.8
+  elevation: 634
+  time: 3h 16m
+  summit: 1250
+  tags: [Sukamakmur]
+  strava: >-
+    <div class="strava-embed-placeholder" data-embed-type="activity" data-embed-id="16700518155" data-style="standard" data-from-embed="false" data-token="7tv4Bv2WmNlZQaM6eLQ0TBlyIioiIq1CM6DqiVwDGho"></div><script src="https://strava-embeds.com/embed.js"></script>
+
+trekking-cisadon-via-curug-love:
+  title: Trekking Cisadon via Curug Love
+  date: 2025-11-24
+  distance: 11.5
+  elevation: 701
+  time: 2h 55m
+  summit: 1193
+  tags: [Sentul]
+  strava: >-
+    <div class="strava-embed-placeholder" data-embed-type="activity" data-embed-id="16549904749" data-style="standard" data-from-embed="false" data-token="kKY1OytdM2I90zEFkMUrgsWfOOTacEvuxngBnNaBuv8"></div><script src="https://strava-embeds.com/embed.js"></script>
+
+trekking-cisadon-via-kandang-sapi:
+  title: Trekking Cisadon via Kandang Sapi
+  date: 2025-11-18
+  distance: 14.6
+  elevation: 540
+  time: 3h 52m
+  summit: 1193
+  tags: [Sentul]
+  strava: >-
+    <div class="strava-embed-placeholder" data-embed-type="activity" data-embed-id="16491152115" data-style="standard" data-from-embed="false" data-token="xOKU3iYBmfjTokQ27eVS077ZLXxqjOn3GlwVHspzLXo"></div><script src="https://strava-embeds.com/embed.js"></script>
+
+bukit-paniisan-via-wangun:
+  title: Bukit Paniisan via Wangun
+  date: 2024-12-29
+  distance: 4.6
+  elevation: 392
+  time: 3h 25m
+  summit: 846
+  tags: [Sukamakmur]
+  strava: >-
+    <div class="strava-embed-placeholder" data-embed-type="activity" data-embed-id="13213042934" data-style="standard" data-from-embed="false" data-token="Hy-uOxICd3pc3eFhbg06_APCGzKoug0xoQ9VERwp2YM"></div><script src="https://strava-embeds.com/embed.js"></script>

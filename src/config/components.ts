@@ -203,6 +203,10 @@ export const componentConfig = {
       title: "Contact",
       description: "Questions about Linux, AI tooling or something I wrote"
     },
+    trekking: {
+      enabled: true,
+      showInNavigation: true
+    },
     series: {
       enabled: true,
       showInNavigation: true,

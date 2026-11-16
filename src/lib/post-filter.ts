@@ -70,7 +70,8 @@ export function initPostFilter(root: HTMLElement): void {
     if (state.tag) next.set('tag', state.tag);
     if (state.series) next.set('series', state.series);
     const query = next.toString();
-    window.history.replaceState(null, '', query ? `?${query}` : window.location.pathname);
+    // Keep the hash: /trekking#<id> deep-links into the list
+    window.history.replaceState(null, '', `${query ? `?${query}` : window.location.pathname}${window.location.hash}`);
   };
 
   input.value = state.query;

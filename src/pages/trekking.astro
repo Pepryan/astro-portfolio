@@ -1,0 +1,493 @@
+---
+/**
+ * Trekking log. Entries live in src/data/treks.yaml (collection `treks`).
+ *
+ * Small screens: each trek is a <details>; opening one loads its Strava embed
+ * inline. Wide screens (src/lib/strava-embed.ts adds [data-split]): the list
+ * sits on the left and a sticky viewer on the right shows the selected trek,
+ * newest first. Either way Strava loads only for treks a visitor looks at.
+ */
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import PageHeader from '../components/blog/PageHeader.astro';
+import GrepFilter from '../components/blog/GrepFilter.astro';
+import { getYear } from '../lib/format';
+import { durationMinutes, stravaUrl } from '../lib/strava';
+import { generateSEO } from '../utils/seo';
+import { isPageEnabled } from '../utils/pages';
+
+if (!isPageEnabled('trekking')) {
+  return new Response(null, { status: 404, statusText: 'Page not found' });
+}
+
+const treks = (await getCollection('treks')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const byYear = [...treks.reduce((map, trek) => {
+  const year = getYear(trek.data.date);
+  return map.set(year, [...(map.get(year) ?? []), trek]);
+}, new Map<number, typeof treks>())];
+
+const tags = [...treks.flatMap((t) => t.data.tags).reduce((map, tag) => map.set(tag, (map.get(tag) ?? 0) + 1), new Map<string, number>())]
+  .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+
+const num = (value: number, digits = 0) =>
+  value.toLocaleString('en-US', { minimumFractionDigits: digits, maximumFractionDigits: digits });
+const hours = (minutes: number) => `${Math.floor(minutes / 60)}h ${String(Math.round(minutes % 60)).padStart(2, '0')}m`;
+
+const totalKm = treks.reduce((sum, t) => sum + (t.data.distance ?? 0), 0);
+const totalGain = treks.reduce((sum, t) => sum + (t.data.elevation ?? 0), 0);
+const totalMinutes = treks.reduce((sum, t) => sum + durationMinutes(t.data.time), 0);
+const highest = treks.filter((t) => t.data.summit).sort((a, b) => (b.data.summit ?? 0) - (a.data.summit ?? 0))[0];
+
+const totals = [
+  { label: 'Treks', value: num(treks.length) },
+  { label: 'Distance', value: num(totalKm, 1), unit: 'km' },
+  { label: 'Elevation gain', value: num(totalGain), unit: 'm' },
+  totalMinutes > 0 && { label: 'On the trail', value: hours(totalMinutes) },
+  highest && { label: 'Highest', value: num(highest.data.summit ?? 0), unit: 'm', note: highest.data.title },
+].filter(Boolean) as { label: string; value: string; unit?: string; note?: string }[];
+
+const isoDay = (date: Date) => date.toISOString().slice(5, 10);
+
+const seo = generateSEO({
+  title: 'Trekking',
+  canonical: '/trekking',
+  description: 'Hikes and mountain trails Febryan Ramadhan has walked, logged on Strava: distance, elevation gain and route for each trek.',
+  type: 'website',
+  keywords: ['trekking', 'hiking', 'pendakian', 'gunung', 'strava'],
+});
+---
+
+<Layout title={seo.title} description={seo.description} canonical={seo.canonical} type={seo.type} keywords={seo.keywords}>
+  <main class="ds-page">
+    <PageHeader
+      eyebrow="Trekking"
+      eyebrowNote="away from the terminal"
+      title="Trails I've walked"
+      lede="Hikes logged on Strava, newest first. Pick one to see its route and photos."
+    />
+
+    {treks.length > 0 && (
+      <dl class="totals">
+        {totals.map(({ label, value, unit, note }) => (
+          <div class="totals__item">
+            <dt class="ds-label">{label}</dt>
+            <dd class="totals__value">
+              {value}{unit && <span class="totals__unit"> {unit}</span>}
+            </dd>
+            {note && <dd class="totals__note">{note}</dd>}
+          </div>
+        ))}
+      </dl>
+    )}
+
+    {treks.length === 0 && <p class="empty">No treks logged yet.</p>}
+
+    <div class="trekking" data-trekking>
+      <div class="trekking__list">
+        {treks.length > 5 && (
+          <GrepFilter
+            tags={tags}
+            noun="treks"
+            placeholder="gede, papandayan…"
+            moreLink={null}
+            hash={false}
+            emptyHint="Try a shorter word."
+          />
+        )}
+
+        <div class="log">
+          {byYear.map(([year, items]) => (
+            <section class="log__year" data-post-group aria-labelledby={`y${year}`}>
+              <h2 id={`y${year}`} class="log__heading">
+                {year}<span class="ds-label">{items.length} {items.length === 1 ? 'trek' : 'treks'}</span>
+              </h2>
+              <ol class="ds-ledger">
+                {items.map(({ id, data }) => {
+                  const text = [data.title, data.note, ...data.tags].filter(Boolean).join(' ').toLowerCase();
+                  const stats = [
+                    data.distance !== undefined && `${num(data.distance, 1)} km`,
+                    data.elevation !== undefined && `${num(data.elevation)} m gain`,
+                    data.time,
+                  ].filter(Boolean);
+                  const extra = [data.summit && `Summit ${num(data.summit)} m`, ...data.tags].filter(Boolean).join(' · ');
+                  const row = (
+                    <>
+                      <time class="trek__date" datetime={data.date.toISOString().slice(0, 10)}>{isoDay(data.date)}</time>
+                      <span class="trek__title">{data.title}</span>
+                      {stats.length > 0 && (
+                        <span class="trek__stats">
+                          {stats.map((stat) => <span>{stat}</span>)}
+                        </span>
+                      )}
+                    </>
+                  );
+                  return (
+                    <li data-post data-text={text} data-tags={data.tags.map((t) => t.toLowerCase()).join('|')}>
+                      {data.strava ? (
+                        <details class="trek" id={id} data-trek>
+                          <summary class="ds-spot trek__row" data-spotlight>
+                            {row}
+                            <span class="trek__toggle" aria-hidden="true"></span>
+                          </summary>
+                          {/* Also the template for the wide-screen viewer panel */}
+                          <div class="trek__body">
+                            {(data.note || extra) && (
+                              <div class="trek__meta">
+                                {data.note && <p class="trek__note">{data.note}</p>}
+                                {extra && <p class="ds-label">{extra}</p>}
+                              </div>
+                            )}
+                            <div
+                              class="trek__embed"
+                              hidden
+                              data-strava
+                              data-type={data.strava.type}
+                              data-id={data.strava.id}
+                              data-token={data.strava.token}
+                              data-style={data.strava.style}
+                              data-label={`${data.title} on Strava`}
+                            >
+                              <p class="trek__loading ds-label">Loading from Strava…</p>
+                            </div>
+                            <a class="ds-link trek__out" href={stravaUrl(data.strava)} target="_blank" rel="noopener noreferrer">
+                              Open on Strava <span class="ds-arrow" aria-hidden="true">↗</span>
+                              <span class="sr-only">: {data.title} (opens in a new tab)</span>
+                            </a>
+                          </div>
+                        </details>
+                      ) : (
+                        <div class="trek trek__row trek__row--static" id={id}>
+                          {row}
+                          {(data.note || extra) && (
+                            <p class="trek__note trek__note--inline">{[data.note, extra].filter(Boolean).join(' · ')}</p>
+                          )}
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
+              </ol>
+            </section>
+          ))}
+        </div>
+
+        {treks.some((t) => t.data.strava) && (
+          <p class="privacy">Maps and photos come from Strava and load only for the trek you open.</p>
+        )}
+      </div>
+
+      <aside class="viewer" data-viewer hidden aria-label="Selected trek"></aside>
+    </div>
+  </main>
+</Layout>
+
+<script>
+  import { initTrekking } from '../lib/strava-embed';
+  document.querySelectorAll<HTMLElement>('[data-trekking]').forEach(initTrekking);
+</script>
+
+<style>
+  /* ---------- totals ---------- */
+  .totals {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    margin: 0 0 var(--ds-s12);
+    border-top: var(--ds-hairline) solid var(--ds-ink);
+  }
+
+  .totals__item {
+    display: grid;
+    align-content: start;
+    gap: var(--ds-s2);
+    padding: var(--ds-s4) var(--ds-s4) var(--ds-s4) 0;
+    border-bottom: var(--ds-hairline) solid var(--ds-rule);
+  }
+
+  .totals dd {
+    margin: 0;
+  }
+
+  .totals__value {
+    font-family: var(--ds-font-display);
+    font-size: var(--ds-fs-value);
+    font-weight: 700;
+    letter-spacing: var(--ds-track-display);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .totals__unit {
+    color: var(--ds-muted);
+    font-size: var(--ds-fs-small);
+    font-weight: 400;
+    letter-spacing: 0;
+  }
+
+  .totals__note {
+    color: var(--ds-muted);
+    font-size: var(--ds-fs-small);
+  }
+
+  .empty {
+    color: var(--ds-muted);
+  }
+
+  /* ---------- layout: list, plus a sticky viewer on wide screens ---------- */
+  .trekking__list {
+    min-width: 0;
+    /* rows switch to one line when the list (not the window) is wide enough */
+    container-type: inline-size;
+  }
+
+  .viewer[hidden] {
+    display: none;
+  }
+
+  @media (min-width: 75rem) {
+    .trekking[data-split] {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 34.75rem;
+      gap: var(--ds-s12);
+      align-items: start;
+    }
+
+    .viewer {
+      position: sticky;
+      top: calc(var(--ds-header) + var(--ds-s6));
+      max-height: calc(100vh - var(--ds-header) - var(--ds-s12));
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: thin;
+    }
+  }
+
+  /* ---------- log ---------- */
+  .log {
+    display: grid;
+    gap: var(--ds-s12);
+  }
+
+  .log__year[hidden] {
+    display: none;
+  }
+
+  .log__heading {
+    display: flex;
+    align-items: baseline;
+    gap: var(--ds-s4);
+    margin: 0 0 var(--ds-s4);
+    font-family: var(--ds-font-display);
+    font-size: var(--ds-fs-value);
+    font-weight: 700;
+    letter-spacing: var(--ds-track-display);
+  }
+
+  /* ---------- trek row ---------- */
+  .trek {
+    /* /trekking#<id> lands below the fixed header */
+    scroll-margin-top: calc(var(--ds-header) + var(--ds-s4));
+  }
+
+  .trek__row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      'date title toggle'
+      '.    stats stats';
+    align-items: baseline;
+    gap: var(--ds-s1) var(--ds-s4);
+    margin-inline: calc(var(--ds-s4) * -1);
+    padding: var(--ds-s4);
+    font-family: var(--ds-font-display);
+    font-size: var(--ds-fs-small);
+    list-style: none;
+    transition: background-color var(--ds-dur) var(--ds-ease), box-shadow var(--ds-dur) var(--ds-ease);
+  }
+
+  summary.trek__row {
+    cursor: pointer;
+  }
+
+  .trek__row::-webkit-details-marker {
+    display: none;
+  }
+
+  .trek__row:focus-visible {
+    outline: 2px solid var(--ds-accent);
+    outline-offset: -2px;
+  }
+
+  .trek__date {
+    grid-area: date;
+    color: var(--ds-accent);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .trek__title {
+    grid-area: title;
+    color: var(--ds-ink);
+    font-weight: 600;
+    transition: color var(--ds-dur) var(--ds-ease);
+  }
+
+  summary.trek__row:hover .trek__title,
+  summary.trek__row:focus-visible .trek__title,
+  .trek[open] .trek__title,
+  .trek__row[aria-current='true'] .trek__title {
+    color: var(--ds-accent);
+  }
+
+  .trek__stats {
+    grid-area: stats;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--ds-s4);
+    color: var(--ds-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* [+] / [−] inline; an arrow pointing at the viewer on wide screens */
+  .trek__toggle {
+    grid-area: toggle;
+    color: var(--ds-muted);
+  }
+
+  .trek__toggle::before {
+    content: '[+]';
+  }
+
+  .trek[open] .trek__toggle::before {
+    content: '[−]';
+    color: var(--ds-accent);
+  }
+
+  [data-split] .trek__toggle::before {
+    content: '→';
+  }
+
+  [data-split] .trek__row[aria-current='true'] {
+    background-color: var(--ds-wash);
+    box-shadow: inset 2px 0 0 var(--ds-accent);
+  }
+
+  [data-split] .trek__row[aria-current='true'] .trek__toggle::before {
+    color: var(--ds-accent);
+  }
+
+  .trek__row--static {
+    grid-template-areas:
+      'date title title'
+      '.    stats stats'
+      '.    note  note';
+  }
+
+  @container (min-width: 40rem) {
+    .trek__row {
+      grid-template-columns: auto minmax(0, 1fr) auto auto;
+      grid-template-areas: 'date title stats toggle';
+    }
+
+    .trek__row--static {
+      grid-template-areas:
+        'date title stats stats'
+        '.    note  note  note';
+    }
+
+    .trek__stats {
+      justify-content: flex-end;
+    }
+  }
+
+  /* ---------- trek body: inline (small screens) and viewer panel ---------- */
+  .trek__body {
+    display: grid;
+    gap: var(--ds-s4);
+    padding: 0 0 var(--ds-s6);
+    font-size: var(--ds-fs-small);
+  }
+
+  /* Note, embed and link form one centred column as wide as the embed */
+  .trek__meta {
+    display: grid;
+    justify-self: center;
+    gap: var(--ds-s2);
+    width: 100%;
+    max-width: 34.625rem;
+  }
+
+  .trek__meta p {
+    margin: 0;
+  }
+
+  .trek__note {
+    max-width: var(--ds-measure);
+    margin: 0;
+    color: var(--ds-prose);
+    font-family: var(--ds-font-text);
+  }
+
+  .trek__note--inline {
+    grid-area: note;
+    color: var(--ds-muted);
+    font-size: var(--ds-fs-small);
+  }
+
+  /* Strava's embed is at most 554px wide: centre it in whatever space it gets.
+     Keep its default height until it reports the real one. */
+  .trek__embed {
+    position: relative;
+    justify-self: center;
+    width: 100%;
+    max-width: 34.625rem;
+    min-height: 40.625rem;
+    border-radius: var(--ds-radius);
+    background: var(--ds-wash);
+    overflow: hidden;
+  }
+
+  .trek__embed[data-loaded] {
+    min-height: 0;
+    background: transparent;
+  }
+
+  .trek__embed :global(iframe) {
+    display: block;
+    width: 100%;
+    height: 40.625rem;
+    border: 0;
+  }
+
+  .trek__loading {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    margin: 0;
+  }
+
+  .trek__embed[data-loaded] .trek__loading {
+    display: none;
+  }
+
+  .trek__out {
+    justify-self: center;
+    padding: 0;
+  }
+
+  /* The viewer reuses the body markup (cloned by src/lib/strava-embed.ts) */
+  .viewer :global(.trek__body) {
+    padding: 0;
+  }
+
+  .viewer :global(.trek__body[hidden]) {
+    display: none;
+  }
+
+  .privacy {
+    margin: var(--ds-s12) 0 0;
+    color: var(--ds-muted);
+    font-family: var(--ds-font-display);
+    font-size: var(--ds-fs-label);
+  }
+</style>

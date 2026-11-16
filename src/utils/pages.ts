@@ -69,6 +69,13 @@ export function getEnabledStaticPages() {
       name: 'blog-tags'
     },
     {
+      path: '/trekking',
+      priority: 0.6,
+      changefreq: 'monthly' as const,
+      enabled: pages.trekking.enabled,
+      name: 'trekking'
+    },
+    {
       path: '/series',
       priority: 0.8,
       changefreq: 'weekly' as const,
