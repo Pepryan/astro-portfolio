@@ -471,9 +471,12 @@
       view-timeline-name: --ds-eyebrow;
     }
 
+    /* Longhands on purpose: the minifier folds a shorthand + timeline into invalid CSS. */
     .ds-eyebrow::after {
       transform-origin: left;
-      animation: ds-draw linear both;
+      animation-name: ds-draw;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
       animation-timeline: --ds-eyebrow;
       animation-range: entry 10% cover 40%;
     }
@@ -483,7 +486,9 @@
     }
 
     .ds-ledger::before {
-      animation: ds-packet linear both;
+      animation-name: ds-packet;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
       animation-timeline: --ds-ledger;
       animation-range: entry 0% exit 20%;
     }

@@ -497,7 +497,10 @@ const shareLinks = [
       height: var(--ds-s1);
       background: var(--ds-accent);
       transform-origin: left;
-      animation: post-progress linear both;
+      /* Longhands on purpose: the minifier folds a shorthand + timeline into invalid CSS. */
+      animation-name: post-progress;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
       animation-timeline: scroll(root);
     }
   }
