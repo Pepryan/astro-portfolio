@@ -5,7 +5,7 @@ import { renderOgImage } from '../../lib/og';
 /** One social preview image per post: /og/<slug>.png */
 export const getStaticPaths = (async () => {
   const posts = await getCollection('posts', (post) => !post.data.draft);
-  return posts.map((post) => ({ params: { slug: post.slug }, props: { post } }));
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
 }) satisfies GetStaticPaths;
 
 export const GET: APIRoute = async ({ props }) => {

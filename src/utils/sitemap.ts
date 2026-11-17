@@ -39,7 +39,7 @@ export async function generateSitemapURLs(): Promise<SitemapURL[]> {
   publishedPosts.forEach(post => {
     const lastmod = post.data.updated || post.data.date;
     urls.push({
-      loc: `${baseUrl}/blog/${post.slug}`,
+      loc: `${baseUrl}/blog/${post.id}`,
       lastmod: lastmod.toISOString(),
       changefreq: 'monthly',
       priority: 0.7

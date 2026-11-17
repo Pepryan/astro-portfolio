@@ -2,8 +2,7 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import react from '@astrojs/react';
-import tailwind from '@astrojs/tailwind';
-import remarkGfm from 'remark-gfm';
+import { unified } from '@astrojs/markdown-remark';
 import rehypePrettyCode from 'rehype-pretty-code';
 import rehypeLazyImages from './src/plugins/rehype-lazy-images.mjs';
 
@@ -39,6 +38,9 @@ const prettyCodeOptions = {
 export default defineConfig({
   site: 'https://febryan.web.id',
   output: 'static',
+  // Astro 7 defaults to 'jsx', which drops whitespace between inline elements
+  // ("2 posts" renders as "2posts"). Keep the pre-7 behavior.
+  compressHTML: true,
   // Fetch pages on link hover/focus so navigation feels instant
   prefetch: {
     prefetchAll: true,
@@ -49,8 +51,11 @@ export default defineConfig({
     '/tags/[tag]': '/blog/tags/[tag]',
   },
   markdown: {
-    remarkPlugins: [remarkGfm],
-    rehypePlugins: [[rehypePrettyCode, prettyCodeOptions], rehypeLazyImages],
+    // Astro 7 defaults to the Sätteri processor, which does not run rehype
+    // plugins. unified() keeps rehype-pretty-code working; GFM is on by default.
+    processor: unified({
+      rehypePlugins: [[rehypePrettyCode, prettyCodeOptions], rehypeLazyImages],
+    }),
     syntaxHighlight: false,
   },
   integrations: [
@@ -60,9 +65,8 @@ export default defineConfig({
     // render and log "Invalid hook call" on every page. React's own check
     // claims the component first and MDX never touches it.
     react(),
-    // MDX inherits the markdown config above (extendMarkdownConfig defaults to true)
+    // MDX inherits the markdown processor above (extendMarkdownConfig defaults to true)
     mdx(),
-    tailwind({ applyBaseStyles: false }),
   ],
   vite: {
     // Native module used for OG image rendering — keep it out of Vite's bundling

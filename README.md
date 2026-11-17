@@ -6,13 +6,13 @@ Personal portfolio and technical blog of **Febryan Ramadhan** — cloud, DevOps 
 
 ![Portfolio preview](public/images/preview.webp)
 
-**Stack:** Astro 5 (static output) · React 18 islands · Tailwind CSS 3 · MDX · Shiki (via rehype-pretty-code) · Pagefind · Satori
+**Stack:** Astro 7 (static output) · React 18 islands · Tailwind CSS 3 · MDX · Shiki (via rehype-pretty-code) · Pagefind · Satori
 
 ---
 
 ## Quick start
 
-Requires **Node.js 20.3+** (the repo pins **24** in `.nvmrc`).
+Requires **Node.js 22.23.4+** (the repo pins **24** in `.nvmrc`).
 
 ```bash
 nvm use            # picks Node 24 from .nvmrc
@@ -79,8 +79,8 @@ src/
 ├── components/      # Astro (static) and React (interactive island) components
 ├── config/
 │   └── components.ts  # ⭐ Site content & feature toggles: SEO, hero, projects, skills, nav…
+├── content.config.ts  # Frontmatter schemas (posts, series, treks)
 ├── content/
-│   ├── config.ts      # Frontmatter schemas (posts, series)
 │   ├── posts/         # Blog posts (.mdx). Files starting with _ are templates, never published
 │   └── series/        # One JSON file per series (file name = series slug)
 ├── layouts/

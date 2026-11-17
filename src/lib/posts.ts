@@ -32,7 +32,7 @@ export function getReadingStats(post: PostEntry) {
  */
 export function toBlogPost(post: PostEntry): BlogPost {
   return {
-    slug: post.slug,
+    slug: post.id,
     data: post.data,
     readingTime: getReadingStats(post).minutes,
   };

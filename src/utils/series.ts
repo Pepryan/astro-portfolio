@@ -26,7 +26,12 @@ export async function getAllSeries(): Promise<SeriesWithPosts[]> {
         completedParts: seriesPosts.length,
       };
     })
-    .sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+    // Newest startDate breaks ties, so the order doesn't depend on loader iteration
+    .sort(
+      (a, b) =>
+        (a.order ?? 999) - (b.order ?? 999) ||
+        (b.startDate?.getTime() ?? 0) - (a.startDate?.getTime() ?? 0),
+    );
 }
 
 /**

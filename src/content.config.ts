@@ -1,6 +1,7 @@
-import { defineCollection, z } from 'astro:content';
-import { file } from 'astro/loaders';
-import { parseStravaEmbed } from '../lib/strava';
+import { defineCollection } from 'astro:content';
+import { z } from 'astro/zod';
+import { file, glob } from 'astro/loaders';
+import { parseStravaEmbed } from './lib/strava';
 
 /**
  * Hikes for /trekking, one entry per key in src/data/treks.yaml.
@@ -25,7 +26,7 @@ const treks = defineCollection({
         const embed = parseStravaEmbed(code);
         if (!embed) {
           ctx.addIssue({
-            code: z.ZodIssueCode.custom,
+            code: 'custom',
             message: 'Paste the whole Strava embed code (it needs data-embed-id and data-token).',
           });
           return z.NEVER;
@@ -36,7 +37,7 @@ const treks = defineCollection({
 });
 
 const series = defineCollection({
-  type: 'data',
+  loader: glob({ pattern: '*.json', base: './src/content/series' }),
   schema: z.object({
     name: z.string(), // Display name of the series
     slug: z.string(), // URL-friendly identifier
@@ -54,8 +55,9 @@ const series = defineCollection({
   }),
 });
 
+// Files starting with "_" are templates and stay out of the collection.
 const posts = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/posts' }),
   schema: z.object({
     title: z.string(),
     description: z.string().optional(),

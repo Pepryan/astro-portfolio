@@ -1,7 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import PostLayout from '../../components/blog/PostLayout.astro';
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import { getPublishedPosts, getReadingStats, toBlogPost, type PostEntry } from '../../lib/posts';
 import { generateBlogPostSEO } from '../../utils/seo';
 import { getSeriesNavigation } from '../../utils/series';
@@ -11,7 +11,7 @@ export async function getStaticPaths() {
   const posts = await getCollection('posts', (post) => !post.data.draft);
   const allPosts = (await getPublishedPosts()).map(toBlogPost);
   return posts.map((post) => ({
-    params: { slug: post.slug },
+    params: { slug: post.id },
     props: { post, allPosts },
   }));
 }
@@ -22,11 +22,12 @@ interface Props {
 }
 
 const { post, allPosts } = Astro.props;
-const { Content, headings } = await post.render();
+const slug = post.id;
+const { Content, headings } = await render(post);
 const { minutes: readingTime, words } = getReadingStats(post);
-const seriesNavigation = await getSeriesNavigation(post);
+const seriesNavigation = await getSeriesNavigation({ slug, data: post.data });
 
-const seo = generateBlogPostSEO({ ...post.data, slug: post.slug });
+const seo = generateBlogPostSEO({ ...post.data, slug });
 ---
 
 <Layout
@@ -42,7 +43,7 @@ const seo = generateBlogPostSEO({ ...post.data, slug: post.slug });
   section={seo.section}
 >
   <PostLayout
-    post={{ slug: post.slug, data: post.data }}
+    post={{ slug, data: post.data }}
     headings={headings}
     readingTime={readingTime}
     wordCount={words}
