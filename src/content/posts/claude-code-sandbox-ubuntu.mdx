@@ -1,0 +1,155 @@
+---
+title: "Claude Code's sandbox on Ubuntu 24.04: what it blocks and where it stops"
+date: "2026-11-24"
+tags: ["claude-code", "linux", "security", "apparmor"]
+category: "Security"
+summary: "What Claude Code's bubblewrap sandbox blocked in my tests on Ubuntu 24.04, what it can't protect against, and why an AppArmor profile scoped to bwrap beats the sysctl shortcut."
+difficulty: "Intermediate"
+keywords: ["claude code sandbox", "bubblewrap", "bwrap", "ubuntu 24.04", "apparmor", "user namespaces", "apparmor_restrict_unprivileged_userns", "claude code security"]
+draft: false
+---
+
+Claude Code can run its shell commands inside a sandbox. On Linux that sandbox is built on bubblewrap, and on Ubuntu 24.04 it runs into a kernel restriction on user namespaces. The quick fix you'll usually find is to switch that restriction off. It works, but it loosens a kernel protection for every program on the machine just to make one tool run. There's a narrower fix that keeps the restriction on.
+
+The [official sandboxing docs](https://code.claude.com/docs/en/sandboxing) cover the setup, including the packages you need (`bubblewrap` and `socat`) and an AppArmor profile for bubblewrap. This post covers what the docs don't: what the sandbox blocked when I tested it, where its protection ends, and why the sysctl shortcut is a bad trade.
+
+Tested with Claude Code 2.1.331 on Ubuntu 24.04 with bubblewrap 0.9.0. Other distros may not have this restriction at all.
+
+## What the sandbox covers
+
+The sandbox wraps the commands Claude runs through its Bash tool. In my tests, a sandboxed command could:
+
+- write inside the project folder and the session's temp directory
+- read most of the system, except a few paths Claude Code hides by mounting an empty folder over them
+- reach the internet only through Claude Code's filtering proxy
+
+It could not write to my home directory, to `/etc`, or to Claude Code's own settings file. Every attempt failed with `Read-only file system`.
+
+On the network side, I told curl to skip the proxy (`--noproxy '*'`) and it couldn't even resolve a hostname. The sandbox has no direct route out. The proxy is the only exit, and it decides which domains get through. So if a request succeeds, the proxy allowed it; the sandbox didn't leak.
+
+A server started inside the sandbox can only be reached from that same command. Your browser can't open it.
+
+The sandbox does **not** cover Claude Code's file tools. Write and Edit run inside the Claude Code process with your user's permissions, much like opening a file in nano or vim. The permission mode controls them, which I cover further down. When Claude tried to append to a note in my home directory through Bash, the sandbox blocked it. When it used the Edit tool on the same file, the sandbox didn't stand in the way and the edit went through. Whether an edit like that asks you first depends on the permission mode, not the sandbox.
+
+## What the sandbox protects against, and what it doesn't
+
+The sandbox puts a fence around the commands Claude runs. It helps when one of those commands turns out to be harmful:
+
+- Claude makes a mistake, like running a destructive command in the wrong folder.
+- A file, issue, or web page Claude reads contains instructions written to trick it (prompt injection), and Claude acts on them.
+- A package Claude installs with `npm install` or `pip install` runs a malicious install script. Inside the sandbox, that script can't write to `~/.ssh` or your crontab, and it can only reach the network through the proxy's domain rules.
+
+It doesn't help when the tool itself is compromised. On October 30, 2026, OpenSourceMalware [reported a trojanized build of the Claude Code extension](https://opensourcemalware.com/blog/trojanized-claude-code-extension-plants-persistent-ssh-backdoor) (versions 2.1.312 and 2.1.313) served through Cursor's marketplace. The malicious code ran as soon as the editor loaded the extension, before any conversation started. It added an SSH key to `~/.ssh/authorized_keys`, tried to start the SSH server, opened a reverse SSH tunnel to the attacker's server, and added a crontab entry so it would come back after a reboot.
+
+None of that went through Claude's Bash tool, so the sandbox never saw it. It couldn't have stopped it anyway: Claude Code sets up the sandbox, and in this attack Claude Code was the part the attacker had replaced.
+
+Different defenses apply to that kind of attack:
+
+- Install extensions only from the official publisher, and be suspicious of a version you can't find on the main registries. According to the report, 2.1.313 never existed on npm, Open VSX, or Microsoft's marketplace.
+- If you don't need to SSH into your laptop, remove `openssh-server`. The reverse tunnel in that attack pointed at the local SSH server.
+- Check the places malware uses to stay on a machine: `~/.ssh/authorized_keys`, `crontab -l`, `~/.config/autostart`, and `~/.config/systemd/user/`.
+- For real isolation, run the whole editor in a VM or a devcontainer, not just its shell commands.
+
+After reading the report, I searched my machine for the indicators it lists (the key comment, the attacker's IP, the persistence files, the file hash) and found none.
+
+## Why bubblewrap needs user namespaces
+
+bubblewrap builds the sandbox without root. To do that it creates a user namespace, and inside it a mount namespace (for the read-only filesystem and the hidden paths) and a network namespace (for the isolated network). Without the user namespace, an unprivileged program can't set any of that up.
+
+Since 23.10, Ubuntu stops unprivileged programs from creating user namespaces unless AppArmor allows it. This sysctl controls it:
+
+```ini
+kernel.apparmor_restrict_unprivileged_userns = 1
+```
+
+With the value at `1` and nothing else configured, bubblewrap can't build the sandbox, and Claude Code's sandbox fails to start.
+
+## Why turning the restriction off is a bad trade
+
+The fix you'll find most often is:
+
+```bash
+sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+```
+
+It works, and it applies to every program on the machine. A user namespace gives a process root-like powers inside its own namespace, and that exposes parts of the kernel normally reserved for root, such as netfilter and mount handling. Many Linux local privilege escalation bugs have been reachable through this path, which is why Ubuntu added the restriction in the first place.
+
+Setting it to `0` widens the kernel attack surface for everything you run, to make one tool work.
+
+## The fix I use: an AppArmor profile for bwrap only
+
+Ubuntu already handles this for other apps. On my machine, Chrome, Firefox, VS Code and others each have a small profile in `/etc/apparmor.d/` that grants them user namespaces. Chrome's looks like this:
+
+```text
+abi <abi/4.0>,
+include <tunables/global>
+profile chrome /opt/google/chrome/chrome flags=(unconfined) {
+  userns,
+  include if exists <local/chrome>
+}
+```
+
+The Claude Code docs recommend the same pattern for bubblewrap. Keep the global restriction on and give permission to `/usr/bin/bwrap` alone:
+
+```bash
+# keep the restriction on (this is the Ubuntu default)
+sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=1
+
+# allow user namespaces for bwrap only
+sudo tee /etc/apparmor.d/bwrap >/dev/null <<'EOF'
+abi <abi/4.0>,
+include <tunables/global>
+
+profile bwrap /usr/bin/bwrap flags=(unconfined) {
+  userns,
+  include if exists <local/bwrap>
+}
+EOF
+
+sudo apparmor_parser -r /etc/apparmor.d/bwrap
+```
+
+If you set the sysctl to `0` in a file under `/etc/sysctl.d/` or in `/etc/sysctl.conf`, delete that line too, or the value goes back to `0` after a reboot. On Ubuntu the default of `1` comes from `/usr/lib/sysctl.d/10-apparmor.conf`.
+
+To confirm both parts:
+
+```bash
+cat /proc/sys/kernel/apparmor_restrict_unprivileged_userns   # should print 1
+sudo aa-status | grep bwrap                                  # should list the profile
+```
+
+If you need extra rules later, put them in `/etc/apparmor.d/local/bwrap`. The profile already includes that file, and keeping your changes there avoids a clash if a package ever ships its own `bwrap` profile. The profile is also tied to the path `/usr/bin/bwrap`, so update it if your bwrap lives somewhere else.
+
+### What this doesn't fix
+
+Any program running as your user can still call `bwrap` to get a user namespace. That gap is much smaller than with the sysctl off, but it isn't closed. On a laptop with a single user, I accept that.
+
+The AppArmor project also has a stricter profile called `bwrap-userns-restrict`. It lets bwrap create namespaces but limits what the processes inside can do with them. I haven't tested it with Claude Code's sandbox, so if you try it, run the checks below afterwards.
+
+## Checking that the sandbox works
+
+I wanted to see the sandbox refuse things, not just trust the toggle. Ask Claude to run these through its Bash tool:
+
+```bash
+touch ./sandbox-test && rm ./sandbox-test                     # should work
+touch ~/sandbox-test                                           # should fail: Read-only file system
+touch /etc/sandbox-test                                        # should fail: Read-only file system
+curl -sS -o /dev/null -w "%{http_code}\n" https://example.com  # works if the proxy allows the domain
+curl --noproxy '*' -sS -o /dev/null https://example.com        # should fail: could not resolve host
+```
+
+If the second or third command succeeds, the sandbox isn't on.
+
+## Two settings that are easy to mix up
+
+The sandbox mode, set in `/sandbox`, decides whether sandboxed Bash commands still ask for approval. Auto-allow runs them without a prompt. Regular permissions sends every Bash command through the normal permission flow, sandboxed or not.
+
+The permission mode (Manual, Edit automatically, Plan, Auto, and the others) decides when everything else asks, including file edits. The docs list what each mode does.
+
+Changing the permission mode never turns the sandbox off. I ran the same tests in Auto and in Edit automatically and got identical results.
+
+The difference that matters most is in Auto: when a command needs to rerun outside the sandbox, or reach a domain the proxy doesn't allow, a classifier approves it instead of you. In the other modes, that request waits for your click.
+
+## What I settled on
+
+The sandbox is on Regular permissions and the permission mode is on Edit automatically. Edits inside the project go through without prompts, and git covers me if one goes wrong. Anything that crosses the boundary, a Bash command outside the sandbox or an edit outside the project, waits for my approval. Bash commands that aren't on my allowlist also ask, even inside the sandbox. Switching the sandbox to Auto-allow would remove those prompts and keep the same boundary.
