@@ -66,7 +66,9 @@
   font-weight: 700;
   letter-spacing: var(--ds-track-display);
   line-height: var(--ds-lh-snug);
-  text-wrap: balance;
+  /* balance halves long headings and strands half the column; pretty fills
+     the line and only pulls a word down to avoid a one-word last line */
+  text-wrap: pretty;
   scroll-margin-top: var(--ds-s24);
 }
 
